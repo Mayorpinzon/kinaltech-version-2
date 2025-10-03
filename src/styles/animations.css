@@ -1,0 +1,109 @@
+@layer utilities {
+
+  /* Reveal on scroll */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 600ms ease, transform 600ms ease
+  }
+
+  .reveal.show {
+    opacity: 1;
+    transform: none
+  }
+
+  .nav-active {
+    color: var(--primary) !important
+  }
+
+  .nav-underline {
+    position: relative;
+  }
+
+  .nav-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 2px;
+    transform: scaleX(0);
+    transition: transform var(--trans);
+  }
+
+  .nav-active.nav-underline::after {
+    transform: scaleX(1)
+  }
+
+  /* Animaciones base */
+  .animate-float {
+    animation: float 6s ease-in-out infinite
+  }
+
+  .animate-slide {
+    animation: slide 30s linear infinite
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0)
+    }
+
+    50% {
+      transform: translateY(-8px)
+    }
+
+    100% {
+      transform: translateY(0)
+    }
+  }
+
+  @keyframes slide {
+    0% {
+      transform: translateX(0)
+    }
+
+    100% {
+      transform: translateX(-50%)
+    }
+  }
+
+  /* -------------------------- */
+  /* Helpers nuevos (sin choques) */
+  /* Elevación/sombra consistente en hover */
+  .hover-rise {
+    transition: transform var(--trans), box-shadow var(--trans);
+  }
+
+  .hover-rise:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(var(--ring), .35);
+  }
+
+  /* Compensación de anclas con header sticky */
+  :where(main)>section {
+    scroll-margin-top: 5rem;
+  }
+
+  /* Útil para carruseles/marquee con desvanecido en bordes (opcional) */
+  .mask-edges {
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  }
+}
+
+/* Accesibilidad: respetar reduce motion */
+@media (prefers-reduced-motion: reduce) {
+
+  .reveal,
+  .hover-rise {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .animate-float,
+  .animate-slide {
+    animation: none !important;
+  }
+}

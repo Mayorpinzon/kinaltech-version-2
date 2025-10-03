@@ -1,13 +1,40 @@
 //src/components/atoms/Button.tsx
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
+type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
+    children: ReactNode;
+    variant?: 'solid' | 'outline';
+};
 
-type Props = ButtonHTMLAttributes<HTMLButtonElement> & { children: ReactNode; variant?: 'solid' | 'outline' };
-export default function Button({ children, className = '', variant = 'solid', ...rest }: Props) {
-    const base = 'inline-flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition active:scale-[.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900';
-    const solid = 'bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg hover:shadow-xl focus-visible:ring-indigo-400';
-    const outline = 'border border-indigo-300 text-indigo-700 hover:bg-indigo-50 dark:text-indigo-200 dark:border-indigo-500/40 dark:hover:bg-indigo-500/10 focus-visible:ring-indigo-300';
+export default function Button({
+    children,
+    className = '',
+    variant = 'solid',
+    ...rest
+}: Props) {
+    const base =
+        'inline-flex items-center justify-center gap-2 rounded-app px-5 py-3 text-sm font-semibold trans-app active:scale-[.90] ' +
+        'focus:outline-none focus:ring-4 ring-primary ' +
+        'hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(var(--ring),.35)]';
+
+
+    const solid =
+        'text-white shadow-soft ' +
+        'bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] ' +
+        'hover:-translate-y-0.5 hover:shadow-lg';
+
+    const outline =
+        'bg-transparent border-2 border-[var(--primary)] text-[var(--primary)] ' +
+        'hover:bg-[var(--primary)] hover:text-white ' +
+        'shadow-lg';
+
+
     return (
-        <button className={`${base} ${variant === 'solid' ? solid : outline} ${className}`} {...rest}>{children}</button>
+        <button
+            className={`${base} ${variant === 'solid' ? solid : outline} ${className}`}
+            {...rest}
+        >
+            {children}
+        </button>
     );
 }
