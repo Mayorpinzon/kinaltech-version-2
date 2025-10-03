@@ -1,0 +1,49 @@
+:root {
+  --bg: #0b1220;
+  --card: #0f172a;
+  --text: #0f172a;
+  --muted: #64748b;
+  --primary: #2563eb;
+  --primary-2: #1e40af;
+  --accent: #a855f7;
+  --accent-2: #7c3aed;
+  --ring: 37,99,235; /* para focus ring rgba() */
+  --white: #ffffff;
+  --shell: #f8fafc;
+  --surface: #ffffff;
+  --grad-1: linear-gradient(135deg,#eff6ff 0%,#e0f2fe 100%);
+  --shadow: 0 10px 30px rgba(2, 6, 23, .10);
+  --radius: 18px;
+  --trans: 220ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* Tema oscuro exacto del template */
+body.dark {
+  --bg: #050814;
+  --shell: #0b1220;
+  --surface: #0c1326;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --card: #0f162e;
+  --grad-1:
+    radial-gradient(1000px 600px at 10% 10%, rgba(168,85,247,.18), transparent 45%),
+    radial-gradient(1000px 600px at 90% 10%, rgba(37,99,235,.18), transparent 45%),
+    radial-gradient(1200px 800px at 50% 120%, rgba(14,165,233,.12), transparent 50%),
+    #050814;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+/* Utilidades para no repetir tanto “var(...)” */
+@layer utilities {
+  .bg-bg       { background: var(--bg) }
+  .bg-shell    { background: var(--shell) }
+  .bg-surface  { background: var(--surface) }
+  .bg-card     { background: var(--card) }
+  .text-body   { color: var(--text) }
+  .text-muted  { color: var(--muted) }
+  .ring-primary{ --tw-ring-color: rgba(var(--ring), .4) }
+  .shadow-soft { box-shadow: var(--shadow) }
+  .rounded-app { border-radius: var(--radius) }
+  .trans-app   { transition: var(--trans) }
+  .bg-grad-1   { background: var(--grad-1) }
+}

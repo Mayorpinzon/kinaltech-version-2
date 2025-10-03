@@ -2,28 +2,69 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from '../atoms/Button';
-
+import { useSectionSpy } from '../../hooks/useSectionSpy';
 
 export default function Nav() {
-    const { t } = useTranslation();
-    const [open, setOpen] = useState(false);
-    useEffect(() => {
-        const close = () => setOpen(false);
-        document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', close));
-        return () => document.querySelectorAll('a[href^="#"]').forEach(a => a.removeEventListener('click', close));
-    }, []);
-    return (
-        <div className="flex items-center gap-4">
-            <nav className={`fixed inset-x-0 top-16 z-40 bg-white/90 backdrop-blur md:static md:bg-transparent ${open ? 'block' : 'hidden'} md:block`}>
-                <ul className="md:flex md:items-center md:gap-6 p-4 md:p-0">
-                    <li><a className="hover:text-indigo-600" href="#home">{t('nav.home')}</a></li>
-                    <li><a className="hover:text-indigo-600" href="#services">{t('nav.services')}</a></li>
-                    <li><a className="hover:text-indigo-600" href="#technologies">{t('nav.technologies')}</a></li>
-                    <li><a className="hover:text-indigo-600" href="#about">{t('nav.about')}</a></li>
-                    <li><a className="hover:text-indigo-600" href="#contact">{t('nav.contact')}</a></li>
-                </ul>
-            </nav>
-            <Button className="md:hidden" onClick={() => setOpen(v => !v)} aria-label="Open menu">☰</Button>
-        </div>
-    );
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+
+  // ids en el orden del scroll
+  const links = [
+    { href: '#home', label: t('nav.home') },
+    { href: '#services', label: t('nav.services') },
+    { href: '#technologies', label: t('nav.technologies') },
+    { href: '#about', label: t('nav.about') },
+    { href: '#contact', label: t('nav.contact') },
+  ];
+
+  const active = useSectionSpy({
+    sectionIds: links.map(l => l.href.slice(1)),
+    offsetTop: 80, // tu header ~64px + respiro
+  });
+
+  useEffect(() => {
+    const close = () => setOpen(false);
+    document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', close));
+    return () => document.querySelectorAll('a[href^="#"]').forEach(a => a.removeEventListener('click', close));
+  }, []);
+
+  return (
+    <div className="flex items-center gap-4">
+      <nav
+        className={`fixed inset-x-0 top-16 z-40 md:static
+        ${open ? 'block' : 'hidden'} md:block
+        bg-[var(--surface)]/90 md:bg-transparent backdrop-blur`}
+        aria-label="Main"
+      >
+        <ul className="p-4 md:p-0 md:flex md:items-center md:gap-6">
+          {links.map(({ href, label }) => {
+            const id = href.slice(1);
+            const isActive = id === active;
+            return (
+              <li key={href}>
+                <a
+                  href={href}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`inline-flex items-center px-2 py-2 rounded-app trans-app nav-underline hover-rise
+                              hover:text-[var(--primary)] ${isActive ? 'nav-active' : ''}`}
+                >
+                  {label}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+
+      <Button
+        className="md:hidden"
+        onClick={() => setOpen(v => !v)}
+        aria-expanded={open}
+        aria-controls="main-nav"
+        aria-label="Open menu"
+      >
+        ☰
+      </Button>
+    </div>
+  );
 }
