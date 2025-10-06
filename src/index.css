@@ -1,5 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap");
 @import "tailwindcss";
 @import "./styles/tokens.css";
 @import "./styles/animations.css";
 
-:root { font-synthesis-weight: none; text-rendering: optimizeLegibility }
+:root[data-scrolled="true"] header[data-component="header"] { box-shadow: 0 8px 24px hsl(0 0% 0% / 0.08); }
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+  opacity: .95;
+}
