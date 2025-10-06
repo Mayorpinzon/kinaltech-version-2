@@ -1,70 +1,62 @@
-//src/components/molecules/Nav.tsx
-import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import Button from '../atoms/Button';
-import { useSectionSpy } from '../../hooks/useSectionSpy';
+// src/components/molecules/Nav.tsx
+import { useTranslation } from "react-i18next";
+import { useSectionSpy } from "../../hooks/useSectionSpy";
 
-export default function Nav() {
+const SECTIONS = [
+  { id: "hero",     key: "nav.home" },
+  { id: "services", key: "nav.services" },
+  { id: "techs",    key: "nav.techs" },
+  { id: "about",    key: "nav.about" },
+  { id: "contact",  key: "nav.contact" },
+] as const;
+
+type Props = {
+  onNavigate?: () => void;
+  variant?: "desktop" | "mobile";
+};
+
+export function Nav({ onNavigate, variant = "desktop" }: Props) {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
-
-  // ids en el orden del scroll
-  const links = [
-    { href: '#home', label: t('nav.home') },
-    { href: '#services', label: t('nav.services') },
-    { href: '#technologies', label: t('nav.technologies') },
-    { href: '#about', label: t('nav.about') },
-    { href: '#contact', label: t('nav.contact') },
-  ];
-
-  const active = useSectionSpy({
-    sectionIds: links.map(l => l.href.slice(1)),
-    offsetTop: 80, // tu header ~64px + respiro
+  const activeId = useSectionSpy({
+    sectionIds: SECTIONS.map((s) => s.id),
+    offsetTop: 80,
   });
 
-  useEffect(() => {
-    const close = () => setOpen(false);
-    document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', close));
-    return () => document.querySelectorAll('a[href^="#"]').forEach(a => a.removeEventListener('click', close));
-  }, []);
+  const listCls =
+    variant === "desktop" ? "flex items-center gap-6" : "flex flex-col gap-1";
+
+  const itemCls =
+    variant === "desktop"
+      ? "relative text-sm font-medium text-[--text-muted] hover:text-[--text] transition-colors"
+      : "relative w-full rounded-xl px-3 py-2 text-[--text] hover:bg-[--surface-2] text-sm";
 
   return (
-    <div className="flex items-center gap-4">
-      <nav
-        className={`fixed inset-x-0 top-16 z-40 md:static
-        ${open ? 'block' : 'hidden'} md:block
-        bg-[var(--surface)]/90 md:bg-transparent backdrop-blur`}
-        aria-label="Main"
-      >
-        <ul className="p-4 md:p-0 md:flex md:items-center md:gap-6">
-          {links.map(({ href, label }) => {
-            const id = href.slice(1);
-            const isActive = id === active;
-            return (
-              <li key={href}>
-                <a
-                  href={href}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={`inline-flex items-center px-2 py-2 rounded-app trans-app nav-underline hover-rise
-                              hover:text-[var(--primary)] ${isActive ? 'nav-active' : ''}`}
-                >
-                  {label}
-                </a>
-              </li>
-            );
-          })}
-        </ul>
-      </nav>
-
-      <Button
-        className="md:hidden"
-        onClick={() => setOpen(v => !v)}
-        aria-expanded={open}
-        aria-controls="main-nav"
-        aria-label="Open menu"
-      >
-        ☰
-      </Button>
-    </div>
+    <nav aria-label={t("nav.aria") ?? "Primary"} className="reveal">
+      <ul className={listCls}>
+        {SECTIONS.map(({ id, key }) => {
+          const active = activeId === id;
+          return (
+            <li key={id}>
+              <a
+                href={`#${id}`}
+                onClick={onNavigate}
+                data-active={active}
+                aria-current={active ? "page" : undefined}
+                className={itemCls}
+              >
+                <span className="relative inline-block pb-1">
+                  {t(key)}
+                  <span
+                    aria-hidden
+                    data-active={active}
+                    className="absolute left-0 bottom-0 h-0.5 w-full origin-left scale-x-0 bg-[--accent] transition-transform duration-300 data-[active=true]:scale-x-100"
+                  />
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
   );
 }
