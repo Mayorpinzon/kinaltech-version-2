@@ -41,6 +41,7 @@ const resources = {
       "services.items.ui.title": "UI/UX Implementation",
       "services.items.ui.text":
         "From design to production with robust design systems.",
+      "services.lead": "We offer comprehensive frontend development solutions tailored to your business needs",
 
       // Techs
       "tech.title": "Technologies We Work With",
@@ -111,6 +112,8 @@ const resources = {
       "services.items.ui.title": "Implementación UI/UX",
       "services.items.ui.text":
         "Del diseño a producción con design systems robustos.",
+      "services.lead": "Ofrecemos soluciones integrales de frontend adaptadas a las necesidades de tu negocio",
+             
 
       // Techs
       "tech.title": "Tecnologías que usamos",
@@ -179,6 +182,7 @@ const resources = {
       "services.items.ui.title": "UI/UX 実装",
       "services.items.ui.text":
         "デザインを実装しデザインシステムで運用。",
+      "services.lead": "ビジネスに最適化したフロントエンド開発を提供",
 
       // Techs
       "tech.title": "対応技術",

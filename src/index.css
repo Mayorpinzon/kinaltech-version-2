@@ -1,11 +1,35 @@
+/* src/index.css */
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap");
 @import "tailwindcss";
 @import "./styles/tokens.css";
 @import "./styles/animations.css";
 
-:root[data-scrolled="true"] header[data-component="header"] { box-shadow: 0 8px 24px hsl(0 0% 0% / 0.08); }
+html, body { background: var(--bg); }
+
+/* ============================
+   Placeholders
+   ============================ */
 input::placeholder,
 textarea::placeholder {
-  color: var(--text-muted);
+  color: var(--muted);
   opacity: .95;
 }
+
+/* ============================
+   Header “glass” (light/dark) + scrolled
+   ============================ */
+
+/* Tokens locales SOLO para el header (no tocan tokens.css) */
+:root {
+  /* base translúcida y versión al hacer scroll */
+  --header-glass-base: color-mix(in srgb, var(--surface) 70%, transparent);
+  --header-glass-scrolled: var(--surface-a-80, var(--surface));
+}
+
+/* En oscuro, el template usa un vidrio más denso/oscuro */
+:root[data-theme="dark"],
+body.dark {
+  --header-glass-base: color-mix(in srgb, var(--card) 70%, transparent);
+  --header-glass-scrolled: var(--card);
+}
+

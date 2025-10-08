@@ -20,7 +20,7 @@ export function Techs() {
   ];
 
   return (
-    <section id="technologies" className="py-20 bg-shell text-body dark:text-white">
+    <section id="techs" className="py-20 bg-shell text-body dark:text-white scroll-mt-20">
 
       <Container>
         <div className="text-center max-w-2xl mx-auto reveal">

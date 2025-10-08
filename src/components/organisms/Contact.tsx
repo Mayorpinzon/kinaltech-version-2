@@ -22,7 +22,7 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="py-20 bg-shell text-base">
+    <section id="contact" className="py-20 bg-shell scroll-mt-20">
       <Container>
         <div className="text-center max-w-2xl mx-auto reveal">
           <H2>{t('contact.title')}</H2>
