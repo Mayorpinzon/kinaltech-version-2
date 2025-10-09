@@ -1,79 +1,99 @@
-//src/components/atoms/LangSelect.tsx
-
+// src/components/atoms/LangSelect.tsx
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-type Props = { size?: "sm" | "md"; variant?: "default" | "pill" };
+type Props = {
+  size?: "sm" | "md";
+  variant?: "default" | "pill";
+};
 
-export function LangSelect({ size = "md", variant = "default" }: Props) {
+export function LangSelect({ size = "md" }: Props) {
   const { i18n, t } = useTranslation();
+  const [open, setOpen] = React.useState(false);
 
-  const value = i18n.language.startsWith("es")
+  const current = i18n.language.startsWith("es")
     ? "es"
     : i18n.language.startsWith("ja")
-    ? "ja"
-    : "en";
+      ? "ja"
+      : "en";
 
-  const base = size === "sm" ? "h-9 text-xs px-2" : "h-10 text-sm px-3";
+  const label = {
+    es: t("lang.es", "Español"),
+    en: t("lang.en", "English"),
+    ja: t("lang.ja", "日本語"),
+  } as const;
 
-  const cls =
-    variant === "pill"
-      ? `${base} appearance-none bg-transparent text-[--text] focus:outline-none`
-      : `${base} rounded-xl border border-[--border] bg-[--surface] text-[--text] focus:outline-none focus:ring-2 focus:ring-[--accent]`;
+  React.useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    const onClick = (e: MouseEvent) => {
+      const el = e.target as HTMLElement;
+      if (!el.closest?.("[data-langselect-root]")) setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("click", onClick);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("click", onClick);
+    };
+  }, []);
 
-  const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const lang = e.target.value;
-    i18n.changeLanguage(lang);
-    try {
-      localStorage.setItem("lng", lang);
-    } catch {}
-  };
-
+  const btnBase =
+    "inline-flex items-center gap-2 rounded-2xl border border-[--border] text-[--text] focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] transition-colors";
+  const btnSize = size === "sm" ? "h-9 px-3 text-sm" : "h-10 px-4 text-sm";
+  const btnBg = "inline-flex items-center justify-center rounded-app px-5 py-3 text-sm font-semibold trans-app active:scale-[.90] focus:outline-none focus:ring-4 ring-primary hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(var(--ring),.35)] bg-transparent border-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white shadow-lg";
   return (
-    <div className="relative inline-flex items-center gap-2">
-      {variant === "pill" && (
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          aria-hidden
-          className="text-[--text-muted]"
-        >
+    <div className="relative" data-langselect-root>
+      <button
+        type="button"
+        className={`${btnBase} ${btnBg} ${btnSize}`}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+      >
+        {/* icono globo */}
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden className="opacity-80">
           <path
-            d="M12 2a10 10 0 100 20 10 10 0 000-20Zm0 0s4 3.5 4 10-4 10-4 10M12 2s-4 3.5-4 10 4 10 4 10M2 12h20"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            fill="none"
+            d="M12 3a9 9 0 100 18 9 9 0 000-18zm0 0c2.7 0 5 4 5 9s-2.3 9-5 9-5-4-5-9 2.3-9 5-9zm-8 9h16M12 3v18"
+            fill="none" stroke="currentColor" strokeWidth="1.2"
           />
         </svg>
-      )}
-
-      <label htmlFor="lang" className="sr-only">
-        {t("actions.changeLanguage")}
-      </label>
-
-      <select id="lang" value={value} onChange={onChange} className={cls}>
-        <option value="es">Español</option>
-        <option value="en">English</option>
-        <option value="ja">日本語</option>
-      </select>
-
-      {variant === "pill" && (
-        <svg
-          className="pointer-events-none absolute right-1"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          aria-hidden
-        >
-          <path
-            d="M7 10l5 5 5-5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          />
+        <span>{label[current]}</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden className={`transition-transform ${open ? "rotate-180" : ""}`}>
+          <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.5" />
         </svg>
-      )}
+      </button>
+
+      {/* Dropdown */}
+      <div
+        role="listbox"
+        aria-label={t("lang.select", "Select language")}
+        hidden={!open}
+        className="absolute right-0 min-w-[10rem] overflow-hidden rounded-2xl 
+        border border-[var(--border)] bg-[var(--primary)] shadow-xl text-[var(--text)]  "
+      >
+        {(["es", "en", "ja"] as const).map(code => (
+          <button
+            key={code}
+            role="option"
+            aria-selected={current === code}
+            className="flex w-full items-center justify-between px-4 py-2 
+            text-left text-sm data-[active=true]:font-semibold
+             hover:bg-blue-400 hover:text-white transition-colors"
+            data-active={current === code}
+            onClick={() => {
+              i18n.changeLanguage(code);
+              setOpen(false);
+            }}
+          >
+            <span>{label[code]}</span>
+            {current === code ? (
+              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden>
+                <path d="M5 12l4 4 10-10" fill="none" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+            ) : null}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

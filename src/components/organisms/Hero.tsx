@@ -11,7 +11,7 @@ export default function Hero() {
 
   return (
     <section
-      id="home"
+      id="hero"
       className="relative overflow-hidden bg-grad-1 text-base py-24 md:py-32 reveal"
     >
       {/* Blobs flotando */}
@@ -20,18 +20,16 @@ export default function Hero() {
 
       <Container className="relative grid items-center gap-12 md:grid-cols-12">
         <div className="md:col-span-6">
-          <H1 className="text-5xl md:text-6xl font-bold leading-tight tracking-tight">
+          <H1 className="text-5xl md:text-6xl font-bold leading-tight tracking-tight text-[var(--text)]">
             {t('hero.title')}{' '}
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--primary)] to-[var(--accent)]">
-              KinalTech
-            </span>
           </H1>
           <Lead className="block mt-6 text-lg max-w-xl">
             {t('hero.subtitle')}
           </Lead>
-          <div className="mt-8 flex gap-4">
+          <div className="mt-10 h-15 flex gap-4">
             {/* tu botón gradiente */}
-            <Button className="rounded-app bg-gradient-to-r from-[var(--primary)] to-[var(--accent)]">
+            <Button className=" bg-gradient-to-r from-[var(--primary)] 
+            to-[var(--accent)] shadow-lg hover:shadow-xl hover:shadow-blue-600/20 ">
               {t('hero.cta1')}
             </Button>
             <Button variant="outline">

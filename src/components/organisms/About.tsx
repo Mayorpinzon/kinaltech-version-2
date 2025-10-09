@@ -10,7 +10,7 @@ export function About() {
   useReveal();
 
   return (
-    <section id="about" className="py-20 bg-surface text-base">
+    <section id="about" className="py-20 bg-surface text-base scroll-mt-20">
       <Container className="grid gap-10 md:grid-cols-2 items-center">
         <div className="reveal">
           <H2>{t('about.title')}</H2>

@@ -13,7 +13,7 @@ export default function Button({
     ...rest
 }: Props) {
     const base =
-        'inline-flex items-center justify-center gap-2 rounded-app px-5 py-3 text-sm font-semibold trans-app active:scale-[.90] ' +
+        'inline-flex items-center justify-center md:text-lg gap-3 rounded-full px-5 py-3 text-sm font-semibold trans-app active:scale-[.90] ' +
         'focus:outline-none focus:ring-4 ring-primary ' +
         'hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(var(--ring),.35)]';
 
