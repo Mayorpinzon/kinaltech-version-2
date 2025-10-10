@@ -1,7 +1,7 @@
 //src/components/organisms/About.tsx
 import { useTranslation } from 'react-i18next';
 import Container from '../atoms/Container';
-import { H2, Lead } from '../atoms/Heading';
+import { H2} from '../atoms/Heading';
 import Button from '../atoms/Button';
 import { useReveal } from '../../hooks/useReveal';
 
@@ -12,11 +12,11 @@ export function About() {
   return (
     <section id="about" className="py-20 bg-surface text-base scroll-mt-20">
       <Container className="grid gap-10 md:grid-cols-2 items-center">
-        <div className="reveal">
+        <div className="text-[var(--text)] ">
           <H2>{t('about.title')}</H2>
-          <Lead>{t('about.p1')}</Lead>
-          <p className="mt-3 text-muted">{t('about.p2')}</p>
-          <p className="mt-2 text-muted">{t('about.p3')}</p>
+          <p className="mt-3 text-[var(--text)]">{t('about.p1')}</p>
+          <p className="mt-3 text-[var(--text)]">{t('about.p2')}</p>
+          <p className="mt-2 text-[var(--text)]">{t('about.p3')}</p>
           <Button className="mt-6">{t('about.cta')}</Button>
         </div>
         <div className="reveal rounded-app overflow-hidden shadow-soft aspect-video bg-card">
