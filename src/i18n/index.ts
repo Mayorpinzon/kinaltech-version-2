@@ -44,8 +44,16 @@ const resources = {
       "services.lead": "We offer comprehensive frontend development solutions tailored to your business needs",
 
       // Techs
-      "tech.title": "Technologies We Work With",
-      "tech.blurb": "A modern stack that powers our solutions",
+      "techs.title": "Technologies We Work With",
+      "techs.blurb": "A modern stack that powers our solutions",
+      "tech.react": "React.js",
+      "tech.next": "Next.js",
+      "tech.vue": "Vue.js",
+      "tech.rn": "React Native",
+      "tech.flutter": "Flutter",
+      "tech.mysql": "MySQL",
+      "tech.graphql": "GraphQL",
+      "tech.redux": "Redux",
 
       // About
       "about.title": "About KinalTech",
@@ -113,11 +121,19 @@ const resources = {
       "services.items.ui.text":
         "Del diseño a producción con design systems robustos.",
       "services.lead": "Ofrecemos soluciones integrales de frontend adaptadas a las necesidades de tu negocio",
-             
+
 
       // Techs
-      "tech.title": "Tecnologías que usamos",
-      "tech.blurb": "Stack moderno que impulsa nuestras soluciones",
+      "techs.title": "Tecnologías que usamos",
+      "techs.blurb": "Stack moderno que impulsa nuestras soluciones",
+      "tech.react": "React.js",
+      "tech.next": "Next.js",
+      "tech.vue": "Vue.js",
+      "tech.rn": "React Native",
+      "tech.flutter": "Flutter",
+      "tech.mysql": "MySQL",
+      "tech.graphql": "GraphQL",
+      "tech.redux": "Redux",
 
       // About
       "about.title": "Sobre KinalTech",
@@ -185,8 +201,16 @@ const resources = {
       "services.lead": "ビジネスに最適化したフロントエンド開発を提供",
 
       // Techs
-      "tech.title": "対応技術",
-      "tech.blurb": "私たちの開発を支えるモダンなスタック",
+      "techs.title": "対応技術",
+      "techs.blurb": "私たちの開発を支えるモダンなスタック",
+      "tech.react": "React.js",
+      "tech.next": "Next.js",
+      "tech.vue": "Vue.js",
+      "tech.rn": "React Native",
+      "tech.flutter": "Flutter",
+      "tech.mysql": "MySQL",
+      "tech.graphql": "GraphQL",
+      "tech.redux": "Redux",
 
       // About
       "about.title": "KinalTech について",
@@ -222,10 +246,10 @@ const browserLng =
 const initialLng = storedLng
   ? storedLng
   : browserLng.startsWith("es")
-  ? "es"
-  : browserLng.startsWith("ja")
-  ? "ja"
-  : "en";
+    ? "es"
+    : browserLng.startsWith("ja")
+      ? "ja"
+      : "en";
 
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({
