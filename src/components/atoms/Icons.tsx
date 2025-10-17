@@ -4,23 +4,111 @@ import { useId, type SVGProps } from "react";
 
 // --- Services ---
 export const WebIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="h-full w-full">
-    <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M3 9h18M8 13h3M8 16h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    className="h-full w-full"
+    aria-hidden
+  >
+    {/* Ventana / pantalla */}
+    <rect
+      x="2"
+      y="3"
+      width="20"
+      height="14"
+      rx="2"
+      stroke="currentColor"
+      strokeWidth="1.6"
+    />
+    {/* Barra superior (como del navegador) */}
+    <path
+      d="M2 7h20"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+    />
+    {/* Contenido: flecha izq, barra central, flecha der (inspirado en tu SVG) */}
+    <path
+      d="M9.5 10.5L7.5 12l2 1.5"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M12 10.25v3.5"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+    />
+    <path
+      d="M14.5 10.5L16.5 12l-2 1.5"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    {/* Base/soporte sutil */}
+    <path
+      d="M8 19h8"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+    />
+    <rect x="6.5" y="20" width="11" height="1.5" rx=".75" fill="currentColor" />
   </svg>
 );
 
 export const MobileIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="h-full w-full">
-    <rect x="8" y="3" width="8" height="18" rx="2" stroke="currentColor" strokeWidth="1.6" />
-    <circle cx="12" cy="17" r="1" fill="currentColor" />
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden
+    className={`h-full w-full`}
+    fill="none"
+  >
+    {/* Punto / home button */}
+    <path
+      d="M13 19a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
+      fill="currentColor"
+    />
+    {/* Cuerpo del teléfono */}
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M9.234 1h.072a.9.9 0 0 1 .0 0h5.388a.9.9 0 0 1 0 0H15c.017 0 .033 0 .049.001.086.001.163.004.235.009 1.985.142 3.564 1.721 3.706 3.706.01.143.01.303.01.518V17.212c0 .818 0 1.494-.046 2.044-.047.571-.149 1.096-.404 1.587a3.999 3.999 0 0 1-1.706 1.706c-.491.255-1.016.357-1.587.404-.55.046-1.226.046-2.044.046h-2.424c-.818 0-1.494 0-2.044-.046a3.99 3.99 0 0 1-1.587-.404 4 4 0 0 1-1.706-1.706c-.255-.491-.357-1.016-.404-1.587C5 18.706 5 18.03 5 17.212V5.234c0-.215 0-.375.01-.518C5.152 2.73 6.73 1.152 8.716 1.01c.072-.005.149-.008.235-.009C8.967 1 8.983 1 9 1h.164a.9.9 0 0 1 .07 0ZM9.272 3c-.269 0-.351 0-.413.004-.993.07-1.782.86-1.853 1.853C7 4.919 7 5.002 7 5.272V17.17c0 .871 0 1.463.039 1.92.037.445.104.673.186.831.19.365.487.663.852.852.158.082.386.15.831.187.457.038 1.049.04 1.92.04h2.34c.871 0 1.463 0 1.92-.04.445-.037.673-.105.831-.187.365-.19.663-.487.852-.852.082-.158.149-.386.186-.83.039-.458.04-1.05.04-1.921V5.272c0-.27 0-.353-.005-.415-.07-.993-.86-1.782-1.852-1.853C14.728 3 14.646 3 14.378 3c-.067 0-.074 0-.079.001a.59.59 0 0 0-.242.211l-.489.542-.012.014c-.006.007-.017.02-.032.035-.031.032-.087.085-.167.138a.73.73 0 0 1-.311.139 1.09 1.09 0 0 1-.214.033h-1.928a1.09 1.09 0 0 1-.214-.033.73.73 0 0 1-.311-.139c-.08-.053-.136-.106-.167-.138-.015-.015-.026-.028-.032-.035l-.012-.014-.489-.542A.59.59 0 0 0 9.35 3C9.345 3 9.338 3 9.272 3Z"
+      fill="currentColor"
+    />
   </svg>
 );
 
 export const UIUXIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" className="h-full w-full">
-    <rect x="3" y="4.5" width="18" height="15" rx="2" stroke="currentColor" strokeWidth="1.6" />
-    <path d="M7 9h4M7 12h6M7 15h8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+  <svg
+    viewBox="0 0 24 24"
+    aria-hidden
+    className={`h-full w-full mt-1`}
+    fill="none"
+  >
+    {/* Ventana (ligeramente grande) */}
+    <rect
+      x="2"
+      y="3"
+      width="20"
+      height="14"
+      rx="2"
+      stroke="currentColor"
+      strokeWidth="1.8"      // un poquito más “presente”
+    />
+    {/* Barra superior */}
+    <path
+      d="M2 7h20"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+    />
+    {/* Tres “dots” de la barra de título */}
+    <circle cx="6" cy="5" r=".9" fill="currentColor" />
+    <circle cx="9" cy="5" r=".9" fill="currentColor" />
+    <circle cx="12" cy="5" r=".9" fill="currentColor" />
   </svg>
 );
 

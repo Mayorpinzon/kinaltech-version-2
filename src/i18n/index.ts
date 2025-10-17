@@ -54,6 +54,9 @@ const resources = {
       "tech.mysql": "MySQL",
       "tech.graphql": "GraphQL",
       "tech.redux": "Redux",
+      "tech.nodeJs": "NodeJS",
+      "tech.javaScript": "JavaScript",
+      "tech.typeScript": "TypeScript",
 
       // About
       "about.title": "About KinalTech",
@@ -134,6 +137,9 @@ const resources = {
       "tech.mysql": "MySQL",
       "tech.graphql": "GraphQL",
       "tech.redux": "Redux",
+      "tech.nodeJs": "NodeJS",
+      "tech.javaScript": "JavaScript",
+      "tech.typeScript": "TypeScript",
 
       // About
       "about.title": "Sobre KinalTech",
@@ -211,6 +217,9 @@ const resources = {
       "tech.mysql": "MySQL",
       "tech.graphql": "GraphQL",
       "tech.redux": "Redux",
+      "tech.nodeJs": "NodeJS",
+      "tech.javaScript": "JavaScript",
+      "tech.typeScript": "TypeScript",
 
       // About
       "about.title": "KinalTech について",
@@ -259,6 +268,14 @@ if (!i18n.isInitialized) {
     interpolation: { escapeValue: false },
     returnEmptyString: false,
   });
-}
+};
+// Setear idioma inicial en <html lang="...">
+try { document.documentElement.lang = initialLng; } catch {}
+
+/** Persist language + set <html lang="..."> **/
+i18n.on("languageChanged", (lng) => {
+  try { localStorage.setItem("lng", lng); } catch {}
+  document.documentElement.lang = lng;
+});
 
 export default i18n;

@@ -58,7 +58,7 @@ export function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 bg-shell text-body scroll-mt-20">
+    <section id="contact" className="py-24 bg-shell text-body scroll-mt-20 bg-grad-1"> 
       <Container>
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto reveal">
