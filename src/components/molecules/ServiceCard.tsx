@@ -6,40 +6,49 @@ export default function ServiceCard({
   title,
   children,
   className = "",
+  style,
 }: {
   icon: ReactNode;
   title: string;
   children: ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   return (
     <article
       className={[
-        "rounded-app border border-[var(--border)] bg-card hover:shadow-lg",
-        "p-10 sm:p-7 trans-app hover:border-[var(--primary)]",
+        // base visual (match template)
+        "relative overflow-hidden",
+        "rounded-[var(--radius)]",
+        "border border-[color-mix(in_srgb,var(--muted)_28%,transparent)]",
+        "bg-[var(--surface)]",
+        "p-7",
+        // sombra + hover elevate
+        "[box-shadow:var(--shadow)]",
+        "transition-transform duration-200",
+        " hover:[box-shadow:0_18px_40px_rgba(2,6,23,.15)]",
+        "focus-within:-translate-y-1.5 focus-within:[box-shadow:0_18px_40px_rgba(2,6,23,.15)]",
+        "hover:border-[var(--primary)]",
         className,
       ].join(" ")}
-      style={{
-        // leve “depth” como en el template
-        background: "linear-gradient(145deg, var(--card) 0%, var(--surface) 100%)",
-        color: "var(--text)",
-      }}
+      style={style}
     >
-      {/* Icono en pastilla con gradiente */}
+      {/* icono con conic-gradient + glow */}
       <div
-        className="
-          inline-grid h-12 w-12 place-items-center rounded-2xl
-          text-[--white]
-          bg-gradient-to-br from-[var(--primary)] to-[var(--accent)]
-          shadow-soft
-      "
+        className={[
+          "w-[66px] h-[66px] rounded-[18px]",
+          "grid place-items-center",
+          "text-white",
+          "mb-4",
+          "bg-[conic-gradient(from_180deg,var(--primary),var(--accent))]",
+          "[box-shadow:0_10px_22px_rgba(var(--ring),.35)]",
+        ].join(" ")}
         aria-hidden
       >
-        {/* el SVG que mandamos desde Services */}
-        <div className="h-6 w-6">{icon}</div>
+        <div className="h-8 w-8">{icon}</div>
       </div>
 
-      <h3 className="mt-4 text-xl font-semibold">{title}</h3>
+      <h3 className="text-xl font-semibold">{title}</h3>
       <p className="mt-2 text-muted">{children}</p>
     </article>
   );

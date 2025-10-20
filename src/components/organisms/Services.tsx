@@ -8,29 +8,58 @@ import { WebIcon, MobileIcon, UIUXIcon } from "../atoms/Icons";
 
 export default function Services() {
   const { t } = useTranslation();
-  useReveal();
+  useReveal(); // activa .reveal -> .show
 
   return (
-    <section id="services" className="py-30 bg-surface text-body
-     dark:text-white scroll-mt-20">
+    <section
+      id="services"
+      className="py-30 bg-[var(--surface)] text-body dark:text-white scroll-mt-20"
+      aria-labelledby="services-title"
+    >
       <Container>
-        <div className="text-center max-w-2xl mx-auto reveal">
-          <H2>{t("services.title")}</H2>
-          <Lead className="mt-3">{t("services.lead")}</Lead>
+        <div className="text-center mb-8 md:mb-12  ">
+          <H2 id="services-title" className="inline-block relative ">
+            {t("services.title")}
+          </H2>
+          <Lead className="max-w-3xl mx-auto mt-2">
+            {t("services.lead") || t("services.blurb")}
+          </Lead>
         </div>
 
-        <div className="mt-12 grid gap-6 sm:gap-7 md:grid-cols-3">
-          <ServiceCard className="reveal" icon={<WebIcon />} title={t("services.items.web.title")!}>
-            {t("services.items.web.text")}
-          </ServiceCard>
+        {/* grid 12→6→4 como el template */}
+        <div className="grid grid-cols-12 gap-5 md:gap-6">
+          <div className="col-span-12 sm:col-span-6 lg:col-span-4">
+            <ServiceCard
+              className="reveal"
+              style={{ transitionDelay: "0ms" }}
+              icon={<WebIcon />}
+              title={t("services.items.web.title")!}
+            >
+              {t("services.items.web.text")}
+            </ServiceCard>
+          </div>
 
-          <ServiceCard className="reveal" icon={<MobileIcon />} title={t("services.items.mobile.title")!}>
-            {t("services.items.mobile.text")}
-          </ServiceCard>
+          <div className="col-span-12 sm:col-span-6 lg:col-span-4">
+            <ServiceCard
+              className="reveal"
+              style={{ transitionDelay: "80ms" }}
+              icon={<MobileIcon />}
+              title={t("services.items.mobile.title")!}
+            >
+              {t("services.items.mobile.text")}
+            </ServiceCard>
+          </div>
 
-          <ServiceCard className="reveal" icon={<UIUXIcon />} title={t("services.items.ui.title")!}>
-            {t("services.items.ui.text")}
-          </ServiceCard>
+          <div className="col-span-12 sm:col-span-6 lg:col-span-4">
+            <ServiceCard
+              className="reveal"
+              style={{ transitionDelay: "160ms" }}
+              icon={<UIUXIcon />}
+              title={t("services.items.ui.title")!}
+            >
+              {t("services.items.ui.text")}
+            </ServiceCard>
+          </div>
         </div>
       </Container>
     </section>

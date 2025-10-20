@@ -28,8 +28,8 @@ const TECHS: Tech[] = [
   { id: "graphql", nameKey: "tech.graphql", color: "#E535AB", Icon: GraphQLIcon },
   { id: "redux",   nameKey: "tech.redux",   color: "#764ABC", Icon: ReduxIcon },
   { id: "nodeJs",  nameKey: "tech.nodeJs",  color: "#83CD29", Icon: NodeBadgeIcon },
-  { id: "javaScript",  nameKey: "tech.javaScript", color:"000000", Icon: JavaScriptBrandIcon },
-  { id: "typeScript",  nameKey: "tech.typeScript", color:"000000", Icon: TypeScriptBrandIcon },
+  { id: "javaScript",  nameKey: "tech.javaScript", color:"#000000", Icon: JavaScriptBrandIcon },
+  { id: "typeScript",  nameKey: "tech.typeScript", color:"#000000", Icon: TypeScriptBrandIcon },
 ];
 
 function Chip({ tech }: { tech: Tech }) {
@@ -43,9 +43,7 @@ function Chip({ tech }: { tech: Tech }) {
         inline-flex items-center gap-4 rounded-full px-5 h-15 mx-2
         border border-[var(--border)]
         bg-[--surface] text-[--text] font-medium
-        shadow-soft transition-colors
-        shrink-0
-      "
+        transition-colors shrink-0"
     >
       <span className="grid place-items-center h-5 w-5" style={{ color }} aria-hidden>
         <Icon />
@@ -84,7 +82,7 @@ function Techs() {
   const [/*active*/, /*setActive*/] = useState<string>(TECHS[0].id);
 
   return (
-    <section id="techs" className="py-24 bg-surface text-body scroll-mt-20">
+    <section id="techs" className="py-24 bg-surface text-body scroll-mt-20 bg-grad-1">
       <Container>
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto reveal">
@@ -92,9 +90,9 @@ function Techs() {
           <Lead className="mt-3">{t("techs.blurb")}</Lead>
         </div>
         {/* Carrusel / pasarela superior (usa animations.css) */}
-        <div className="mt-7 overflow-hidden mask-edges reveal" aria-hidden="true">
+        <div className="mt-7 overflow-hidden mask-edges reveal  " aria-hidden="true">
           {/* Pista duplicada para loop continuo. Claves únicas con índice. */}
-          <div className="inline-flex h-17 items-center gap-4 animate-slide">
+          <div className="inline-flex h-17 items-center gap-4 animate-slide"> 
             {[...TECHS, ...TECHS].map((tech, i) => (
               <Chip key={`${tech.id}-${i}`} tech={tech} />
             ))}
