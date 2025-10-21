@@ -46,18 +46,13 @@ export default function Header() {
         <div className="h-16 flex items-center justify-between">
           {/* Brand (izquierda) */}
           <a
-            href="#hero"
-            className="flex items-center gap-2 font-semibold text-[--text] focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] rounded-md"
-          >
-            <a
               href="#hero"
-              className="flex items-center gap-2 font-semibold text-[--text] focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] rounded-md"
+              className="flex gap-2 font-semibold text-[--text] focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] rounded-md"
             >
               {/* Logo a color, escalable por alto */}
-              <KinalTechLogo className="h-7 w-auto md:h-8" aria-hidden />
+              <KinalTechLogo className="h-13 w-auto md:h-13 max-[420px]:h-8 " aria-hidden />
               <span className="sr-only">KinalTech</span>
             </a>
-          </a>
 
           {/* Nav centrado (solo desktop) */}
           <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:block">

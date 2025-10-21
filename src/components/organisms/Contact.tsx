@@ -13,52 +13,113 @@ function InfoRow({
   title,
   subtitle,
 }: {
-  icon: ReactNode;     // <-- antes: JSX.Element
+  icon: ReactNode;
   title: string;
   subtitle: string;
 }) {
   return (
-    <div className="flex items-start text-[var(--text)] gap-4 rounded-app border-transparent bg-tranparent p-4 ">
+    <div className="flex items-start  gap-5 rounded-app border-transparent bg-tranparent p-4 ">
       <div
         className="
-          inline-grid h-12 w-12 place-items-center rounded-2xl
+          inline-grid h-15 w-15 place-items-center rounded-2xl
           text-[--white]
           bg-gradient-to-br from-[var(--primary)] to-[var(--accent)]
           shadow-soft
         "
         aria-hidden
       >
-        <div className="h-6 w-6">{icon}</div>
+        <div className="h-6 w-6 text-[var(--white)] ">{icon}</div>
       </div>
 
       <div className="min-w-0">
-        <p className="text-sm font-semibold text-[--text]">{title}</p>
+        <p className="text-md font-semibold text-[--text]">{title}</p>
         <p className="text-sm text-[--muted] truncate">{subtitle}</p>
       </div>
     </div>
   );
 }
 
+/** Validación ligera en cliente (no sustituye validación server-side) */
+function validateFields(f: {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}) {
+  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email);
+  if (f.name.trim().length < 2) return "Name is too short.";
+  if (!emailOk) return "Invalid email.";
+  if (f.subject.trim().length < 2) return "Subject is too short.";
+  if (f.message.trim().length < 10) return "Message is too short.";
+  return null;
+}
+
 export function Contact() {
   const { t } = useTranslation();
-  const [ok, setOk] = useState("");
   useReveal();
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const [ok, setOk] = useState("");
+  const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
+  const [ts] = useState(() => Date.now()); // timestamp de carga para bots rápidos
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const name = String(fd.get("name") || "").trim();
-    const email = String(fd.get("email") || "").trim();
-    if (!name || !email) {
-      setOk("");
+    setError("");
+    setOk("");
+
+    // tiempo mínimo de llenado (2.5s) — frena bots instantáneos
+    if (Date.now() - ts < 2500) {
+      setError("Please take a moment to complete the form.");
       return;
     }
-    setOk(`${name}, te contactamos pronto a ${email}.`);
-    e.currentTarget.reset();
+
+    const fd = new FormData(e.currentTarget);
+    const data = {
+      name: String(fd.get("name") || ""),
+      email: String(fd.get("email") || ""),
+      subject: String(fd.get("subject") || ""),
+      message: String(fd.get("message") || ""),
+      company: String(fd.get("company") || ""), // honeypot invisible
+      ts,
+    };
+
+    const v = validateFields(data);
+    if (v) {
+      setError(v);
+      return;
+    }
+
+    // Si el honeypot viene con contenido, simulamos OK (no damos pista)
+    if (data.company) {
+      setOk("Thanks! We’ll get back to you shortly.");
+      (e.currentTarget as HTMLFormElement).reset();
+      return;
+    }
+
+    // Llamada a tu endpoint real (ajusta la URL si es necesario)
+    try {
+      setSending(true);
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error("Request failed");
+      setOk("Thanks! We’ll get back to you shortly.");
+      (e.currentTarget as HTMLFormElement).reset();
+    } catch {
+      setError("We couldn’t send your message. Please try again.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
-    <section id="contact" className="py-24 bg-shell text-body scroll-mt-20 bg-grad-1"> 
+    <section
+      id="contact"
+      className="py-24 bg-shell text-body scroll-mt-20 bg-grad-1"
+    >
       <Container>
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto reveal">
@@ -69,7 +130,7 @@ export function Contact() {
         {/* Grid */}
         <div className="mt-12 grid gap-8 md:grid-cols-2">
           {/* Left: info blocks */}
-          <div className="space-y-4 reveal">
+          <div className="space-y-4 reveal ">
             <InfoRow
               icon={<MailIcon />}
               title={t("contact.email.label", "Escríbenos")}
@@ -88,7 +149,22 @@ export function Contact() {
           </div>
 
           {/* Right: form */}
-          <form onSubmit={onSubmit} className="space-y-4 reveal">
+          <form onSubmit={onSubmit} className="space-y-4 reveal" noValidate>
+            {/* Honeypot (invisible pero accesible) */}
+            <label htmlFor="company" className="sr-only">
+              Company
+            </label>
+            <input
+              id="company"
+              name="company"
+              autoComplete="off"
+              tabIndex={-1}
+              aria-hidden="true"
+              className="absolute left-[-9999px] top-auto w-px h-px overflow-hidden"
+            />
+            {/* Timestamp de carga */}
+            <input type="hidden" name="ts" value={ts} />
+
             {(["name", "email", "subject", "message"] as const).map((field) => {
               const isTextArea = field === "message";
               const label = t(`form.${field}`);
@@ -98,10 +174,10 @@ export function Contact() {
                     field === "name"
                       ? "Your name"
                       : field === "email"
-                        ? "Your email"
-                        : field === "subject"
-                          ? "Subject"
-                          : "Your message",
+                      ? "Your email"
+                      : field === "subject"
+                      ? "Subject"
+                      : "Your message",
                 }) || undefined;
 
               const common =
@@ -109,7 +185,10 @@ export function Contact() {
 
               return (
                 <div key={field}>
-                  <label className="block text-sm font-semibold mb-1" htmlFor={field}>
+                  <label
+                    className="block text-sm font-semibold mb-1"
+                    htmlFor={field}
+                  >
                     {label}
                   </label>
 
@@ -135,10 +214,12 @@ export function Contact() {
               );
             })}
 
-            <Button type="submit" className="mt-2">
-              {t("form.send")}
+            <Button type="submit" className="mt-2 h-13 w-50  bg-gradient-to-r from-[var(--primary)] 
+            to-[var(--accent)] shadow-lg hover:shadow-xl hover:shadow-blue-600/20 " disabled={sending}>
+              {sending ? "Sending..." : t("form.send")}
             </Button>
 
+            {error && <p className="text-sm text-[--danger]">{error}</p>}
             {ok && <p className="text-sm text-emerald-500">{ok}</p>}
           </form>
         </div>
