@@ -37,6 +37,18 @@
     transform: scaleX(1)
   }
 
+  .menu-panel {
+    transform: translateY(-8px);
+    opacity: 0;
+    transition: transform var(--trans), opacity var(--trans);
+  }
+
+  [data-state="open"] .menu-panel {
+    transform: none;
+    opacity: 1;
+  }
+
+
   /* Animaciones base */
   .animate-float {
     animation: float 6s ease-in-out infinite
