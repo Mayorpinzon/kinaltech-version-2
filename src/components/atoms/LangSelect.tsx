@@ -58,12 +58,13 @@ export function LangSelect({ size = "md" }: Props) {
     <div className="relative" data-langselect-root>
       <button
         type="button"
-        className={`${btnBase} ${btnBg} ${btnSize}`}
+        className={`${btnBase} ${btnBg} ${btnSize} max-[420px]:px-2 max-[420px]:w-10 max-[420px]:justify-center`}
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-label={`Change language: ${label[current]}`}
         onClick={() => setOpen((v) => !v)}
       >
-        {/* icono globo*/}
+        {/* icono globo */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="17"
@@ -83,13 +84,14 @@ export function LangSelect({ size = "md" }: Props) {
           </g>
         </svg>
 
-        <span>{label[current]}</span>
+        <span className="font-medium max-[430px]:hidden">{label[current]}</span>
+
         <svg
           width="16"
           height="16"
           viewBox="0 0 24 24"
           aria-hidden
-          className={`transition-transform ${open ? "rotate-180" : ""}`}
+          className={`transition-transform ${open ? "rotate-180" : ""} max-[420px]:hidden`}
         >
           <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.5" />
         </svg>

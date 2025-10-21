@@ -4,7 +4,7 @@
   --text: #0f172a;
   --muted: #64748b;
   --primary: #2563eb;
-  --primary-2: #1e40af;
+  --primary-2: #031085;
   --accent: #a855f7;
   --accent-2: #7c3aed;
   --ring: 37, 99, 235;
@@ -38,6 +38,7 @@ body.dark {
   --text: #e5e7eb;
   --muted: #94a3b8;
   --card: #0f162e;
+  --primary-2:#e5e7eb;
   --grad-1:
     radial-gradient(1000px 600px at 10% 10%, rgba(168, 85, 247, .18), transparent 45%),
     radial-gradient(1000px 600px at 90% 10%, rgba(37, 99, 235, .18), transparent 45%),

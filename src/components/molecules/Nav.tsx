@@ -2,67 +2,68 @@
 import { useTranslation } from "react-i18next";
 import { useSectionSpy } from "../../hooks/useSectionSpy";
 
-const SECTIONS = [
-  { id: "hero", key: "nav.home" },
-  { id: "services", key: "nav.services" },
-  { id: "techs", key: "nav.techs" },
-  { id: "about", key: "nav.about" },
-  { id: "contact", key: "nav.contact" },
-] as const;
-
 type Props = {
+  variant: "desktop" | "mobile";
   onNavigate?: () => void;
-  variant?: "desktop" | "mobile";
 };
 
-export function Nav({ onNavigate, variant = "desktop" }: Props) {
+const SECTIONS = [
+  { id: "hero", key: "nav.home", href: "#hero" },
+  { id: "services", key: "nav.services", href: "#services" },
+  { id: "techs", key: "nav.techs", href: "#techs" },
+  { id: "about", key: "nav.about", href: "#about" },
+  { id: "contact", key: "nav.contact", href: "#contact" },
+];
+
+export function Nav({ variant, onNavigate }: Props) {
   const { t } = useTranslation();
-  const activeId = useSectionSpy({
-    sectionIds: SECTIONS.map((s) => s.id),
-    offsetTop: 80,
-  });
+  const activeId = useSectionSpy({ sectionIds: SECTIONS.map(s => s.id), offsetTop: 80 });
 
-  const listCls =
-    variant === "desktop" ? "flex items-center gap-6" : "flex flex-col gap-1";
+  if (variant === "desktop") {
+    return (
+      <nav aria-label={t("nav.aria") ?? "Primary navigation"}>
+        <ul className="flex items-center gap-6">
+          {SECTIONS.map(({ id, key, href }) => {
+            const active = activeId === id;
+            return (
+              <li key={id}>
+                <a
+                  href={href}
+                  className={[
+                    "text-sm font-semibold text-[--text] opacity-90 hover:opacity-100 transition-colors",
+                    "nav-underline",
+                    active ? "nav-active" : "",
+                  ].join(" ")}
+                >
+                  {t(key)}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+    );
+  }
 
-  // Nota: añadimos "group" para poder animar el subrayado también en hover
-  const itemCls =
-    variant === "desktop"
-      ? "group relative text-md font-bold text-[--text] data-[active=true]:opacity-100 transition-colors data-[active=true]:font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] rounded-md"
-      : "group relative w-full rounded-xl px-3 py-2 text-[--text] hover:bg-[--surface] text-sm data-[active=true]:font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]";
-
-
+  // Mobile: sheet list
   return (
-    <nav aria-label={t("nav.aria") ?? "Primary"} className="reveal">
-      <ul className={listCls}>
-        {SECTIONS.map(({ id, key }) => {
+    <nav aria-label={t("nav.aria") ?? "Primary navigation"}>
+      <ul className="py-2">
+        {SECTIONS.map(({ id, key, href }) => {
           const active = activeId === id;
           return (
             <li key={id}>
               <a
-                href={`#${id}`}
+                href={href}
                 onClick={onNavigate}
-                data-active={active}
-                aria-current={active ? "page" : undefined}
-                className={itemCls}
+                className={[
+                  "block px-4 py-3 text-center font-semibold",
+                  "focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] rounded-xl",
+                  "hover:bg-[var(--surface-a-60)] active:bg-[var(--surface-a-60)]",
+                  active ? "text-[var(--primary)]" : "text-[var(--primary-2)]",
+                ].join(" ")}
               >
-                <span className="relative inline-block pb-1">
-                  {t(key)}
-                  <span
-                    aria-hidden
-                    data-active={active}
-                    className="
-                      absolute left-0 bottom-0 h-0.5 w-full
-                      origin-left scale-x-0
-                      transition-transform duration-300
-                      data-[active=true]:scale-x-100
-                      group-hover:scale-x-100
-                      bg-gradient-to-r
-                      from-[var(--accent)]
-                      to-[var(--primary,var(--accent))]
-                    "
-                  />
-                </span>
+                {t(key)}
               </a>
             </li>
           );
