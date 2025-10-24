@@ -39,7 +39,6 @@ function InfoRow({
   );
 }
 
-/** Validación ligera en cliente (no sustituye validación server-side) */
 function validateFields(f: {
   name: string;
   email: string;
@@ -61,14 +60,14 @@ export function Contact() {
   const [ok, setOk] = useState("");
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
-  const [ts] = useState(() => Date.now()); // timestamp de carga para bots rápidos
+  const [ts] = useState(() => Date.now()); // marca de tiempo para bots rápidos
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setOk("");
 
-    // tiempo mínimo de llenado (2.5s) — frena bots instantáneos
+    // tiempo mínimo de llenado (2.5s)
     if (Date.now() - ts < 2500) {
       setError("Please take a moment to complete the form.");
       return;
@@ -80,7 +79,7 @@ export function Contact() {
       email: String(fd.get("email") || ""),
       subject: String(fd.get("subject") || ""),
       message: String(fd.get("message") || ""),
-      company: String(fd.get("company") || ""), // honeypot invisible
+      company: String(fd.get("company") || ""), // honeypot
       ts,
     };
 
@@ -90,36 +89,41 @@ export function Contact() {
       return;
     }
 
-    // Si el honeypot viene con contenido, simulamos OK (no damos pista)
+    // si el honeypot viene relleno, simulamos OK y salimos
     if (data.company) {
       setOk("Thanks! We’ll get back to you shortly.");
       (e.currentTarget as HTMLFormElement).reset();
       return;
     }
 
-    // Llamada a tu endpoint real (ajusta la URL si es necesario)
     try {
       setSending(true);
+      // con proxy de Vite, /api/contact apunta al emulador
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error("Request failed");
+
+      const payload = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(payload?.error ?? "There was a problem sending your message.");
+        setOk("");
+        return;
+      }
+
       setOk("Thanks! We’ll get back to you shortly.");
       (e.currentTarget as HTMLFormElement).reset();
     } catch {
-      setError("We couldn’t send your message. Please try again.");
+      setError("Network error. Please try again.");
+      setOk("");
     } finally {
       setSending(false);
     }
   };
 
   return (
-    <section
-      id="contact"
-      className="py-24 bg-shell text-body scroll-mt-20 bg-grad-1"
-    >
+    <section id="contact" className="py-24 bg-shell text-body scroll-mt-20 bg-grad-1">
       <Container>
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto reveal">
@@ -129,7 +133,7 @@ export function Contact() {
 
         {/* Grid */}
         <div className="mt-12 grid gap-8 md:grid-cols-2">
-          {/* Left: info blocks */}
+          {/* Left */}
           <div className="space-y-4 reveal ">
             <InfoRow
               icon={<MailIcon />}
@@ -150,10 +154,8 @@ export function Contact() {
 
           {/* Right: form */}
           <form onSubmit={onSubmit} className="space-y-4 reveal" noValidate>
-            {/* Honeypot (invisible pero accesible) */}
-            <label htmlFor="company" className="sr-only">
-              Company
-            </label>
+            {/* Honeypot accesible pero oculto visualmente */}
+            <label htmlFor="company" className="sr-only">Company</label>
             <input
               id="company"
               name="company"
@@ -162,7 +164,7 @@ export function Contact() {
               aria-hidden="true"
               className="absolute left-[-9999px] top-auto w-px h-px overflow-hidden"
             />
-            {/* Timestamp de carga */}
+            {/* timestamp de carga */}
             <input type="hidden" name="ts" value={ts} />
 
             {(["name", "email", "subject", "message"] as const).map((field) => {
@@ -174,10 +176,10 @@ export function Contact() {
                     field === "name"
                       ? "Your name"
                       : field === "email"
-                      ? "Your email"
-                      : field === "subject"
-                      ? "Subject"
-                      : "Your message",
+                        ? "Your email"
+                        : field === "subject"
+                          ? "Subject"
+                          : "Your message",
                 }) || undefined;
 
               const common =
@@ -185,21 +187,12 @@ export function Contact() {
 
               return (
                 <div key={field}>
-                  <label
-                    className="block text-sm font-semibold mb-1"
-                    htmlFor={field}
-                  >
+                  <label className="block text-sm font-semibold mb-1" htmlFor={field}>
                     {label}
                   </label>
 
                   {isTextArea ? (
-                    <textarea
-                      id={field}
-                      name={field}
-                      rows={6}
-                      placeholder={ph}
-                      className={`${common} px-4 py-3`}
-                    />
+                    <textarea id={field} name={field} rows={6} placeholder={ph} className={`${common} px-4 py-3`} />
                   ) : (
                     <input
                       id={field}
@@ -214,8 +207,12 @@ export function Contact() {
               );
             })}
 
-            <Button type="submit" className="mt-2 h-13 w-50  bg-gradient-to-r from-[var(--primary)] 
-            to-[var(--accent)] shadow-lg hover:shadow-xl hover:shadow-blue-600/20 " disabled={sending}>
+            <Button
+              type="submit"
+              className="mt-2 h-13 w-50  bg-gradient-to-r from-[var(--primary)] 
+            to-[var(--accent)] shadow-lg hover:shadow-xl hover:shadow-blue-600/20 "
+              disabled={sending}
+            >
               {sending ? "Sending..." : t("form.send")}
             </Button>
 

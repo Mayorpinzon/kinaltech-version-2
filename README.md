@@ -122,3 +122,48 @@ src/
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
+
+## Procedure to run emulators:
+
+- Edit .env.local:
+
+VITE_FIREBASE_API_KEY=...
+VITE_FIREBASE_AUTH_DOMAIN=...
+VITE_FIREBASE_PROJECT_ID=kinaltech-dev
+VITE_FIREBASE_STORAGE_BUCKET=...
+VITE_FIREBASE_MESSAGING_SENDER_ID=...
+VITE_FIREBASE_APP_ID=...
+
+VITE_FUNCTIONS_BASE=http://127.0.0.1:5001/kinaltech-dev/us-central1
+
+- The .env.local is ignored by Git. Only .env.example is versioned.
+- Install the CLI (once) and select the right project locally.
+npm i -g firebase-tools
+firebase login
+firebase use --add
+
+- Prepare Cloud Functions (TypeScript):
+- From the project root:
+cd functions
+npm install
+npm run build         # compiles to functions/lib
+cd ..
+
+Tip: during development you can keep a watcher running:
+cd functions && npm run watch
+
+- Start emulators and the web app:
+Open two terminals at the project root:
+
+A) Firebase Functions Emulator:
+firebase emulators:start --only functions
+B) Vite dev server:
+npm run dev
+
+- Health check
+Open in your browser:
+http://127.0.0.1:5001/kinaltech-dev/us-central1/health
+
+- Expected:
+
+{ "ok": true, "service": "functions", "env": "emulator" }
