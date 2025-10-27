@@ -64,6 +64,10 @@ export function Contact() {
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // GUARDA la ref del formulario ANTES de cualquier await (no uses e luego)
+    const form = e.currentTarget as HTMLFormElement;
+
     setError("");
     setOk("");
 
@@ -73,7 +77,7 @@ export function Contact() {
       return;
     }
 
-    const fd = new FormData(e.currentTarget);
+    const fd = new FormData(form);
     const data = {
       name: String(fd.get("name") || ""),
       email: String(fd.get("email") || ""),
@@ -92,35 +96,40 @@ export function Contact() {
     // si el honeypot viene relleno, simulamos OK y salimos
     if (data.company) {
       setOk("Thanks! We’ll get back to you shortly.");
-      (e.currentTarget as HTMLFormElement).reset();
+      form.reset();
       return;
     }
 
     try {
       setSending(true);
-      // con proxy de Vite, /api/contact apunta al emulador
+
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
-      const payload = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(payload?.error ?? "There was a problem sending your message.");
-        setOk("");
-        return;
+        let payload: any = {};
+        try { payload = await res.json(); } catch { }
+        throw new Error(payload?.error || `HTTP ${res.status}`);
       }
 
+      // JSON opcional; si falla, igual tratamos como éxito
+      try { await res.json(); } catch { }
+
       setOk("Thanks! We’ll get back to you shortly.");
-      (e.currentTarget as HTMLFormElement).reset();
-    } catch {
-      setError("Network error. Please try again.");
+      setError("");
+      form.reset();         // <-- usamos la ref guardada, no e.currentTarget
+    } catch (err: any) {
+      console.error("Contact submit failed:", err);
       setOk("");
+      setError(err?.message || "Network error. Please try again.");
     } finally {
       setSending(false);
     }
   };
+
 
   return (
     <section id="contact" className="py-24 bg-shell text-body scroll-mt-20 bg-grad-1">
