@@ -3,11 +3,14 @@ import { useTranslation } from "react-i18next";
 import Container from "../atoms/Container";
 import { H2, Lead } from "../atoms/Heading";
 import Button from "../atoms/Button";
-import { useState } from "react";
+import { useState, type FormEvent, type ReactNode } from "react";
 import { useReveal } from "../../hooks/useReveal";
 import { MailIcon, PinIcon, ClockIcon } from "../atoms/Icons";
-import type { ReactNode, FormEvent } from "react";
+import { z } from "zod";
 
+/* ============================
+   UI helpers
+============================ */
 function InfoRow({
   icon,
   title,
@@ -18,19 +21,15 @@ function InfoRow({
   subtitle: string;
 }) {
   return (
-    <div className="flex items-start  gap-5 rounded-app border-transparent bg-tranparent p-4 ">
+    <div className="flex items-start gap-5 rounded-app bg-transparent p-4">
       <div
-        className="
-          inline-grid h-15 w-15 place-items-center rounded-2xl
-          text-[--white]
-          bg-gradient-to-br from-[var(--primary)] to-[var(--accent)]
-          shadow-soft
-        "
+        className="inline-grid h-15 w-15 place-items-center rounded-2xl
+                   text-[--white] bg-gradient-to-br from-[var(--primary)] to-[var(--accent)]
+                   shadow-soft"
         aria-hidden
       >
-        <div className="h-6 w-6 text-[var(--white)] ">{icon}</div>
+        <div className="h-6 w-6 text-[var(--white)]">{icon}</div>
       </div>
-
       <div className="min-w-0">
         <p className="text-md font-semibold text-[--text]">{title}</p>
         <p className="text-sm text-[--muted] truncate">{subtitle}</p>
@@ -39,87 +38,117 @@ function InfoRow({
   );
 }
 
-/** Validación ligera en cliente (no sustituye validación server-side) */
-function validateFields(f: {
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-}) {
-  const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email);
-  if (f.name.trim().length < 2) return "Name is too short.";
-  if (!emailOk) return "Invalid email.";
-  if (f.subject.trim().length < 2) return "Subject is too short.";
-  if (f.message.trim().length < 10) return "Message is too short.";
-  return null;
+/* ============================
+   Validación UI con Zod
+============================ */
+const ContactSchema = z.object({
+  name: z.string().min(2, "Please enter your full name.").max(120),
+  email: z.string().email("Please enter a valid email.").max(160),
+  subject: z.string().min(2, "Subject is too short.").max(160),
+  message: z.string().min(10, "Message should be at least 10 characters.").max(5000),
+});
+type ContactInput = z.infer<typeof ContactSchema>;
+
+function mapIssues(issues: z.ZodIssue[]) {
+  const out: Record<string, string> = {};
+  for (const i of issues) {
+    const key = i.path.join(".");
+    if (key) out[key] = i.message;
+  }
+  return out;
 }
 
-export function Contact() {
+export default function Contact() {
   const { t } = useTranslation();
   useReveal();
 
   const [ok, setOk] = useState("");
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
-  const [ts] = useState(() => Date.now()); // timestamp de carga para bots rápidos
+  const [errs, setErrs] = useState<Record<string, string>>({});
+  const [ts] = useState(() => Date.now()); // marca de tiempo para bots rápidos
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // guarda la referencia del form ANTES de cualquier await
+    const form = e.currentTarget as HTMLFormElement;
+
     setError("");
     setOk("");
+    setErrs({});
 
-    // tiempo mínimo de llenado (2.5s) — frena bots instantáneos
+    // tiempo mínimo de llenado (2.5s) – simple antispam
     if (Date.now() - ts < 2500) {
       setError("Please take a moment to complete the form.");
       return;
     }
 
-    const fd = new FormData(e.currentTarget);
+    const fd = new FormData(form);
     const data = {
       name: String(fd.get("name") || ""),
       email: String(fd.get("email") || ""),
       subject: String(fd.get("subject") || ""),
       message: String(fd.get("message") || ""),
-      company: String(fd.get("company") || ""), // honeypot invisible
+      company: String(fd.get("company") || ""), // honeypot
       ts,
     };
 
-    const v = validateFields(data);
-    if (v) {
-      setError(v);
+    // Validación UI (mismo esquema que backend)
+    const parsed = ContactSchema.safeParse({
+      name: data.name,
+      email: data.email,
+      subject: data.subject,
+      message: data.message,
+    } satisfies ContactInput);
+
+    if (!parsed.success) {
+      setErrs(mapIssues(parsed.error.issues));
+      setError("Please fix the highlighted fields.");
       return;
     }
 
-    // Si el honeypot viene con contenido, simulamos OK (no damos pista)
+    // Honeypot: si viene relleno, devolver éxito silencioso
     if (data.company) {
       setOk("Thanks! We’ll get back to you shortly.");
-      (e.currentTarget as HTMLFormElement).reset();
+      form.reset();
       return;
     }
 
-    // Llamada a tu endpoint real (ajusta la URL si es necesario)
     try {
       setSending(true);
+
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data), // SIN captcha, para pruebas locales
       });
-      if (!res.ok) throw new Error("Request failed");
+
+      if (!res.ok) {
+        let payload: any = {};
+        try { payload = await res.json(); } catch {}
+        if (payload?.issues) {
+          setErrs(Object.fromEntries(payload.issues.map((i: any) => [i.path, i.message])));
+        }
+        throw new Error(payload?.error || `HTTP ${res.status}`);
+      }
+
+      // si el backend no envía body, igual tratamos como éxito
+      try { await res.json(); } catch {}
+
       setOk("Thanks! We’ll get back to you shortly.");
-      (e.currentTarget as HTMLFormElement).reset();
-    } catch {
-      setError("We couldn’t send your message. Please try again.");
+      setError("");
+      form.reset();
+    } catch (err: any) {
+      console.error("Contact submit failed:", err);
+      setOk("");
+      setError(err?.message || "Network error. Please try again.");
     } finally {
       setSending(false);
     }
   };
 
   return (
-    <section
-      id="contact"
-      className="py-24 bg-shell text-body scroll-mt-20 bg-grad-1"
-    >
+    <section id="contact" className="py-24 bg-shell text-body scroll-mt-20 bg-grad-1">
       <Container>
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto reveal">
@@ -129,8 +158,8 @@ export function Contact() {
 
         {/* Grid */}
         <div className="mt-12 grid gap-8 md:grid-cols-2">
-          {/* Left: info blocks */}
-          <div className="space-y-4 reveal ">
+          {/* Columna izquierda: info */}
+          <div className="space-y-4 reveal">
             <InfoRow
               icon={<MailIcon />}
               title={t("contact.email.label", "Escríbenos")}
@@ -148,12 +177,10 @@ export function Contact() {
             />
           </div>
 
-          {/* Right: form */}
+          {/* Columna derecha: form */}
           <form onSubmit={onSubmit} className="space-y-4 reveal" noValidate>
-            {/* Honeypot (invisible pero accesible) */}
-            <label htmlFor="company" className="sr-only">
-              Company
-            </label>
+            {/* Honeypot accesible pero oculto visualmente */}
+            <label htmlFor="company" className="sr-only">Company</label>
             <input
               id="company"
               name="company"
@@ -162,7 +189,7 @@ export function Contact() {
               aria-hidden="true"
               className="absolute left-[-9999px] top-auto w-px h-px overflow-hidden"
             />
-            {/* Timestamp de carga */}
+            {/* timestamp del cliente */}
             <input type="hidden" name="ts" value={ts} />
 
             {(["name", "email", "subject", "message"] as const).map((field) => {
@@ -174,32 +201,25 @@ export function Contact() {
                     field === "name"
                       ? "Your name"
                       : field === "email"
-                      ? "Your email"
-                      : field === "subject"
-                      ? "Subject"
-                      : "Your message",
+                        ? "Your email"
+                        : field === "subject"
+                          ? "Subject"
+                          : "Your message",
                 }) || undefined;
 
               const common =
-                "w-full rounded-app border border-[var(--muted)] text-[--text] placeholder-[--muted] focus:shadow-md focus:shadow-blue-400 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]  focus:border-[var(--primary)] transition duration-200";
+                "w-full rounded-app border border-[var(--muted)] text-[--text] placeholder-[--muted] " +
+                "focus:shadow-md focus:shadow-blue-400 focus:outline-none focus:ring-2 " +
+                "focus:ring-[var(--primary)] focus:border-[var(--primary)] transition duration-200";
 
               return (
                 <div key={field}>
-                  <label
-                    className="block text-sm font-semibold mb-1"
-                    htmlFor={field}
-                  >
+                  <label className="block text-sm font-semibold mb-1" htmlFor={field}>
                     {label}
                   </label>
 
                   {isTextArea ? (
-                    <textarea
-                      id={field}
-                      name={field}
-                      rows={6}
-                      placeholder={ph}
-                      className={`${common} px-4 py-3`}
-                    />
+                    <textarea id={field} name={field} rows={6} placeholder={ph} className={`${common} px-4 py-3`} />
                   ) : (
                     <input
                       id={field}
@@ -210,12 +230,20 @@ export function Contact() {
                       className={`${common} h-12 px-4`}
                     />
                   )}
+
+                  {errs[field] && (
+                    <p className="mt-1 text-sm text-[--danger]">{errs[field]}</p>
+                  )}
                 </div>
               );
             })}
 
-            <Button type="submit" className="mt-2 h-13 w-50  bg-gradient-to-r from-[var(--primary)] 
-            to-[var(--accent)] shadow-lg hover:shadow-xl hover:shadow-blue-600/20 " disabled={sending}>
+            <Button
+              type="submit"
+              className="mt-2 h-13 w-50 bg-gradient-to-r from-[var(--primary)] to-[var(--accent)]
+                         shadow-lg hover:shadow-xl hover:shadow-blue-600/20"
+              disabled={sending}
+            >
               {sending ? "Sending..." : t("form.send")}
             </Button>
 
@@ -227,3 +255,5 @@ export function Contact() {
     </section>
   );
 }
+
+export { Contact};
