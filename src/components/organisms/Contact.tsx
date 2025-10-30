@@ -8,26 +8,19 @@ import { useReveal } from "../../hooks/useReveal";
 import { MailIcon, PinIcon, ClockIcon } from "../atoms/Icons";
 import { z } from "zod";
 
+declare global {
+  interface Window { turnstile?: any }
+}
+
 /* ============================
    UI helpers
 ============================ */
 function InfoRow({
-  icon,
-  title,
-  subtitle,
-}: {
-  icon: ReactNode;
-  title: string;
-  subtitle: string;
-}) {
+  icon, title, subtitle,
+}: { icon: ReactNode; title: string; subtitle: string }) {
   return (
     <div className="flex items-start gap-5 rounded-app bg-transparent p-4">
-      <div
-        className="inline-grid h-15 w-15 place-items-center rounded-2xl
-                   text-[--white] bg-gradient-to-br from-[var(--primary)] to-[var(--accent)]
-                   shadow-soft"
-        aria-hidden
-      >
+      <div className="inline-grid h-15 w-15 place-items-center rounded-2xl text-[--white] bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] shadow-soft" aria-hidden>
         <div className="h-6 w-6 text-[var(--white)]">{icon}</div>
       </div>
       <div className="min-w-0">
@@ -42,10 +35,10 @@ function InfoRow({
    Validación UI con Zod
 ============================ */
 const ContactSchema = z.object({
-  name: z.string().min(2, "Please enter your full name.").max(120),
+  name: z.string().min(2, "Please enter your full name.").max(30, "Max 30 characters."),
   email: z.string().email("Please enter a valid email.").max(160),
-  subject: z.string().min(2, "Subject is too short.").max(160),
-  message: z.string().min(10, "Message should be at least 10 characters.").max(5000),
+  subject: z.string().min(2, "Subject is too short.").max(160, "Max 160 characters."),
+  message: z.string().min(10, "Message should be at least 10 characters.").max(300, "Max 300 characters."),
 });
 type ContactInput = z.infer<typeof ContactSchema>;
 
@@ -56,6 +49,33 @@ function mapIssues(issues: z.ZodIssue[]) {
     if (key) out[key] = i.message;
   }
   return out;
+}
+
+/* Obtener token de Turnstile (invisible).
+   - Si no hay sitekey o el script no cargó, devuelve "" y seguimos (dev).
+   - En producción, el backend exigirá captcha; el front debe tener sitekey real. */
+async function getTurnstileToken(sitekey?: string): Promise<string> {
+  if (!sitekey) return ""; // dev sin captcha
+  // esperar a que cargue el script
+  await new Promise<void>((resolve) => {
+    const check = () => (window.turnstile ? resolve() : setTimeout(check, 40));
+    check();
+  });
+  return await new Promise<string>((resolve, reject) => {
+    try {
+      // render “invisible” y ejecutar
+      window.turnstile.render("#cf-turnstile", {
+        sitekey,
+        size: "invisible",
+        callback: (token: string) => resolve(token),
+        "error-callback": () => reject(new Error("Captcha failed")),
+        retry: "auto",
+      });
+      window.turnstile.execute("#cf-turnstile");
+    } catch (e) {
+      reject(e);
+    }
+  });
 }
 
 export default function Contact() {
@@ -70,14 +90,13 @@ export default function Contact() {
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // guarda la referencia del form ANTES de cualquier await
     const form = e.currentTarget as HTMLFormElement;
 
     setError("");
     setOk("");
     setErrs({});
 
-    // tiempo mínimo de llenado (2.5s) – simple antispam
+    // anti-speed (2.5s)
     if (Date.now() - ts < 2500) {
       setError("Please take a moment to complete the form.");
       return;
@@ -93,7 +112,7 @@ export default function Contact() {
       ts,
     };
 
-    // Validación UI (mismo esquema que backend)
+    // Validación UI
     const parsed = ContactSchema.safeParse({
       name: data.name,
       email: data.email,
@@ -107,7 +126,7 @@ export default function Contact() {
       return;
     }
 
-    // Honeypot: si viene relleno, devolver éxito silencioso
+    // Honeypot: si viene, fingimos OK y salimos
     if (data.company) {
       setOk("Thanks! We’ll get back to you shortly.");
       form.reset();
@@ -117,10 +136,15 @@ export default function Contact() {
     try {
       setSending(true);
 
+      // === Turnstile (token si hay sitekey; en dev puede no haber) ===
+      const sitekey = import.meta.env.VITE_TURNSTILE_SITEKEY as string | undefined;
+      const captchaToken = await getTurnstileToken(sitekey);
+
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data), // SIN captcha, para pruebas locales
+        // En prod el backend exigirá `captcha`; en dev puede ir vacío.
+        body: JSON.stringify({ ...data, captcha: captchaToken }),
       });
 
       if (!res.ok) {
@@ -132,9 +156,7 @@ export default function Contact() {
         throw new Error(payload?.error || `HTTP ${res.status}`);
       }
 
-      // si el backend no envía body, igual tratamos como éxito
       try { await res.json(); } catch {}
-
       setOk("Thanks! We’ll get back to you shortly.");
       setError("");
       form.reset();
@@ -158,7 +180,7 @@ export default function Contact() {
 
         {/* Grid */}
         <div className="mt-12 grid gap-8 md:grid-cols-2">
-          {/* Columna izquierda: info */}
+          {/* Izquierda: info */}
           <div className="space-y-4 reveal">
             <InfoRow
               icon={<MailIcon />}
@@ -177,9 +199,9 @@ export default function Contact() {
             />
           </div>
 
-          {/* Columna derecha: form */}
+          {/* Derecha: form */}
           <form onSubmit={onSubmit} className="space-y-4 reveal" noValidate>
-            {/* Honeypot accesible pero oculto visualmente */}
+            {/* Honeypot accesible pero oculto */}
             <label htmlFor="company" className="sr-only">Company</label>
             <input
               id="company"
@@ -191,6 +213,8 @@ export default function Contact() {
             />
             {/* timestamp del cliente */}
             <input type="hidden" name="ts" value={ts} />
+            {/* contenedor para Turnstile invisible */}
+            <div id="cf-turnstile" className="hidden" aria-hidden="true" />
 
             {(["name", "email", "subject", "message"] as const).map((field) => {
               const isTextArea = field === "message";
@@ -255,5 +279,5 @@ export default function Contact() {
     </section>
   );
 }
-
-export { Contact};
+ 
+export { Contact }
