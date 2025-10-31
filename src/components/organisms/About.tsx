@@ -14,16 +14,16 @@ export function About() {
       <Container className="grid gap-10 md:grid-cols-2 items-center">
         <div className="text-[var(--text)] ">
           <H2>{t('about.title')}</H2>
-          <p className="mt-3 text-[var(--text)]">{t('about.p1')}</p>
-          <p className="mt-3 text-[var(--text)]">{t('about.p2')}</p>
-          <p className="mt-2 text-[var(--text)]">{t('about.p3')}</p>
+          <p className="mt-3 text-[var(--muted)]">{t('about.p1')}</p>
+          <p className="mt-3 text-[var(--muted)]">{t('about.p2')}</p>
+          <p className="mt-2 text-[var(--muted)]">{t('about.p3')}</p>
           <Button className="mt-6 bg-gradient-to-r from-[var(--primary)] 
             to-[var(--accent)] shadow-lg hover:shadow-xl hover:shadow-blue-600/20">{t('about.cta')}</Button>
         </div>
-        <div className="reveal rounded-app overflow-hidden shadow-soft aspect-video bg-card">
+        <div className="reveal rounded-app overflow-hidden shadow-soft aspect-video bg-card h-full">
           <img
             className="w-full h-full object-cover"
-            src="https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1400&q=80"
+            src="/AboutStructure.JPG"
             alt="Team"
           />
         </div>

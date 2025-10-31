@@ -61,11 +61,11 @@ const resources = {
       // About
       "about.title": "About KinalTech",
       "about.p1":
-        "We craft exceptional digital experiences as an independent frontend team.",
+        "KinalTech blends precision with imagination. We’re a frontend team that turns ideas into efficient, scalable, high-performance products.",
       "about.p2":
-        "We blend technical excellence with strategic thinking to drive outcomes.",
+        "Details matter—architecture, accessibility, micro-interactions. We partner with startups and mid-market teams, matching their pace and outcomes.",
       "about.p3":
-        "We specialize in modern frontend technologies for performance and maintainability.",
+        "Beyond code, we craft experiences that run in harmony—clear, dependable, and built to keep evolving.",
       "about.cta": "Start Your Project",
 
       // Contact
@@ -144,13 +144,12 @@ const resources = {
       // About
       "about.title": "Sobre KinalTech",
       "about.p1":
-        "Creamos experiencias digitales sobresalientes como equipo frontend independiente.",
+        "En KinalTech creemos que la precisión y la creatividad pueden convivir. Somos un equipo de desarrolladores frontend comprometidos con crear soluciones eficientes, escalables y de alto rendimiento que transforman la manera en que las personas interactúan con la tecnología.",
       "about.p2":
-        "Combinamos excelencia técnica con estrategia para resultados de negocio.",
+        "Nos apasiona el detalle: cada línea de código, cada animación y cada decisión visual cuentan. Trabajamos junto a startups, empresas medianas y proyectos en crecimiento, adaptando nuestras soluciones a sus metas y ritmo.",
       "about.p3":
-        "Especialistas en tecnologías modernas para rendimiento y mantenibilidad.",
+        "Más que escribir código, construimos experiencias digitales que funcionan con la misma armonía que un sistema bien diseñado: claras, estables y en constante evolución.",
       "about.cta": "Inicia tu proyecto",
-
       // Contact
       "contact.title": "Contacto",
       "contact.blurb":
@@ -224,10 +223,11 @@ const resources = {
       // About
       "about.title": "KinalTech について",
       "about.p1":
-        "独立系フロントエンドチームとして優れたデジタル体験を創出します。",
-      "about.p2": "技術と戦略を両立しビジネス成果を実現。",
+        "KinalTech は精度と創造性が共存できると信じています。私たちは効率的でスケーラブル、かつ高性能なソリューションを提供し、人々がテクノロジーと関わる方法を変えることを目指すフロントエンド開発チームです。",
+      "about.p2":
+        "細部へのこだわりが私たちの原動力です。コードの一行、アニメーション、デザインの決定、そのすべてに意味があります。スタートアップや中規模企業、成長中のプロジェクトと協力し、それぞれの目標とリズムに合わせて最適化します。",
       "about.p3":
-        "最新技術で高性能・保守性を備えた実装を提供します。",
+        "単なるコード以上のものを作ります。明快で安定し、常に進化し続けるデジタル体験——それが私たちの目指す形です。",
       "about.cta": "プロジェクトを始める",
 
       // Contact
@@ -270,11 +270,11 @@ if (!i18n.isInitialized) {
   });
 };
 // Setear idioma inicial en <html lang="...">
-try { document.documentElement.lang = initialLng; } catch {}
+try { document.documentElement.lang = initialLng; } catch { }
 
 /** Persist language + set <html lang="..."> **/
 i18n.on("languageChanged", (lng) => {
-  try { localStorage.setItem("lng", lng); } catch {}
+  try { localStorage.setItem("lng", lng); } catch { }
   document.documentElement.lang = lng;
 });
 

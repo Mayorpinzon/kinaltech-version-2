@@ -48,8 +48,7 @@
     opacity: 1;
   }
 
-
-  /* Animaciones base */
+    /* Animaciones base */
   .animate-float {
     animation: float 6s ease-in-out infinite
   }
@@ -58,28 +57,36 @@
     animation: slide 30s linear infinite
   }
 
+  .glow-pulse {
+    box-shadow: var(--shadow);                   
+  }
+
+    /* Pulso suave y continuo mientras hay hover/focus */
+  .glow-pulse:hover,
+  .glow-pulse:focus-within {
+    /* lineal + alternate = sin pausas y sin tirones */
+    animation: kt-shadow-pulse 1.6s linear infinite alternate;
+  }
+
+    /* Curva “suave”: baja → media → alta → media → baja */
+  @keyframes kt-shadow-pulse {
+    0%   { box-shadow: 0 8px 20px rgba(var(--ring), .22); } /* baja */
+    25%  { box-shadow: 0 12px 24px rgba(var(--ring), .32); } /* media */
+    50%  { box-shadow: 0 16px 28px rgba(var(--ring), .40); } /* alta */
+    75%  { box-shadow: 0 12px 24px rgba(var(--ring), .34); } /* media */
+    100% { box-shadow: 0 8px 20px rgba(var(--ring), .22); } /* baja */
+  }
+
+
   @keyframes float {
-    0% {
-      transform: translateY(0)
-    }
-
-    50% {
-      transform: translateY(-8px)
-    }
-
-    100% {
-      transform: translateY(0)
-    }
+    0% {transform: translateY(0)}
+    50% {transform: translateY(-8px)}
+    100% {transform: translateY(0)}
   }
 
   @keyframes slide {
-    0% {
-      transform: translateX(0)
-    }
-
-    100% {
-      transform: translateX(-50%)
-    }
+    0% {transform: translateX(0)}
+    100% {transform: translateX(-50%)}
   }
 
   /* -------------------------- */
@@ -118,4 +125,8 @@
   .animate-slide {
     animation: none !important;
   }
+
+  .glow-pulse:hover,
+  .glow-pulse:focus-within { animation: none !important; }
+
 }

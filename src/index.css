@@ -33,3 +33,9 @@ body.dark {
   --header-glass-scrolled: var(--card);
 }
 
+.btn-shadow-slow {
+  /* Mantén el timing del proyecto; solo cambiamos duración y propiedad */
+  transition-property: box-shadow;
+  transition-duration: 1.22s; /* + ~1s respecto a los 220ms globales */
+  transition-timing-function: cubic-bezier(.2, .8, .2, 1);
+}
