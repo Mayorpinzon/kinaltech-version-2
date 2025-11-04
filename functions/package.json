@@ -2,9 +2,9 @@
   "name": "functions",
   "type": "module",
   "scripts": {
-    "lint": "eslint --ext .js,.ts .",
+    "lint": "eslint src --ext .js .ts .",
     "build": "tsc",
-    "build:watch": "tsc --watch",
+    "build:watch": "tsc -w",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",

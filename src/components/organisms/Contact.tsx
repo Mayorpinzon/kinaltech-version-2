@@ -56,21 +56,23 @@ function mapIssues(issues: z.ZodIssue[]) {
    - En producción, el backend exigirá captcha; el front debe tener sitekey real. */
 async function getTurnstileToken(sitekey?: string): Promise<string> {
   if (!sitekey) return ""; // dev sin captcha
-  // esperar a que cargue el script
+
   await new Promise<void>((resolve) => {
     const check = () => (window.turnstile ? resolve() : setTimeout(check, 40));
     check();
   });
+
   return await new Promise<string>((resolve, reject) => {
     try {
-      // render “invisible” y ejecutar
       window.turnstile.render("#cf-turnstile", {
         sitekey,
-        size: "invisible",
+        // antes: size: "invisible",
+        appearance: "execute", // ← auto-ejecuta modo invisible actual
         callback: (token: string) => resolve(token),
         "error-callback": () => reject(new Error("Captcha failed")),
         retry: "auto",
       });
+      // en "execute" no hace falta llamar a execute(), pero no estorba:
       window.turnstile.execute("#cf-turnstile");
     } catch (e) {
       reject(e);
@@ -149,14 +151,14 @@ export default function Contact() {
 
       if (!res.ok) {
         let payload: any = {};
-        try { payload = await res.json(); } catch {}
+        try { payload = await res.json(); } catch { }
         if (payload?.issues) {
           setErrs(Object.fromEntries(payload.issues.map((i: any) => [i.path, i.message])));
         }
         throw new Error(payload?.error || `HTTP ${res.status}`);
       }
 
-      try { await res.json(); } catch {}
+      try { await res.json(); } catch { }
       setOk("Thanks! We’ll get back to you shortly.");
       setError("");
       form.reset();
@@ -279,5 +281,5 @@ export default function Contact() {
     </section>
   );
 }
- 
+
 export { Contact }

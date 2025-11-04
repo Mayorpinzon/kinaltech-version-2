@@ -24,9 +24,8 @@ export default function ServiceCard({
         "bg-[var(--surface)]",
         "p-7",
         // sombra + hover elevate
-        "[box-shadow:var(--shadow)]",
+        "glow-pulse",                    
         "transition-transform duration-200",
-        " hover:[box-shadow:0_18px_40px_rgba(2,6,23,.15)]",
         "focus-within:-translate-y-1.5 focus-within:[box-shadow:0_18px_40px_rgba(2,6,23,.15)]",
         "hover:border-[var(--primary)]",
         className,
