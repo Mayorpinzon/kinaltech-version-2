@@ -30,6 +30,8 @@ const TECHS: Tech[] = [
   { id: "nodeJs",  nameKey: "tech.nodeJs",  color: "#83CD29", Icon: NodeBadgeIcon },
   { id: "javaScript",  nameKey: "tech.javaScript", color:"#000000", Icon: JavaScriptBrandIcon },
   { id: "typeScript",  nameKey: "tech.typeScript", color:"#000000", Icon: TypeScriptBrandIcon },
+  { id: "python",  nameKey: "tech.python", color:"#ffffff", Icon: TypeScriptBrandIcon },
+  { id: "angular",  nameKey: "tech.angular", color:"#ffffff", Icon: TypeScriptBrandIcon },
 ];
 
 function Chip({ tech }: { tech: Tech }) {
@@ -82,7 +84,7 @@ function Techs() {
   const [/*active*/, /*setActive*/] = useState<string>(TECHS[0].id);
 
   return (
-    <section id="techs" className="py-24 bg-surface text-body scroll-mt-20 bg-grad-1">
+    <section id="techs" className="py-24 md:py-28 bg-surface text-body scroll-mt-20 bg-grad-1">
       <Container>
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto reveal">

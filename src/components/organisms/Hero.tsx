@@ -45,7 +45,7 @@ export default function Hero() {
       </div>
 
       <Container className="relative z-20 grid items-center gap-15 md:grid-cols-12 ">
-        <div className="md:col-span-7">
+        <div className="md:col-span-7 h-auto">
           <H1 className="text-5xl md:text-6xl font-bold leading-tight tracking-tight text-white">
             {t("hero.title")}{" "}
           </H1>
@@ -54,10 +54,10 @@ export default function Hero() {
           </Lead>
 
           <div className="mt-10 h-15 flex gap-4">
-            <Button className="bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] shadow-lg hover:shadow-xl hover:shadow-blue-600/20">
+            <Button onClick={() => document.querySelector('#services')?.scrollIntoView({ behavior: 'smooth' })} className="shadow-lg hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round " >
               {t("hero.cta1")}
             </Button>
-            <Button variant="outline">
+            <Button onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })} className="shadow-lg hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round" >
               {t("hero.cta2")}
             </Button>
           </div>

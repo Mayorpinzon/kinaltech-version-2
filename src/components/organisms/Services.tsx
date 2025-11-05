@@ -4,7 +4,13 @@ import Container from "../atoms/Container";
 import { H2, Lead } from "../atoms/Heading";
 import ServiceCard from "../molecules/ServiceCard";
 import { useReveal } from "../../hooks/useReveal";
-import { WebIcon, MobileIcon, UIUXIcon } from "../atoms/Icons";
+import { 
+  WebIcon, 
+  MobileIcon, 
+  UIUXIcon, 
+  IA_Icon, 
+  TeamworkIcon
+} from "../atoms/Icons";
 
 export default function Services() {
   const { t } = useTranslation();
@@ -13,7 +19,7 @@ export default function Services() {
   return (
     <section
       id="services"
-      className="py-30 bg-[var(--surface)] text-body dark:text-white scroll-mt-20"
+      className="py-25 md:py-28 bg-[var(--surface)] text-body dark:text-white scroll-mt-20"
       aria-labelledby="services-title"
     >
       <Container>
@@ -26,7 +32,6 @@ export default function Services() {
           </Lead>
         </div>
 
-        {/* grid 12→6→4 como el template */}
         <div className="grid grid-cols-12 gap-5 md:gap-6">
           <div className="col-span-12 sm:col-span-6 lg:col-span-4">
             <ServiceCard
@@ -42,7 +47,7 @@ export default function Services() {
           <div className="col-span-12 sm:col-span-6 lg:col-span-4">
             <ServiceCard
               className="reveal"
-              style={{ transitionDelay: "80ms" }}
+              style={{ transitionDelay: "160ms" }}
               icon={<MobileIcon />}
               title={t("services.items.mobile.title")!}
             >
@@ -58,6 +63,26 @@ export default function Services() {
               title={t("services.items.ui.title")!}
             >
               {t("services.items.ui.text")}
+            </ServiceCard>
+          </div>
+          <div className="col-span-12 sm:col-span-6 lg:col-span-4">
+            <ServiceCard
+              className="reveal"
+              style={{ transitionDelay: "160ms" }}
+              icon={<IA_Icon />}
+              title={t("services.items.ia.title")!}
+            >
+              {t("services.items.ia.text")}
+            </ServiceCard>
+          </div>
+          <div className="col-span-12 sm:col-span-6 lg:col-span-4">
+            <ServiceCard
+              className="reveal"
+              style={{ transitionDelay: "160ms" }}
+              icon={<TeamworkIcon />}
+              title={t("services.items.phi.title")!}
+            >
+              {t("services.items.phi.text")}
             </ServiceCard>
           </div>
         </div>
