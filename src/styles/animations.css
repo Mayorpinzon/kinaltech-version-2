@@ -1,15 +1,18 @@
 /* ============================
    Props y keyframes globales
    ============================ */
-@keyframes rainbow-rotate {
+@keyframes spin-border {
   to {
-    transform: rotate(1turn);
+    --angle: 360deg
   }
 }
-/*----------------------------------------------------------------------------------------*/
-@keyframes spin-border { to { --angle: 360deg } }
-@property --angle { syntax:"<angle>"; initial-value:0deg; inherits:false }
-/*----------------------------------------------------------------------------------------*/
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false
+}
+
 /* ============================
    Utilities
    ============================ */
@@ -150,76 +153,26 @@
   /* ============================
      Moving border (conic + mask)
      ============================ */
-  .rainbow-border-btn {
-    position: relative;
-    z-index: 0;
-    overflow: hidden;
-    /* para que no se salga el borde */
-    border-radius: 15px;
-    /* respeta el radio del botón */
-    --rb: 1px;
-    /* grosor del “borde” (ajústalo) */
-  }
 
-  .rainbow-border-btn::before {
-    content: "";
-    position: absolute;
-    z-index: -2;
-    left: -50%;
-    top: -50%;
-    width: 200%;
-    height: 200%;
-    border-radius: inherit;
-
-    /* 4 bandas (una por cada lado) que rotan alrededor */
-    background-repeat:no-repeat;
-    background-size: 50% 50%, 50% 50%, 50% 50%, 50% 50%;
-    background-position: 0 0, 100% 0, 100% 100%, 0 100%;
-
-    /* Colores: usa tus tokens (puedes cambiarlos) */
-    background-image:
-
-      linear-gradient(#ffffff, #ffffff );
-   
-
-    animation: rainbow-rotate 4s linear infinite;
-  }
-
-  .rainbow-border-btn::after {
-    /* “tapa” interior para que solo se vea el borde */
-    content: "";
-    position: absolute;
-    z-index: -1;
-    left: var(--rb);
-    top: var(--rb);
-    width: calc(100% - 2 * var(--rb));
-    height: calc(100% - 2 * var(--rb));
-    border-radius: calc(var(--radius) - var(--rb));
-    background: inherit;
-    /* relleno interno; cámbialo si quieres */
-  }
-
-
-/*----------------------------------------------------------------------------------------*/
-.rainbow-border-round {
+  .rainbow-border-round {
     position: relative;
     overflow: hidden;
-    border-radius: 14px;
-    --rb: 3px;                 /* grosor del borde */
+    border-radius: 30px;
+    --rb: 2px;
+    /* grosor del borde */
   }
 
   .rainbow-border-round::before {
     content: "";
-    position: absolute; inset: 0;
-    border-radius: inherit;
+    position: absolute;
+    inset: 0;
+    border-radius: 30px;
     padding: var(--rb);
 
     /* arco iris continuo que SIGUE las esquinas redondeadas */
     background:
-      conic-gradient(
-        from var(--angle),
-        #ffff, black, black, black, black, black, black
-      );
+      conic-gradient(from var(--angle),
+        rgba(64, 171, 241, 1), var(--primary), var(--accent-2), var(--green-light), transparent, transparent, rgba(64, 171, 241, 1));
 
     /* recortamos a un ANILLO (outer - inner), respetando el border-radius */
     -webkit-mask:
@@ -231,7 +184,7 @@
       linear-gradient(#000 0 0);
     mask-composite: exclude;
 
-    animation: spin-border 4.5s linear infinite;
+    animation: spin-border 3s linear infinite ;
   }
 
   /* capa interior (fondo del botón) */
@@ -239,21 +192,11 @@
     content: "";
     position: absolute;
     inset: var(--rb);
-    border-radius: calc(var(--radius) - var(--rb));
-    background: var(--surface);   /* ← color de relleno (ver punto 2) */
+    border-radius: 30px;
+    background: var(--primary);
+    /* ← color de relleno (ver punto 2) */
     z-index: -1;
   }
-/*----------------------------------------------------------------------------------------*/
-
-
-
-
-
-
-
-
-
-
 
 
 

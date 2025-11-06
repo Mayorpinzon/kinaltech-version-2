@@ -265,9 +265,9 @@ export default function Contact() {
             })}
 
             <Button
+              variant="outline"
               type="submit"
-              className="mt-2 h-13 w-50 bg-gradient-to-r from-[var(--primary)] to-[var(--accent)]
-                         shadow-lg hover:shadow-xl hover:shadow-blue-600/20"
+              className="mt-2 h-13 w-50 shadow-lg text-white border-none hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
               disabled={sending}
             >
               {sending ? "Sending..." : t("form.send")}

@@ -18,7 +18,11 @@
   --trans: 270ms cubic-bezier(.2, .8, .2, 1);
   --border: rgba(148,163,184,.18);
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
- 
+  --green-light: #83CE3F;
+  --blue-light: #4EBCE5;
+
+
+
   /* alfas para fondos translúcidos */
   --surface-a-80: color-mix(in srgb, var(--surface) 80%, transparent);
   --surface-a-60: color-mix(in srgb, var(--surface) 60%, transparent);
@@ -51,6 +55,8 @@ body.dark {
   --surface-a-60: color-mix(in srgb, var(--surface) 60%, transparent);
   --surface-a-40: color-mix(in srgb, var(--surface) 40%, transparent);
 }
+
+
 
 /* Utilidades que ya tenías */
 @layer utilities {

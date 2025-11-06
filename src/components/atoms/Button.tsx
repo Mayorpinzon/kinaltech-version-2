@@ -31,7 +31,7 @@ export default function Button({
       ? 'border-2 border-transparent'
       : 'border-2 border-[var(--primary)]'
     ) +
-    ' bg-transparent text-[var(--primary)] ' +
+    ' bg-[var(--primary)] text-[var(--primary)] ' +
     'hover:bg-[var(--primary)] hover:text-white ' +
     'shadow-lg';
 
