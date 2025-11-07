@@ -8,7 +8,7 @@ import { useState, type ComponentType } from "react";
 import {
   ReactIcon, NextIcon, VueIcon, RNIcon,
   FlutterIcon, MySQLIcon, GraphQLIcon, ReduxIcon, NodeBadgeIcon, 
-  JavaScriptBrandIcon, TypeScriptBrandIcon 
+  JavaScriptBrandIcon, TypeScriptBrandIcon, AngularIcon, PythonIcon
 } from "../atoms/Icons";
 
 type Tech = {
@@ -30,8 +30,8 @@ const TECHS: Tech[] = [
   { id: "nodeJs",  nameKey: "tech.nodeJs",  color: "#83CD29", Icon: NodeBadgeIcon },
   { id: "javaScript",  nameKey: "tech.javaScript", color:"#000000", Icon: JavaScriptBrandIcon },
   { id: "typeScript",  nameKey: "tech.typeScript", color:"#000000", Icon: TypeScriptBrandIcon },
-  { id: "python",  nameKey: "tech.python", color:"#ffffff", Icon: TypeScriptBrandIcon },
-  { id: "angular",  nameKey: "tech.angular", color:"#ffffff", Icon: TypeScriptBrandIcon },
+  { id: "python",  nameKey: "tech.python", color:"#ffffff", Icon: PythonIcon },
+  { id: "angular",  nameKey: "tech.angular", color:"#ffffff", Icon: AngularIcon },
 ];
 
 function Chip({ tech }: { tech: Tech }) {

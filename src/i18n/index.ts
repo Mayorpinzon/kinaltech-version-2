@@ -58,6 +58,8 @@ const resources = {
       "tech.nodeJs": "NodeJS",
       "tech.javaScript": "JavaScript",
       "tech.typeScript": "TypeScript",
+      "tech.python": "Python",
+      "tech.angular": "Angular.js",
 
       // About
       "about.title": "About KinalTech",
@@ -144,6 +146,8 @@ const resources = {
       "tech.nodeJs": "NodeJS",
       "tech.javaScript": "JavaScript",
       "tech.typeScript": "TypeScript",
+      "tech.python": "Python",
+      "tech.angular": "Angular.js",
 
       // About
       "about.title": "Sobre KinalTech",
@@ -227,6 +231,8 @@ const resources = {
       "tech.nodeJs": "NodeJS",
       "tech.javaScript": "JavaScript",
       "tech.typeScript": "TypeScript",
+      "tech.python": "Python",
+      "tech.angular": "Angular.js",
 
       // About
       "about.title": "KinalTech について",
