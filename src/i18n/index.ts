@@ -21,17 +21,14 @@ const resources = {
       },
 
       // Hero
-      "hero.title":
-        "Transform Your Digital Experience with Expert Frontend Development",
-      "hero.subtitle":
-        "KinalTech is a team of independent frontend developers delivering high-impact web and mobile experiences.",
+      "hero.title": "Enhance your digital experience with expert frontend development",
+      "hero.subtitle": "KinalTech is a team of independent frontend developers creating web and mobile experiences that elevate your digital products.",
       "hero.cta1": "Our Services",
       "hero.cta2": "Get In Touch",
 
       // Services
       "services.title": "Our Services",
-      "services.blurb":
-        "Comprehensive frontend development solutions tailored to your business needs",
+      "services.lead": "We offer comprehensive frontend development solutions tailored to your business needs",
       "services.items.web.title": "Web Development",
       "services.items.web.text":
         "Responsive, accessible websites with React/Next/Vue.",
@@ -41,7 +38,11 @@ const resources = {
       "services.items.ui.title": "UI/UX Implementation",
       "services.items.ui.text":
         "From design to production with robust design systems.",
-      "services.lead": "We offer comprehensive frontend development solutions tailored to your business needs",
+      "services.items.ia.title": "AI Integration",
+      "services.items.ia.text": "We implement AI models to streamline processes and deliver more intuitive user experiences.",
+      "services.items.phi.title": "Agile Workflows",
+      "services.items.phi.text": "We embrace methodologies such as Agile and Scrum to adapt to each project and enhance collaboration.",
+
 
       // Techs
       "techs.title": "Technologies We Work With",
@@ -57,6 +58,8 @@ const resources = {
       "tech.nodeJs": "NodeJS",
       "tech.javaScript": "JavaScript",
       "tech.typeScript": "TypeScript",
+      "tech.python": "Python",
+      "tech.angular": "Angular.js",
 
       // About
       "about.title": "About KinalTech",
@@ -104,16 +107,15 @@ const resources = {
 
       // Hero
       "hero.title":
-        "Transforma tu experiencia digital con desarrollo frontend experto",
+        "Potencia tu experiencia digital con desarrollo frontend experto",
       "hero.subtitle":
-        "KinalTech es un equipo de desarrolladores frontend independientes que crea experiencias web y móviles de alto impacto.",
+        "KinalTech es un equipo de desarrolladores frontend independientes que crea experiencias web y móviles para impulsar tus productos digitales.",
       "hero.cta1": "Nuestros Servicios",
       "hero.cta2": "Contáctanos",
 
       // Services
       "services.title": "Nuestros Servicios",
-      "services.blurb":
-        "Soluciones integrales de frontend adaptadas a las necesidades de tu negocio",
+      "services.lead": "Ofrecemos soluciones integrales de frontend adaptadas a las necesidades de tu negocio",
       "services.items.web.title": "Desarrollo Web",
       "services.items.web.text":
         "Sitios responsivos y accesibles con React/Next/Vue.",
@@ -123,7 +125,11 @@ const resources = {
       "services.items.ui.title": "Implementación UI/UX",
       "services.items.ui.text":
         "Del diseño a producción con design systems robustos.",
-      "services.lead": "Ofrecemos soluciones integrales de frontend adaptadas a las necesidades de tu negocio",
+      "services.items.ia.title": "Integración de IA",
+      "services.items.ia.text": "Aplicamos modelos de inteligencia artificial para optimizar procesos y ofrecer experiencias más intuitivas.",
+      "services.items.phi.title": "Filosofías de trabajo ágiles",
+      "services.items.phi.text": "Adoptamos metodologías como Agile y Scrum para adaptarnos a cada proyecto y mejorar la colaboración.",
+
 
 
       // Techs
@@ -140,6 +146,8 @@ const resources = {
       "tech.nodeJs": "NodeJS",
       "tech.javaScript": "JavaScript",
       "tech.typeScript": "TypeScript",
+      "tech.python": "Python",
+      "tech.angular": "Angular.js",
 
       // About
       "about.title": "Sobre KinalTech",
@@ -185,15 +193,14 @@ const resources = {
       },
 
       // Hero
-      "hero.title": "熟練のフロントエンド開発でデジタル体験を変革",
-      "hero.subtitle":
-        "KinalTech は独立系フロントエンド開発者のチームです。高品質な Web / モバイル体験を提供します。",
+      "hero.title": "熟練したフロントエンド開発でデジタル体験を向上",
+      "hero.subtitle": "KinalTechは、独立したフロントエンド開発者チームとして、Webやモバイルであなたのデジタル製品を引き立てる体験を創り出します。",
       "hero.cta1": "サービスを見る",
       "hero.cta2": "お問い合わせ",
 
       // Services
       "services.title": "提供サービス",
-      "services.blurb": "ビジネスに最適化したフロントエンド開発を提供",
+      "services.lead": "ビジネスに最適化したフロントエンド開発を提供",
       "services.items.web.title": "Web 開発",
       "services.items.web.text":
         "React/Next/Vue によるレスポンシブでアクセシブルなサイト。",
@@ -203,7 +210,12 @@ const resources = {
       "services.items.ui.title": "UI/UX 実装",
       "services.items.ui.text":
         "デザインを実装しデザインシステムで運用。",
-      "services.lead": "ビジネスに最適化したフロントエンド開発を提供",
+      "services.items.ia.title": "AI統合",
+      "services.items.ia.text": "人工知能モデルを導入し、業務プロセスを最適化して、より直感的なユーザー体験を実現します。",
+      "services.items.phi.title": "アジャイル型ワークフロー",
+      "services.items.phi.text": "AgileやScrumなどの手法を採用し、各プロジェクトに柔軟に対応しながらチームの連携を高めます。",
+
+
 
       // Techs
       "techs.title": "対応技術",
@@ -219,6 +231,8 @@ const resources = {
       "tech.nodeJs": "NodeJS",
       "tech.javaScript": "JavaScript",
       "tech.typeScript": "TypeScript",
+      "tech.python": "Python",
+      "tech.angular": "Angular.js",
 
       // About
       "about.title": "KinalTech について",

@@ -172,7 +172,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 bg-shell text-body scroll-mt-20 bg-grad-1">
+    <section id="contact" className="py-24 md:py-28 bg-shell text-body scroll-mt-20 bg-grad-1">
       <Container>
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto reveal">
@@ -265,9 +265,9 @@ export default function Contact() {
             })}
 
             <Button
+              variant="outline"
               type="submit"
-              className="mt-2 h-13 w-50 bg-gradient-to-r from-[var(--primary)] to-[var(--accent)]
-                         shadow-lg hover:shadow-xl hover:shadow-blue-600/20"
+              className="mt-2 h-13 w-50 shadow-lg text-white border-none hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
               disabled={sending}
             >
               {sending ? "Sending..." : t("form.send")}
