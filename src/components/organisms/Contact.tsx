@@ -19,13 +19,13 @@ function InfoRow({
   icon, title, subtitle,
 }: { icon: ReactNode; title: string; subtitle: string }) {
   return (
-    <div className="flex items-start gap-5 rounded-app bg-transparent p-4">
-      <div className="inline-grid h-15 w-15 place-items-center rounded-2xl text-[--white] bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] shadow-soft" aria-hidden>
+    <div className="flex items-center gap-5 rounded-app bg-transparent p-4">
+      <div className="inline-grid h-15 w-15 flex-none shrink-0 place-items-center rounded-2xl text-[--white] bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] shadow-soft" aria-hidden>
         <div className="h-6 w-6 text-[var(--white)]">{icon}</div>
       </div>
       <div className="min-w-0">
         <p className="text-md font-semibold text-[--text]">{title}</p>
-        <p className="text-sm text-[--muted] truncate">{subtitle}</p>
+        <p className="text-sm text-[--muted] whitespace-pre-line">{subtitle}</p>
       </div>
     </div>
   );
@@ -181,23 +181,23 @@ export default function Contact() {
         </div>
 
         {/* Grid */}
-        <div className="mt-12 grid gap-8 md:grid-cols-2">
+        <div className="mt-12 grid gap-8 md:grid-cols-2 ">
           {/* Izquierda: info */}
-          <div className="space-y-4 reveal">
+          <div className="space-y-4 reveal text-left">
             <InfoRow
               icon={<MailIcon />}
-              title={t("contact.email.label", "Escríbenos")}
-              subtitle={t("contact.email.value", "hello@kinaltech.com")}
+              title={t("contact.email.label")}
+              subtitle={t("contact.email.value")}
             />
             <InfoRow
               icon={<PinIcon />}
-              title={t("contact.location.label", "Ubicación")}
-              subtitle={t("contact.location.value", "Equipo remoto global")}
+              title={t("contact.location.label")}
+              subtitle={t("contact.location.value")}
             />
             <InfoRow
               icon={<ClockIcon />}
-              title={t("contact.hours.label", "Horario")}
-              subtitle={t("contact.hours.value", "Lunes – Viernes: 9AM – 6PM")}
+              title={t("contact.hours.label")}
+              subtitle={t("contact.hours.value")}
             />
           </div>
 
@@ -235,17 +235,16 @@ export default function Contact() {
 
               const common =
                 "w-full rounded-app border border-[var(--muted)] text-[--text] placeholder-[--muted] " +
-                "focus:shadow-md focus:shadow-blue-400 focus:outline-none focus:ring-2 " +
-                "focus:ring-[var(--primary)] focus:border-[var(--primary)] transition duration-200";
+                "focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] ";
 
               return (
                 <div key={field}>
-                  <label className="block text-sm font-semibold mb-1" htmlFor={field}>
+                  <label className="block text-sm font-semibold mb-1 " htmlFor={field}>
                     {label}
                   </label>
 
                   {isTextArea ? (
-                    <textarea id={field} name={field} rows={6} placeholder={ph} className={`${common} px-4 py-3`} />
+                    <textarea id={field} name={field} rows={6} placeholder={ph} className={`${common} px-4 py-3 glow-pulse`} />
                   ) : (
                     <input
                       id={field}
@@ -253,12 +252,12 @@ export default function Contact() {
                       type={field === "email" ? "email" : "text"}
                       autoComplete={field === "email" ? "email" : "off"}
                       placeholder={ph}
-                      className={`${common} h-12 px-4`}
+                      className={`${common} h-12 px-4 glow-pulse`}
                     />
                   )}
 
                   {errs[field] && (
-                    <p className="mt-1 text-sm text-[--danger]">{errs[field]}</p>
+                    <p className="mt-1 text-sm text-[--shell]">{errs[field]}</p>
                   )}
                 </div>
               );

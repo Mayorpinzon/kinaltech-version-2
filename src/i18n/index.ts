@@ -72,9 +72,14 @@ const resources = {
       "about.cta": "Start Your Project",
 
       // Contact
-      "contact.title": "Get In Touch",
-      "contact.blurb":
-        "Ready to start? Reach out for a quick consultation",
+      "contact.title": "Contact",
+      "contact.blurb": "Ready to elevate your business? Reach out for a quick, no-obligation consultation.",
+      "contact.email.label": "Write to us",
+      "contact.email.value": "Please use the form to get in touch — we’ll reply shortly.",
+      "contact.location.label": "Location",
+      "contact.location.value": "Kyoto, Japan",
+      "contact.hours.label": "Business hours",
+      "contact.hours.value": "Monday – Friday: 10AM – 7PM",
 
       // Form
       "form.name": "Full Name",
@@ -160,8 +165,13 @@ const resources = {
       "about.cta": "Inicia tu proyecto",
       // Contact
       "contact.title": "Contacto",
-      "contact.blurb":
-        "¿Listo para empezar? Escríbenos para una consulta rápida",
+      "contact.blurb": "¿Listo para impulsar tu negocio? Escríbenos para una consulta rápida, sin compromiso. ",
+      "contact.email.label": "Escribenos",
+      "contact.email.value": "Por favor usa el formulario para contactarnos.\nEn breve te responderemos.",
+      "contact.location.label": "Ubicación",
+      "contact.location.value": "Kyoto, Japon",
+      "contact.hours.label": "Horario",
+      "contact.hours.value": "Lunes – Viernes: 10AM – 7PM ",
 
       // Form
       "form.name": "Nombre",
@@ -246,7 +256,14 @@ const resources = {
 
       // Contact
       "contact.title": "お問い合わせ",
-      "contact.blurb": "まずはお気軽にご相談ください",
+      "contact.blurb": "ビジネスをさらに成長させませんか？お気軽にご相談ください。",
+      "contact.email.label": "メールでのお問い合わせ",
+      "contact.email.value": "フォームからご連絡ください。折り返しこちらからご返信いたします。",
+      "contact.location.label": "所在地",
+      "contact.location.value": "日本・京都",
+      "contact.hours.label": "営業時間",
+      "contact.hours.value": "月曜～金曜：10時〜19時",
+
 
       // Form
       "form.name": "お名前",
