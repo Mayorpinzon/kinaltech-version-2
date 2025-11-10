@@ -64,7 +64,7 @@ function Card({ tech }: { tech: Tech }) {
       className="
         rounded-[16px] border border-[var(--border)] bg-card p-6 text-center
         shadow-soft hover:border-[var(--primary)] hover:shadow-md
-        transition-colors
+        transition-colors glow-pulse
       "
     >
       <div className="mx-auto mb-2 grid h-8 w-10 place-items-center" style={{ color }} aria-hidden>
