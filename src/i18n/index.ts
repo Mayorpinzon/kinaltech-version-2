@@ -28,7 +28,7 @@ const resources = {
 
       // Services
       "services.title": "Our Services",
-      "services.lead": "We offer comprehensive frontend development solutions tailored to your business needs",
+      "services.lead": "We offer comprehensive frontend development solutions tailored to your business needs:",
       "services.items.web.title": "Web Development",
       "services.items.web.text":
         "Responsive, accessible websites with React/Next/Vue.",
@@ -60,6 +60,8 @@ const resources = {
       "tech.typeScript": "TypeScript",
       "tech.python": "Python",
       "tech.angular": "Angular.js",
+      "tech.html5": "HTML5",
+      "tech.css": "CSS3",
 
       // About
       "about.title": "About KinalTech",
@@ -120,7 +122,7 @@ const resources = {
 
       // Services
       "services.title": "Nuestros Servicios",
-      "services.lead": "Ofrecemos soluciones integrales de frontend adaptadas a las necesidades de tu negocio",
+      "services.lead": "Ofrecemos soluciones integrales de frontend adaptadas a las necesidades de tu negocio:",
       "services.items.web.title": "Desarrollo Web",
       "services.items.web.text":
         "Sitios responsivos y accesibles con React/Next/Vue.",
@@ -153,6 +155,9 @@ const resources = {
       "tech.typeScript": "TypeScript",
       "tech.python": "Python",
       "tech.angular": "Angular.js",
+      "tech.html5": "HTML5",
+      "tech.css": "CSS3",
+
 
       // About
       "about.title": "Sobre KinalTech",
@@ -243,6 +248,8 @@ const resources = {
       "tech.typeScript": "TypeScript",
       "tech.python": "Python",
       "tech.angular": "Angular.js",
+      "tech.html5": "HTML5",
+      "tech.css": "CSS3",
 
       // About
       "about.title": "KinalTech について",

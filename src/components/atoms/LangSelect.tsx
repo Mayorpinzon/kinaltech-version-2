@@ -44,7 +44,7 @@ export function LangSelect({ size = "md" }: Props) {
   const btnBase =
     "inline-flex items-center gap-2 rounded-2xl border border-[--border] text-[--text] focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] transition-colors";
   const btnSize = size === "sm" ? "h-9 px-3 text-sm" : "h-10 px-4 text-sm";
-  // Mantengo tu combo de estilos original:
+  // Combo de estilos original:
   const btnBg =
     "inline-flex items-center justify-center rounded-app px-5 py-3 text-sm font-semibold trans-app active:scale-[.90] focus:outline-none focus:ring-4 ring-primary hover:-translate-y-0.5 hover:shadow-[0_12px_26px_rgba(var(--ring),.35)] bg-transparent border-2 border-[var(--primary)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white shadow-lg";
 
