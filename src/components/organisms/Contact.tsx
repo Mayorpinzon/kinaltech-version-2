@@ -234,7 +234,7 @@ export default function Contact() {
                 }) || undefined;
 
               const common =
-                "w-full rounded-app border border-[var(--muted)] text-[--text] placeholder-[--muted] " +
+                "w-full rounded-app border border-[var(--primary)] text-[--text] placeholder-[--muted] " +
                 "focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] ";
 
               return (

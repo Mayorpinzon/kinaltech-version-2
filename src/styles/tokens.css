@@ -5,6 +5,7 @@
   --muted: #64748b;
   --primary: #2563eb;
   --primary-2: #031085;
+  --footerBorder: rgba(214, 211, 211, 1);
   --accent: #a855f7;
   --accent-2: #7c3aed;
   --ring: 37, 99, 235;
@@ -20,6 +21,7 @@
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --green-light: #83CE3F;
   --blue-light: #4EBCE5;
+
 
 
 
@@ -43,6 +45,7 @@ body.dark {
   --muted: #94a3b8;
   --card: #0f162e;
   --primary-2:#e5e7eb;
+  --footerBorder: #2563eb;
   --grad-1:
     radial-gradient(1000px 600px at 10% 10%, rgba(168, 85, 247, .18), transparent 45%),
     radial-gradient(1000px 600px at 90% 10%, rgba(37, 99, 235, .18), transparent 45%),

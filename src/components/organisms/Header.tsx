@@ -1,5 +1,5 @@
 // src/components/organisms/Header.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Nav } from "../molecules/Nav";
 import { ThemeToggle } from "../atoms/ThemeToggle";
@@ -9,6 +9,7 @@ import { KinalTechLogo } from "../atoms/Icons";
 export default function Header() {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   // Cerrar panel si cambiamos a desktop
   useEffect(() => {
@@ -31,6 +32,24 @@ export default function Header() {
     }
   }, [open]);
 
+  // Cierre por clic/touch fuera del panel (refuerzo al overlay)
+  useEffect(() => {
+    if (!open) return;
+
+    const onOutside = (e: MouseEvent | TouchEvent) => {
+      const el = panelRef.current;
+      if (!el) return;
+      if (!el.contains(e.target as Node)) setOpen(false);
+    };
+
+    document.addEventListener("mousedown", onOutside, { capture: true });
+    document.addEventListener("touchstart", onOutside, { capture: true });
+    return () => {
+      document.removeEventListener("mousedown", onOutside, { capture: true });
+      document.removeEventListener("touchstart", onOutside, { capture: true });
+    };
+  }, [open]);
+
   return (
     <header
       className="
@@ -46,13 +65,12 @@ export default function Header() {
         <div className="h-16 flex items-center justify-between">
           {/* Brand (izquierda) */}
           <a
-              href="#hero"
-              className="flex gap-2 font-semibold text-[--text] focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] rounded-md"
-            >
-              {/* Logo a color, escalable por alto */}
-              <KinalTechLogo className="h-13 w-auto md:h-13 max-[420px]:h-8 " aria-hidden />
-              <span className="sr-only">KinalTech</span>
-            </a>
+            href="#hero"
+            className="flex gap-2 font-semibold text-[--text] focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] rounded-md"
+          >
+            <KinalTechLogo className="h-13 w-auto md:h-13 max-[420px]:h-8 " aria-hidden />
+            <span className="sr-only">KinalTech</span>
+          </a>
 
           {/* Nav centrado (solo desktop) */}
           <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:block">
@@ -69,10 +87,9 @@ export default function Header() {
 
           {/* Acciones móviles */}
           <div className="md:hidden flex items-center gap-2.5">
-            {/* En anchuras MUY chicas ocultamos el selector en la barra para desahogar */}
             <div className="max-[380px]:hidden">
               <LangSelect size="sm" />
-            </div  >
+            </div>
             <ThemeToggle size="sm" />
             <button
               type="button"
@@ -101,20 +118,21 @@ export default function Header() {
         id="mobile-menu"
         hidden={!open}
         data-state={open ? "open" : "closed"}
-        className="md:hidden fixed inset-0 z-40 bg-[color:rgba(0,0,0,.25)] backdrop-blur-sm  "
-        onClick={() => setOpen(false)}
+        className="md:hidden fixed inset-0 z-40 bg-[color:rgba(0,0,0,.25)] backdrop-blur-sm"
+        onClick={() => setOpen(false)}        
       >
         {/* Sheet: cuelga del header, ancho completo */}
         <div
           role="dialog"
           aria-modal="true"
+          ref={panelRef}                        
           className="
             menu-panel absolute inset-x-2 top-16
             rounded-2xl border border-[var(--primary)]
             bg-[var(--shell)] backdrop-blur 
             shadow-xl
           "
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}   
         >
           {/* Hilera de controles (solo aparece si ocultamos la versión de la barra) */}
           <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--primary)] min-h-[48px]">
