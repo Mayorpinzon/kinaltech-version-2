@@ -193,8 +193,7 @@
     position: absolute;
     inset: var(--rb);
     border-radius: 30px;
-    background: var(--primary);
-    /* ← color de relleno (ver punto 2) */
+    background: inherit;
     z-index: -1;
   }
 

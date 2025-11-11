@@ -62,22 +62,20 @@ export default function Hero() {
           <div className="mt-10 h-15 flex gap-4">
             <Button
               variant="outline"
+              movingBorder
               aria-label={t("hero.cta1_aria") || t("hero.cta1")}
-              onClick={() =>
-                document.querySelector("#services")?.scrollIntoView({ behavior: "smooth" })
-              }
-              className="shadow-lg text-white border-none hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
+              onClick={() => document.querySelector("#services")?.scrollIntoView({ behavior: "smooth" })}
+              className="shadow-lg hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
             >
               {t("hero.cta1")}
             </Button>
 
             <Button
               variant="outline"
+              movingBorder
               aria-label={t("hero.cta2_aria") || t("hero.cta2")}
-              onClick={() =>
-                document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })
-              }
-              className="shadow-lg text-white border-none hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
+              onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
+              className="shadow-lg hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
             >
               {t("hero.cta2")}
             </Button>

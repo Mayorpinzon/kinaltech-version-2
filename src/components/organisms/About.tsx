@@ -35,11 +35,10 @@ export function About() {
           {/* Clear action; aria-label falls back to button text if *_aria is missing */}
           <Button
             variant="outline"
+            movingBorder
             aria-label={t("about.cta_aria", { defaultValue: t("about.cta") })}
-            onClick={() =>
-              document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })
-            }
-            className="mt-5 shadow-lg text-white border-none hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
+            onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
+            className="mt-5 shadow-lg hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
           >
             {t("about.cta")}
           </Button>

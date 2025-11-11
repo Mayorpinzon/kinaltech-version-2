@@ -4,38 +4,71 @@
 @import "./styles/tokens.css";
 @import "./styles/animations.css";
 
-html, body { background: var(--bg); }
+/* Base canvas */
+html, body { background: var(--bg); min-height: 100%; }
 
-/* ============================
-   Placeholders
-   ============================ */
+/* Smooth scroll for UX; respect reduced motion */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Selection uses brand tokens */
+::selection {
+  background: color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--white);
+}
+
+/* Placeholders (consistent + readable) */
 input::placeholder,
 textarea::placeholder {
   color: var(--muted);
   opacity: .95;
 }
 
+/* Focus ring: visible, not agresive */
+:where(a, button, input, textarea, select, summary):focus {
+  outline: none; /* rely on focus-visible */
+}
+:where(a, button, input, textarea, select, summary):focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 60%, transparent);
+  outline-offset: 2px;
+  border-radius: .75rem; /* works fine with your rounded app elements */
+}
+
+/* Disabled affordance */
+:where(button, [role="button"], input, select, textarea)[disabled] {
+  cursor: not-allowed;
+  opacity: .7;
+}
+
 /* ============================
    Header “glass” (light/dark) + scrolled
+   - Local tokens for Header only (don’t touch tokens.css)
    ============================ */
-
-/* Tokens locales SOLO para el header (no tocan tokens.css) */
 :root {
-  /* base translúcida y versión al hacer scroll */
   --header-glass-base: color-mix(in srgb, var(--surface) 70%, transparent);
   --header-glass-scrolled: var(--surface-a-80, var(--surface));
 }
-
-/* En oscuro, el template usa un vidrio más denso/oscuro */
 :root[data-theme="dark"],
 body.dark {
   --header-glass-base: color-mix(in srgb, var(--card) 70%, transparent);
   --header-glass-scrolled: var(--card);
 }
 
+/* Button shadow easing kept; only property + duration tuned */
 .btn-shadow-slow {
-  /* Mantén el timing del proyecto; solo cambiamos duración y propiedad */
   transition-property: box-shadow;
-  transition-duration: 1.22s; /* + ~1s respecto a los 220ms globales */
+  transition-duration: 1.22s;
   transition-timing-function: cubic-bezier(.2, .8, .2, 1);
+}
+
+/* Respect reduced motion globally (caps long animations/transforms) */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

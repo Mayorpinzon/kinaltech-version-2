@@ -257,8 +257,8 @@ export default function Contact() {
               // native autocomplete hints
               const auto =
                 field === "name" ? "name"
-                : field === "email" ? "email"
-                : "off";
+                  : field === "email" ? "email"
+                    : "off";
 
               const invalid = Boolean(errs[field]);
 
@@ -307,8 +307,9 @@ export default function Contact() {
 
             <Button
               variant="outline"
+              movingBorder
               type="submit"
-              className="mt-2 h-13 w-50 shadow-lg text-white border-none hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
+              className="mt-2 h-13 w-50 shadow-lg hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
               disabled={sending}
               aria-label={sending ? "Sending…" : t("form.send")}
             >
