@@ -4,6 +4,7 @@ import Home from "./components/pages/Home";
 import { useScrolledAttr } from "./hooks/useScrolledAttr";
 
 export default function App() {
-  useScrolledAttr(); 
-  return <Home />;
+  // Adds [data-scrolled] on body when header passes threshold (used for glass styling)
+  useScrolledAttr();
+  return <Home />; // Page already provides proper <main>/<section> landmarks
 }

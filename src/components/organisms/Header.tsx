@@ -1,4 +1,3 @@
-// src/components/organisms/Header.tsx
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Nav } from "../molecules/Nav";
@@ -11,14 +10,18 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
 
-  // Cerrar panel si cambiamos a desktop
+  /* ============================
+     Responsive + accessibility
+     ============================ */
+
+  // Close mobile panel when resizing to desktop
   useEffect(() => {
     const onResize = () => { if (window.innerWidth >= 768) setOpen(false); };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Esc para cerrar + bloqueo de scroll en body
+  // Close on Escape + lock scroll when open
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
     if (open) {
@@ -32,7 +35,7 @@ export default function Header() {
     }
   }, [open]);
 
-  // Cierre por clic/touch fuera del panel (refuerzo al overlay)
+  // Close panel on outside click or touch (extra safety beyond overlay)
   useEffect(() => {
     if (!open) return;
 
@@ -51,119 +54,152 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header
-      className="
-        site-header sticky top-0 z-50
-        border-b border-[color:var(--border)]
-        bg-[color:var(--header-glass-base)]
-        backdrop-blur
-        transition-[background,box-shadow,border-color] duration-300
-        text-[var(--text)]
-      "
-    >
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="h-16 flex items-center justify-between">
-          {/* Brand (izquierda) */}
-          <a
-            href="#hero"
-            className="flex gap-2 font-semibold text-[--text] focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] rounded-md"
-          >
-            <KinalTechLogo className="h-13 w-auto md:h-13 max-[420px]:h-8 " aria-hidden />
-            <span className="sr-only">KinalTech</span>
-          </a>
-
-          {/* Nav centrado (solo desktop) */}
-          <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:block">
-            <div className="pointer-events-auto">
-              <Nav variant="desktop" />
-            </div>
-          </div>
-
-          {/* Acciones (derecha) */}
-          <div className="hidden md:flex items-center gap-3">
-            <LangSelect variant="pill" />
-            <ThemeToggle size="sm" />
-          </div>
-
-          {/* Acciones móviles */}
-          <div className="md:hidden flex items-center gap-2.5">
-            <div className="max-[380px]:hidden">
-              <LangSelect size="sm" />
-            </div>
-            <ThemeToggle size="sm" />
-            <button
-              type="button"
-              aria-label={open ? (t("nav.close") ?? "Close menu") : (t("nav.open") ?? "Open menu")}
-              aria-expanded={open}
-              aria-controls="mobile-menu"
-              onClick={() => setOpen(v => !v)}
-              className="inline-flex items-center text-[var(--primary)] justify-center rounded-xl h-9 w-9 border border-[--border] bg-[--surface] hover:bg-[--surface] focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent]"
-            >
-              {!open ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Overlay + sheet móvil */}
-      <div
-        id="mobile-menu"
-        hidden={!open}
-        data-state={open ? "open" : "closed"}
-        className="md:hidden fixed inset-0 z-40 bg-[color:rgba(0,0,0,.25)] backdrop-blur-sm"
-        onClick={() => setOpen(false)}        
+    <>
+      {/* Accessible skip link (keyboard users can jump directly to content) */}
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60]
+                   focus:bg-[var(--surface)] focus:text-[var(--text)]
+                   focus:px-3 focus:py-2 focus:rounded-md focus:shadow-soft"
       >
-        {/* Sheet: cuelga del header, ancho completo */}
-        <div
-          role="dialog"
-          aria-modal="true"
-          ref={panelRef}                        
-          className="
-            menu-panel absolute inset-x-2 top-16
-            rounded-2xl border border-[var(--primary)]
-            bg-[var(--shell)] backdrop-blur 
-            shadow-xl
-          "
-          onClick={(e) => e.stopPropagation()}   
-        >
-          {/* Hilera de controles (solo aparece si ocultamos la versión de la barra) */}
-          <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--primary)] min-h-[48px]">
+        Skip to content
+      </a>
+
+      {/* Header landmark */}
+      <header
+        role="banner"
+        className="
+          site-header sticky top-0 z-50
+          border-b border-[color:var(--border)]
+          bg-[color:var(--header-glass-base)]
+          backdrop-blur
+          transition-[background,box-shadow,border-color] duration-300
+          text-[var(--text)]
+        "
+      >
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="h-16 flex items-center justify-between">
+            {/* Brand / Logo with home link */}
             <a
               href="#hero"
-              className="flex items-center gap-2 font-semibold text-[--text] focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] rounded-md"
+              rel="home"
+              aria-label="KinalTech — Home"
+              className="flex gap-2 font-semibold text-[--text]
+                         focus:outline-none focus-visible:ring-2
+                         focus-visible:ring-[--accent] rounded-md"
             >
-              <KinalTechLogo className="h-7 w-auto md:h-8" aria-hidden />
+              <KinalTechLogo className="h-13 w-auto md:h-13 max-[420px]:h-8" aria-hidden />
               <span className="sr-only">KinalTech</span>
             </a>
-            <div className="flex items-center gap-2 ">
-              <div className="min-[381px]:hidden">
+
+            {/* Centered desktop navigation */}
+            <div className="pointer-events-none absolute left-1/2 top-1/2 hidden 
+                            -translate-x-1/2 -translate-y-1/2 md:block">
+              <div className="pointer-events-auto">
+                <Nav variant="desktop" />
+              </div>
+            </div>
+
+            {/* Right-side actions (desktop only) */}
+            <div className="hidden md:flex items-center gap-3">
+              <LangSelect variant="pill" />
+              <ThemeToggle size="sm" />
+            </div>
+
+            {/* Mobile actions */}
+            <div className="md:hidden flex items-center gap-2.5">
+              {/* Hide language selector on very narrow screens */}
+              <div className="max-[380px]:hidden">
                 <LangSelect size="sm" />
               </div>
               <ThemeToggle size="sm" />
               <button
-                className="h-9 w-9 inline-flex items-center justify-center rounded-lg border border-[--border] hover:bg-[--surface] focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] text-[var(--primary)] "
-                onClick={() => setOpen(false)}
-                aria-label={t("nav.close") ?? "Close menu"}
+                type="button"
+                aria-label={
+                  open
+                    ? (t("nav.close") ?? "Close menu")
+                    : (t("nav.open") ?? "Open menu")
+                }
+                aria-expanded={open}
+                aria-controls="mobile-menu"
+                onClick={() => setOpen((v) => !v)}
+                className="inline-flex items-center text-[var(--primary)] justify-center 
+                           rounded-xl h-9 w-9 border border-[--border] bg-[--surface] 
+                           hover:bg-[--surface] focus:outline-none focus-visible:ring-2 
+                           focus-visible:ring-[--accent]"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
+                {!open ? (
+                  // Hamburger icon
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+                    <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                ) : (
+                  // Close (X) icon
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+                    <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
-
-          {/* Items */}
-          <Nav variant="mobile" onNavigate={() => setOpen(false)} />
         </div>
-      </div>
-    </header>
+
+        {/* Mobile overlay and sheet */}
+        <div
+          id="mobile-menu"
+          hidden={!open}
+          data-state={open ? "open" : "closed"}
+          className="md:hidden fixed inset-0 z-40 bg-[color:rgba(0,0,0,.25)] backdrop-blur-sm"
+          onClick={() => setOpen(false)} // closes when clicking outside
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            ref={panelRef}
+            className="
+              menu-panel absolute inset-x-2 top-16
+              rounded-2xl border border-[var(--primary)]
+              bg-[var(--shell)] backdrop-blur 
+              shadow-xl
+            "
+            onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+          >
+            {/* Top row inside the mobile menu */}
+            <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--primary)] min-h-[48px]">
+              <a
+                href="#hero"
+                className="flex items-center gap-2 font-semibold text-[--text]
+                           focus:outline-none focus-visible:ring-2
+                           focus-visible:ring-[--accent] rounded-md"
+              >
+                <KinalTechLogo className="h-7 w-auto md:h-8" aria-hidden />
+                <span className="sr-only">KinalTech</span>
+              </a>
+              <div className="flex items-center gap-2">
+                <div className="min-[381px]:hidden">
+                  <LangSelect size="sm" />
+                </div>
+                <ThemeToggle size="sm" />
+                <button
+                  className="h-9 w-9 inline-flex items-center justify-center rounded-lg 
+                             border border-[--border] hover:bg-[--surface] 
+                             focus:outline-none focus-visible:ring-2 
+                             focus-visible:ring-[--accent] text-[var(--primary)]"
+                  onClick={() => setOpen(false)}
+                  aria-label={t("nav.close") ?? "Close menu"}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                    <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            {/* Navigation links */}
+            <Nav variant="mobile" onNavigate={() => setOpen(false)} />
+          </div>
+        </div>
+      </header>
+    </>
   );
 }

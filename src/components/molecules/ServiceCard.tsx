@@ -1,5 +1,5 @@
 // src/components/molecules/ServiceCard.tsx
-import type { ReactNode } from "react";
+import type { ReactNode, CSSProperties } from "react";
 
 export default function ServiceCard({
   icon,
@@ -9,22 +9,22 @@ export default function ServiceCard({
   style,
 }: {
   icon: ReactNode;
-  title: string;
+  title: ReactNode;                 
   children: ReactNode;
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 }) {
   return (
     <article
       className={[
-        // base visual (match template)
+        // base visuals (match template)
         "relative overflow-hidden",
         "rounded-[var(--radius)]",
         "border border-[color-mix(in_srgb,var(--muted)_28%,transparent)]",
         "bg-[var(--surface)]",
         "p-7",
-        // sombra + hover elevate
-        "glow-pulse",                    
+        // elevation + hover feedback
+        "glow-pulse",
         "transition-transform duration-200",
         "focus-within:-translate-y-1.5 focus-within:[box-shadow:0_18px_40px_rgba(2,6,23,.15)]",
         "hover:border-[var(--primary)]",
@@ -32,7 +32,7 @@ export default function ServiceCard({
       ].join(" ")}
       style={style}
     >
-      {/* icono con conic-gradient + glow */}
+      {/* Decorative icon (visual only) */}
       <div
         className={[
           "w-[66px] h-[66px] rounded-[18px]",
@@ -47,6 +47,7 @@ export default function ServiceCard({
         <div className="h-8 w-8">{icon}</div>
       </div>
 
+      {/* Title and body copy */}
       <h3 className="text-xl font-semibold">{title}</h3>
       <p className="mt-2 text-muted">{children}</p>
     </article>

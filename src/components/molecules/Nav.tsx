@@ -7,20 +7,27 @@ type Props = {
   onNavigate?: () => void;
 };
 
+/** Centralized list of in-page sections for both nav variants */
 const SECTIONS = [
-  { id: "hero", key: "nav.home", href: "#hero" },
+  { id: "hero",     key: "nav.home",    href: "#hero" },
   { id: "services", key: "nav.services", href: "#services" },
-  { id: "techs", key: "nav.techs", href: "#techs" },
-  { id: "about", key: "nav.about", href: "#about" },
-  { id: "contact", key: "nav.contact", href: "#contact" },
+  { id: "techs",    key: "nav.techs",   href: "#techs" },
+  { id: "about",    key: "nav.about",   href: "#about" },
+  { id: "contact",  key: "nav.contact", href: "#contact" },
 ];
 
 export function Nav({ variant, onNavigate }: Props) {
   const { t } = useTranslation();
-  const activeId = useSectionSpy({ sectionIds: SECTIONS.map(s => s.id), offsetTop: 80 });
+
+  // Track which section is currently in view (used for visual + a11y state)
+  const activeId = useSectionSpy({
+    sectionIds: SECTIONS.map((s) => s.id),
+    offsetTop: 80,
+  });
 
   if (variant === "desktop") {
     return (
+      // <nav> is a landmark; keep a readable label for screen readers
       <nav aria-label={t("nav.aria") ?? "Primary navigation"}>
         <ul className="flex items-center gap-6">
           {SECTIONS.map(({ id, key, href }) => {
@@ -34,6 +41,8 @@ export function Nav({ variant, onNavigate }: Props) {
                     "nav-underline",
                     active ? "nav-active" : "",
                   ].join(" ")}
+                  // Announce the current location to assistive tech
+                  aria-current={active ? "page" : undefined}
                 >
                   {t(key)}
                 </a>
@@ -45,7 +54,7 @@ export function Nav({ variant, onNavigate }: Props) {
     );
   }
 
-  // Mobile: sheet list
+  // Mobile sheet version (bigger targets + focus ring)
   return (
     <nav aria-label={t("nav.aria") ?? "Primary navigation"}>
       <ul className="py-2">
@@ -62,6 +71,7 @@ export function Nav({ variant, onNavigate }: Props) {
                   "hover:bg-[var(--surface-a-60)] active:bg-[var(--surface-a-60)]",
                   active ? "text-[var(--primary)]" : "text-[var(--primary-2)]",
                 ].join(" ")}
+                aria-current={active ? "page" : undefined}
               >
                 {t(key)}
               </a>

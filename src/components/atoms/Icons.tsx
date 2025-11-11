@@ -2,7 +2,8 @@
 
 import { useId, type SVGProps } from "react";
 
-// --- Services ---
+//       ----------- Services ----------
+// --- Web ---
 export const WebIcon = () => (
   <svg
     viewBox="0 0 24 24"
@@ -10,7 +11,6 @@ export const WebIcon = () => (
     className="h-full w-full"
     aria-hidden
   >
-    {/* Ventana / pantalla */}
     <rect
       x="2"
       y="3"
@@ -20,14 +20,12 @@ export const WebIcon = () => (
       stroke="currentColor"
       strokeWidth="1.6"
     />
-    {/* Barra superior (como del navegador) */}
     <path
       d="M2 7h20"
       stroke="currentColor"
       strokeWidth="1.6"
       strokeLinecap="round"
     />
-    {/* Contenido: flecha izq, barra central, flecha der (inspirado en tu SVG) */}
     <path
       d="M9.5 10.5L7.5 12l2 1.5"
       stroke="currentColor"
@@ -48,7 +46,6 @@ export const WebIcon = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
     />
-    {/* Base/soporte sutil */}
     <path
       d="M8 19h8"
       stroke="currentColor"
@@ -58,7 +55,7 @@ export const WebIcon = () => (
     <rect x="6.5" y="20" width="11" height="1.5" rx=".75" fill="currentColor" />
   </svg>
 );
-
+// --- Mobile ---
 export const MobileIcon = () => (
   <svg
     viewBox="0 0 24 24"
@@ -66,12 +63,10 @@ export const MobileIcon = () => (
     className={`h-full w-full`}
     fill="none"
   >
-    {/* Punto / home button */}
     <path
       d="M13 19a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"
       fill="currentColor"
     />
-    {/* Cuerpo del teléfono */}
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -80,7 +75,7 @@ export const MobileIcon = () => (
     />
   </svg>
 );
-
+// --- UI/UX ---
 export const UIUXIcon = () => (
   <svg
     viewBox="0 0 24 24"
@@ -88,7 +83,6 @@ export const UIUXIcon = () => (
     className={`h-full w-full mt-1`}
     fill="none"
   >
-    {/* Ventana (ligeramente grande) */}
     <rect
       x="2"
       y="3"
@@ -96,24 +90,20 @@ export const UIUXIcon = () => (
       height="14"
       rx="2"
       stroke="currentColor"
-      strokeWidth="1.8"      // un poquito más “presente”
+      strokeWidth="1.8"    
     />
-    {/* Barra superior */}
     <path
       d="M2 7h20"
       stroke="currentColor"
       strokeWidth="1.8"
       strokeLinecap="round"
     />
-    {/* Tres “dots” de la barra de título */}
     <circle cx="6" cy="5" r=".9" fill="currentColor" />
     <circle cx="9" cy="5" r=".9" fill="currentColor" />
     <circle cx="12" cy="5" r=".9" fill="currentColor" />
   </svg>
 );
-
 // --- IA ---
-
 export const IA_Icon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 512 512" fill="none" className="h-full w-full" aria-hidden {...props}>
     <path
@@ -122,46 +112,46 @@ export const IA_Icon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-
+// --- Teamwork ---
 export const TeamworkIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 32 32" fill="none" className="h-full w-full" aria-hidden {...props}>
-    {/* Elementos principales */}
+
     <path fill="currentColor" d="M25,26a5,5,0,1,1,5-5A5.006,5.006,0,0,1,25,26Zm0-8a3,3,0,1,0,3,3A3,3,0,0,0,25,18Z" />
     <path fill="currentColor" d="M22,32H20a1,1,0,0,1-.98-.8l-1-5a1,1,0,0,1,.533-1.091l3.6-1.8a1,1,0,1,1,.894,1.789L20.13,26.553,20.82,30H22a1,1,0,0,1,0,2Z" />
     <path fill="currentColor" d="M30,32H26a1,1,0,0,1,0-2h3.18l.69-3.447L26.953,25.1a1,1,0,1,1,.894-1.789l3.6,1.8A1,1,0,0,1,31.98,26.2l-1,5A1,1,0,0,1,30,32Z" />
     <path fill="currentColor" d="M7,26a5,5,0,1,1,5-5A5.006,5.006,0,0,1,7,26Zm0-8a3,3,0,1,0,3,3A3,3,0,0,0,7,18Z" />
     <path fill="currentColor" d="M4,32H2a1,1,0,0,1-.98-.8l-1-5a1,1,0,0,1,.533-1.091l3.6-1.8A1,1,0,1,1,5.047,25.1L2.13,26.553,2.82,30H4a1,1,0,0,1,0,2Z" />
     <path fill="currentColor" d="M12,32H8a1,1,0,0,1,0-2h3.18l.69-3.447L8.953,25.1a1,1,0,1,1,.894-1.789l3.6,1.8A1,1,0,0,1,13.98,26.2l-1,5A1,1,0,0,1,12,32Z" />
-
-    {/* Elementos secundarios (engranaje/círculo central) con ligera transparencia */}
     <path fill="currentColor" opacity=".6" d="M16.706,16H15.294A2.3,2.3,0,0,1,13,13.706a.294.294,0,0,0-.441-.255,2.294,2.294,0,0,1-3.135-.84l-.7-1.222a2.3,2.3,0,0,1,.84-3.134.295.295,0,0,0,0-.51,2.3,2.3,0,0,1-.84-3.134l.705-1.222a2.294,2.294,0,0,1,3.135-.84A.294.294,0,0,0,13,2.294,2.3,2.3,0,0,1,15.294,0h1.412A2.3,2.3,0,0,1,19,2.294a.284.284,0,0,0,.147.255.291.291,0,0,0,.294,0,2.294,2.294,0,0,1,3.135.84l.7,1.222a2.3,2.3,0,0,1-.84,3.134.295.295,0,0,0,0,.51,2.3,2.3,0,0,1,.84,3.134l-.7,1.222a2.294,2.294,0,0,1-3.135.84.288.288,0,0,0-.294,0,.284.284,0,0,0-.147.255A2.3,2.3,0,0,1,16.706,16Zm-4-4.592A2.3,2.3,0,0,1,15,13.706a.294.294,0,0,0,.294.294h1.412A.294.294,0,0,0,17,13.706a2.294,2.294,0,0,1,3.441-1.987.281.281,0,0,0,.224.029.285.285,0,0,0,.178-.137l.706-1.222a.293.293,0,0,0-.108-.4,2.295,2.295,0,0,1,0-3.974.293.293,0,0,0,.108-.4h0l-.706-1.222a.285.285,0,0,0-.178-.137.289.289,0,0,0-.224.029A2.294,2.294,0,0,1,17,2.294.294.294,0,0,0,16.706,2H15.294A.294.294,0,0,0,15,2.294a2.294,2.294,0,0,1-3.441,1.987.289.289,0,0,0-.224-.029.285.285,0,0,0-.178.137l-.706,1.222a.293.293,0,0,0,.108.4,2.295,2.295,0,0,1,0,3.974.293.293,0,0,0-.108.4l.706,1.222a.285.285,0,0,0,.178.137.28.28,0,0,0,.224-.029A2.292,2.292,0,0,1,12.706,11.408Z" />
     <path fill="currentColor" opacity=".6" d="M16,10a2,2,0,1,1,2-2A2,2,0,0,1,16,10Z" />
   </svg>
 );
 
-// --- Contact ---
+//       ----------- Contact ----------
+// --- Mail ---
 export const MailIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="h-full w-full">
     <rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" strokeWidth="1.8" />
     <path d="M3 7l9 6 9-6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
-
+// --- Pin ---
 export const PinIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="h-full w-full">
     <path d="M12 21s7-5.1 7-11a7 7 0 10-14 0c0 5.9 7 11 7 11z" stroke="currentColor" strokeWidth="1.8" />
     <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.8" />
   </svg>
 );
-
+// --- Phone ---
 export const ClockIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" className="h-full w-full">
     <circle cx="12" cy="12" r="8.5" stroke="currentColor" strokeWidth="1.8" />
     <path d="M12 7v5l3 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
   </svg>
 );
-// --- Technologies ---
 
+//       ----------- Technologies ----------
+// --- React ---
 export const ReactIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 32 32" className="h-full w-full" fill="none" aria-hidden {...props}>
     <circle cx="16" cy="15.974" r="2.5" fill="currentColor" />
@@ -173,14 +163,14 @@ export const ReactIcon = (props: SVGProps<SVGSVGElement>) => (
       fill="currentColor" />
   </svg>
 );
-
+// --- Next.js ---
 export const NextIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 128 128" className="h-full w-full" fill="none" aria-hidden {...props}>
     <path d="M64 0C28.7 0 0 28.7 0 64s28.7 64 64 64c11.2 0 21.7-2.9 30.8-7.9L48.4 55.3v36.6h-6.8V41.8h6.8l50.5 75.8C116.4 106.2 128 86.5 128 64c0-35.3-28.7-64-64-64zm22.1 84.6l-7.5-11.3V41.8h7.5v42.8z"
       fill="var(--text)" />
   </svg>
 );
-
+// --- Vue.js ---
 export const VueIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 128 128"
@@ -196,7 +186,7 @@ export const VueIcon = (props: SVGProps<SVGSVGElement>) => (
       fill="#41b883" />
   </svg>
 );
-
+// --- React Native ---
 export const RNIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 32 32" className="h-full w-full" fill="none" aria-hidden {...props}>
     <circle cx="16" cy="15.974" r="2.5" fill="currentColor" />
@@ -208,7 +198,7 @@ export const RNIcon = (props: SVGProps<SVGSVGElement>) => (
       fill="currentColor" />
   </svg>
 );
-
+// --- Flutter ---
 export const FlutterIcon = (props: SVGProps<SVGSVGElement>) => {
   const gid = useId();
   const gradId = `flutter-grad-${gid}`;
@@ -239,14 +229,14 @@ export const FlutterIcon = (props: SVGProps<SVGSVGElement>) => {
     </svg>
   );
 };
-
+// --- MySQL ---
 export const MySQLIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" className="h-full w-full" fill="none" aria-hidden {...props}>
     <path fillRule="evenodd" clipRule="evenodd" d="M3.25 6C3.25 4.45831 4.48029 3.26447 6.00774 2.50075C7.58004 1.7146 9.69967 1.25 12 1.25C14.3003 1.25 16.42 1.7146 17.9923 2.50075C19.5197 3.26447 20.75 4.45831 20.75 6V18C20.75 19.5417 19.5197 20.7355 17.9923 21.4992C16.42 22.2854 14.3003 22.75 12 22.75C9.69967 22.75 7.58004 22.2854 6.00774 21.4992C4.48029 20.7355 3.25 19.5417 3.25 18V6ZM4.75 6C4.75 5.33255 5.31057 4.52639 6.67856 3.84239C8.00168 3.18083 9.88205 2.75 12 2.75C14.118 2.75 15.9983 3.18083 17.3214 3.84239C18.6894 4.52639 19.25 5.33255 19.25 6C19.25 6.66745 18.6894 7.47361 17.3214 8.15761C15.9983 8.81917 14.118 9.25 12 9.25C9.88205 9.25 8.00168 8.81917 6.67856 8.15761C5.31057 7.47361 4.75 6.66745 4.75 6ZM4.75 18C4.75 18.6674 5.31057 19.4736 6.67856 20.1576C8.00168 20.8192 9.88205 21.25 12 21.25C14.118 21.25 15.9983 20.8192 17.3214 20.1576C18.6894 19.4736 19.25 18.6674 19.25 18V14.7072C18.8733 15.0077 18.4459 15.2724 17.9923 15.4992C16.42 16.2854 14.3003 16.75 12 16.75C9.69967 16.75 7.58004 16.2854 6.00774 15.4992C5.55414 15.2724 5.12675 15.0077 4.75 14.7072V18ZM19.25 8.70722V12C19.25 12.6674 18.6894 13.4736 17.3214 14.1576C15.9983 14.8192 14.118 15.25 12 15.25C9.88205 15.25 8.00168 14.8192 6.67856 14.1576C5.31057 13.4736 4.75 12.6674 4.75 12V8.70722C5.12675 9.00772 5.55414 9.27245 6.00774 9.49925C7.58004 10.2854 9.69967 10.75 12 10.75C14.3003 10.75 16.42 10.2854 17.9923 9.49925C18.4459 9.27245 18.8733 9.00772 19.25 8.70722Z"
       fill="currentColor" />
   </svg>
 );
-
+// --- GraphQL ---
 export const GraphQLIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 128 128"
@@ -267,14 +257,14 @@ export const GraphQLIcon = (props: SVGProps<SVGSVGElement>) => (
     </g>
   </svg>
 );
-
+// --- Next.js ---
 export const ReduxIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 128 128" className="h-full w-full" fill="none" aria-hidden {...props}>
     <path d="M88.69 88.11c-9 18.4-24.76 30.78-45.61 34.85a39.73 39.73 0 0 1-9.77 1.14c-12 0-23-5-28.34-13.19C-2.2 100-4.64 76.87 19 59.76c.48 2.61 1.46 6.19 2.11 8.31A38.24 38.24 0 0 0 10 81.1c-4.4 8.64-3.91 17.27 1.3 25.25 3.6 5.38 9.3 8.65 16.63 9.65a44 44 0 0 0 26.55-5c12.71-6.68 21.18-14.66 26.72-25.57a9.32 9.32 0 0 1-2.61-6A9.12 9.12 0 0 1 87.37 70h.34a9.15 9.15 0 0 1 1 18.25zm28.67-20.2c12.21 13.84 12.54 30.13 7.82 39.58-4.4 8.63-16 17.27-31.6 17.27a50.48 50.48 0 0 1-21-5.05c2.29-1.63 5.54-4.24 7.33-5.87a41.54 41.54 0 0 0 16 3.42c10.1 0 17.75-4.72 22.31-13.35 2.93-5.7 3.1-12.38.33-19.22a43.61 43.61 0 0 0-17.27-20.85 62 62 0 0 0-34.74-10.59h-2.93a9.21 9.21 0 0 1-8 5.54h-.31a9.13 9.13 0 0 1-.3-18.25h.33a9 9 0 0 1 8 4.89h2.61c20.8 0 39.06 7.98 51.42 22.48zm-82.75 23a7.31 7.31 0 0 1 1.14-4.73c-9.12-15.8-14-35.83-6.51-56.68C34.61 13.83 48.13 3.24 62.79 3.24c15.64 0 31.93 13.69 33.88 40.07-2.44-.81-6-2-8.14-2.44-.53-8.63-7.82-30.13-25.09-29.81-6.19.17-15.31 3.1-20 9.12a43.69 43.69 0 0 0-9.64 25.25 59.61 59.61 0 0 0 8.47 36.16 2.75 2.75 0 0 1 1.14-.16h.32a9.121 9.121 0 0 1 .33 18.24h-.33a9.16 9.16 0 0 1-9.12-8.79z"
       fill="currentColor" />
   </svg>
 );
-
+// --- Node.js ---
 export const NodeBadgeIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 128 128"
@@ -289,7 +279,7 @@ export const NodeBadgeIcon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-
+// --- JavaScript ---
 export const JavaScriptBrandIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 128 128"
@@ -305,7 +295,7 @@ export const JavaScriptBrandIcon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-
+// --- TypeScript ---
 export const TypeScriptBrandIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 128 128"
@@ -322,7 +312,7 @@ export const TypeScriptBrandIcon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-
+// --- Angular ---
 export const AngularIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 256 272"
@@ -345,7 +335,7 @@ export const AngularIcon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-
+// --- HTML5 ---
 export const HTML5Icon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 32 32"
@@ -362,7 +352,7 @@ export const HTML5Icon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-
+// --- CSS3 ---
 export const CSS3Icon = (props: SVGProps<SVGSVGElement>) => (
   <svg
     viewBox="0 0 32 32"
@@ -379,7 +369,7 @@ export const CSS3Icon = (props: SVGProps<SVGSVGElement>) => (
     <polygon points="16 13.191 16 15.111 16 16.274 16 16.282 12.611 16.282 12.611 16.282 12.601 16.282 12.539 15.587 12.399 14.02 12.325 13.191 16 13.191" fill="#EBEBEB" />
   </svg>
 );
-
+// --- Python ---
 export const PythonIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 32 32" fill="none" className="h-full w-full" aria-hidden {...props}>
     <defs>
@@ -392,7 +382,6 @@ export const PythonIcon = (props: SVGProps<SVGSVGElement>) => (
         <stop offset="1" stopColor="#F9C600" />
       </linearGradient>
     </defs>
-
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -407,15 +396,14 @@ export const PythonIcon = (props: SVGProps<SVGSVGElement>) => (
     />
   </svg>
 );
-
+//       ----------- Logo ----------
+// --- Kinal Tech Logo ---
 export const KinalTechLogo = (props: SVGProps<SVGSVGElement>) => {
   const gid = useId();
   const grad0 = `ktl-g0-${gid}`;
   const grad1 = `ktl-g1-${gid}`;
-
   return (
     <svg viewBox="0 0 521 107" fill="none" aria-hidden className="h-full w-auto" {...props}>
-      {/* Wordmark (gris y celeste) */}
       <path d="M187.449 105.335c-.429 0-.782-.13-1.058-.391-.261-.276-.391-.614-.391-1.013V90.634c0-.398.13-.728.391-.989.276-.276.614-.414 1.012-.414h7.478c.398 0 .728.13.989.391.276.245.414.567.414.966 0 .337-.138.636-.414.897-.261.261-.591.391-.989.391h-6.212l.207-.276v4.624l-.161-.299h5.13c.399 0 .729.13.99.391.276.245.414.567.414.966 0 .337-.138.636-.414.897-.261.261-.591.391-.99.391h-5.176l.207-.215v5.567c0 .399-.146.737-.437 1.013-.276.261-.606.391-.99.391z" fill="#747B82" />
       <path d="M200.575 105.335c-.429 0-.812-.13-1.15-.391-.337-.276-.506-.614-.506-1.013V90.634c0-.399.13-.728.391-.989.276-.276.614-.414 1.012-.414h6.626c.798 0 1.542.215 2.232.644.706.414 1.273.997 1.703 1.749.429.736.644 1.587.644 2.553 0 .583-.123 1.151-.368 1.703-.23.552-.553 1.051-.967 1.496-.398.445-.851.79-1.357 1.036l.023-.529c.429.23.782.506 1.058.828.292.306.514.644.667 1.012.169.353.269.736.3 1.151.061.383.099.72.115 1.012.03.291.076.537.138.736.076.199.214.353.414.46.337.2.544.491.621.874.092.369.008.698-.253.99-.169.199-.384.33-.644.391-.261.046-.522.046-.783 0-.26-.061-.475-.138-.644-.23a2.28 2.28 0 01-.782-.668c-.23-.307-.444-.714-.613-1.22-.154-.506-.23-1.158-.23-1.955 0-.261-.046-.499-.138-.714a1.35 1.35 0 00-.391-.575 1.37 1.37 0 00-.645-.322 3.12 3.12 0 00-.92-.062h-4.646l.345-.529v4.992c0 .399-.108.737-.322 1.013-.215.261-.514.391-.898.391zm.898-8.237h5.36c.276 0 .545-.123.806-.368.26-.261.475-.606.644-1.035.168-.445.253-.928.253-1.45 0-.675-.184-1.235-.552-1.68-.353-.46-.737-.69-1.151-.69h-5.314l.276-.736v6.511l-.322-.552z" fill="#747B82" />
       <path d="M229.305 97.282c0 1.15-.191 2.224-.575 3.22-.383.997-.928 1.879-1.633 2.646-.69.752-1.52 1.343-2.485 1.772-.951.429-1.994.644-3.129.644-1.135 0-2.178-.215-3.129-.644-.951-.43-1.779-1.02-2.485-1.772-.69-.767-1.227-1.649-1.61-2.646a8.63 8.63 0 01-.575-3.22c0-1.15.191-2.224.575-3.221.383-.997.92-1.871 1.61-2.623.706-.767 1.534-1.365 2.485-1.795.951-.429 1.994-.644 3.129-.644 1.135 0 2.178.215 3.129.644.966.43 1.795 1.028 2.485 1.795.705.752 1.25 1.626 1.633 2.623.383.997.575 2.071.575 3.221zm-2.99 0c0-1.028-.207-1.956-.622-2.784-.414-.844-.981-1.511-1.702-2.002-.721-.49-1.557-.736-2.508-.736-.951 0-1.787.245-2.508.736-.72.491-1.288 1.15-1.702 1.978-.399.829-.598 1.764-.598 2.807 0 1.028.199 1.964.598 2.807.414.829.982 1.488 1.702 1.979.721.491 1.557.736 2.508.736.951 0 1.787-.245 2.508-.736.721-.491 1.288-1.15 1.702-1.979.415-.843.622-1.779.622-2.807z" fill="#747B82" />

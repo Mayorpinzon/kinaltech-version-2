@@ -14,13 +14,17 @@ declare global {
 
 /* ============================
    UI helpers
-============================ */
+   ============================ */
 function InfoRow({
   icon, title, subtitle,
 }: { icon: ReactNode; title: string; subtitle: string }) {
   return (
     <div className="flex items-center gap-5 rounded-app bg-transparent p-4">
-      <div className="inline-grid h-15 w-15 flex-none shrink-0 place-items-center rounded-2xl text-[--white] bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] shadow-soft" aria-hidden>
+      {/* Decorative icon only (visual). */}
+      <div
+        className="inline-grid h-15 w-15 flex-none shrink-0 place-items-center rounded-2xl text-[--white] bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] shadow-soft"
+        aria-hidden
+      >
         <div className="h-6 w-6 text-[var(--white)]">{icon}</div>
       </div>
       <div className="min-w-0">
@@ -32,8 +36,8 @@ function InfoRow({
 }
 
 /* ============================
-   Validación UI con Zod
-============================ */
+   UI validation (Zod)
+   ============================ */
 const ContactSchema = z.object({
   name: z.string().min(2, "Please enter your full name.").max(30, "Max 30 characters."),
   email: z.string().email("Please enter a valid email.").max(160),
@@ -51,11 +55,11 @@ function mapIssues(issues: z.ZodIssue[]) {
   return out;
 }
 
-/* Obtener token de Turnstile (invisible).
-   - Si no hay sitekey o el script no cargó, devuelve "" y seguimos (dev).
-   - En producción, el backend exigirá captcha; el front debe tener sitekey real. */
+/* Turnstile token (invisible).
+   - If no sitekey or script missing, returns "" (dev fallback).
+   - In prod the backend will require a valid token. */
 async function getTurnstileToken(sitekey?: string): Promise<string> {
-  if (!sitekey) return ""; // dev sin captcha
+  if (!sitekey) return ""; // dev without captcha
 
   await new Promise<void>((resolve) => {
     const check = () => (window.turnstile ? resolve() : setTimeout(check, 40));
@@ -66,13 +70,11 @@ async function getTurnstileToken(sitekey?: string): Promise<string> {
     try {
       window.turnstile.render("#cf-turnstile", {
         sitekey,
-        // antes: size: "invisible",
-        appearance: "execute", // ← auto-ejecuta modo invisible actual
+        appearance: "execute",
         callback: (token: string) => resolve(token),
         "error-callback": () => reject(new Error("Captcha failed")),
         retry: "auto",
       });
-      // en "execute" no hace falta llamar a execute(), pero no estorba:
       window.turnstile.execute("#cf-turnstile");
     } catch (e) {
       reject(e);
@@ -88,11 +90,11 @@ export default function Contact() {
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
   const [errs, setErrs] = useState<Record<string, string>>({});
-  const [ts] = useState(() => Date.now()); // marca de tiempo para bots rápidos
+  const [ts] = useState(() => Date.now()); // timestamp used by simple anti-bot
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.currentTarget as HTMLFormElement;
+    const form = e.currentTarget;
 
     setError("");
     setOk("");
@@ -114,7 +116,7 @@ export default function Contact() {
       ts,
     };
 
-    // Validación UI
+    // UI validation
     const parsed = ContactSchema.safeParse({
       name: data.name,
       email: data.email,
@@ -128,7 +130,7 @@ export default function Contact() {
       return;
     }
 
-    // Honeypot: si viene, fingimos OK y salimos
+    // Honeypot: pretend OK and exit (do not send)
     if (data.company) {
       setOk("Thanks! We’ll get back to you shortly.");
       form.reset();
@@ -138,14 +140,13 @@ export default function Contact() {
     try {
       setSending(true);
 
-      // === Turnstile (token si hay sitekey; en dev puede no haber) ===
+      // Turnstile (token if sitekey exists; empty in dev)
       const sitekey = import.meta.env.VITE_TURNSTILE_SITEKEY as string | undefined;
       const captchaToken = await getTurnstileToken(sitekey);
 
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // En prod el backend exigirá `captcha`; en dev puede ir vacío.
         body: JSON.stringify({ ...data, captcha: captchaToken }),
       });
 
@@ -171,19 +172,27 @@ export default function Contact() {
     }
   };
 
+  // Helper to build IDs for each field's error message
+  const errId = (field: "name" | "email" | "subject" | "message") => `field-${field}-error`;
+
   return (
-    <section id="contact" className="py-24 md:py-28 bg-shell text-body scroll-mt-20 bg-grad-1">
+    <section
+      id="contact"
+      className="py-24 md:py-28 bg-shell text-body scroll-mt-20 bg-grad-1"
+      aria-labelledby="contact-title"
+      aria-describedby="contact-desc"
+    >
       <Container>
         {/* Heading */}
         <div className="text-center max-w-2xl mx-auto reveal">
-          <H2>{t("contact.title")}</H2>
-          <Lead className="mt-3">{t("contact.blurb")}</Lead>
+          <H2 id="contact-title">{t("contact.title")}</H2>
+          <Lead id="contact-desc" className="mt-3">{t("contact.blurb")}</Lead>
         </div>
 
         {/* Grid */}
         <div className="mt-12 grid gap-8 md:grid-cols-2 ">
-          {/* Izquierda: info */}
-          <div className="space-y-4 reveal text-left">
+          {/* Left: contact info (static, easy to scan) */}
+          <div className="space-y-4 reveal text-left" aria-label={t("contact.title")}>
             <InfoRow
               icon={<MailIcon />}
               title={t("contact.email.label")}
@@ -201,9 +210,14 @@ export default function Contact() {
             />
           </div>
 
-          {/* Derecha: form */}
-          <form onSubmit={onSubmit} className="space-y-4 reveal" noValidate>
-            {/* Honeypot accesible pero oculto */}
+          {/* Right: form */}
+          <form
+            onSubmit={onSubmit}
+            className="space-y-4 reveal"
+            noValidate
+            aria-describedby={error ? "form-error" : ok ? "form-success" : undefined}
+          >
+            {/* Accessible honeypot (hidden off-screen) */}
             <label htmlFor="company" className="sr-only">Company</label>
             <input
               id="company"
@@ -213,9 +227,11 @@ export default function Contact() {
               aria-hidden="true"
               className="absolute left-[-9999px] top-auto w-px h-px overflow-hidden"
             />
-            {/* timestamp del cliente */}
+
+            {/* client timestamp */}
             <input type="hidden" name="ts" value={ts} />
-            {/* contenedor para Turnstile invisible */}
+
+            {/* Turnstile container (invisible) */}
             <div id="cf-turnstile" className="hidden" aria-hidden="true" />
 
             {(["name", "email", "subject", "message"] as const).map((field) => {
@@ -233,31 +249,57 @@ export default function Contact() {
                           : "Your message",
                 }) || undefined;
 
+              // shared input classes
               const common =
                 "w-full rounded-app border border-[var(--primary)] text-[--text] placeholder-[--muted] " +
                 "focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] ";
 
+              // native autocomplete hints
+              const auto =
+                field === "name" ? "name"
+                  : field === "email" ? "email"
+                    : "off";
+
+              const invalid = Boolean(errs[field]);
+
               return (
                 <div key={field}>
-                  <label className="block text-sm font-semibold mb-1 " htmlFor={field}>
+                  <label className="block text-sm font-semibold mb-1" htmlFor={field}>
                     {label}
                   </label>
 
                   {isTextArea ? (
-                    <textarea id={field} name={field} rows={6} placeholder={ph} className={`${common} px-4 py-3 glow-pulse`} />
+                    <textarea
+                      id={field}
+                      name={field}
+                      rows={6}
+                      placeholder={ph}
+                      className={`${common} px-4 py-3 glow-pulse`}
+                      autoComplete="off"
+                      required
+                      aria-required="true"
+                      aria-invalid={invalid}
+                      aria-describedby={invalid ? errId(field) : undefined}
+                    />
                   ) : (
                     <input
                       id={field}
                       name={field}
                       type={field === "email" ? "email" : "text"}
-                      autoComplete={field === "email" ? "email" : "off"}
+                      autoComplete={auto as any}
                       placeholder={ph}
                       className={`${common} h-12 px-4 glow-pulse`}
+                      required
+                      aria-required="true"
+                      aria-invalid={invalid}
+                      aria-describedby={invalid ? errId(field) : undefined}
                     />
                   )}
 
                   {errs[field] && (
-                    <p className="mt-1 text-sm text-[--shell]">{errs[field]}</p>
+                    <p id={errId(field)} className="mt-1 text-sm text-[--danger]" role="alert">
+                      {errs[field]}
+                    </p>
                   )}
                 </div>
               );
@@ -265,15 +307,26 @@ export default function Contact() {
 
             <Button
               variant="outline"
+              movingBorder
               type="submit"
-              className="mt-2 h-13 w-50 shadow-lg text-white border-none hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
+              className="mt-2 h-13 w-50 shadow-lg hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
               disabled={sending}
+              aria-label={sending ? "Sending…" : t("form.send")}
             >
               {sending ? "Sending..." : t("form.send")}
             </Button>
 
-            {error && <p className="text-sm text-[--danger]">{error}</p>}
-            {ok && <p className="text-sm text-emerald-500">{ok}</p>}
+            {/* Live regions for form status */}
+            {error && (
+              <p id="form-error" role="alert" className="text-sm text-[--danger]">
+                {error}
+              </p>
+            )}
+            {ok && (
+              <p id="form-success" aria-live="polite" className="text-sm text-emerald-500">
+                {ok}
+              </p>
+            )}
           </form>
         </div>
       </Container>

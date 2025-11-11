@@ -1,3 +1,6 @@
+html {
+  font-family: var(--font-sans);
+}
 :root {
   --bg: #f8fafc;
   --card: #ffffff;
@@ -21,9 +24,7 @@
   --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --green-light: #83CE3F;
   --blue-light: #4EBCE5;
-
-
-
+  --button-bg: #03108572;
 
   /* alfas para fondos translúcidos */
   --surface-a-80: color-mix(in srgb, var(--surface) 80%, transparent);
@@ -31,9 +32,7 @@
   --surface-a-40: color-mix(in srgb, var(--surface) 40%, transparent);
 }
 
-html {
-  font-family: var(--font-sans);
-}
+
 
 /* DARK – sirve tanto con body.dark como con html[data-theme="dark"] */
 :root[data-theme="dark"],
@@ -46,6 +45,7 @@ body.dark {
   --card: #0f162e;
   --primary-2:#e5e7eb;
   --footerBorder: #2563eb;
+   --button-bg: #03108572;
   --grad-1:
     radial-gradient(1000px 600px at 10% 10%, rgba(168, 85, 247, .18), transparent 45%),
     radial-gradient(1000px 600px at 90% 10%, rgba(37, 99, 235, .18), transparent 45%),
@@ -60,8 +60,6 @@ body.dark {
 }
 
 
-
-/* Utilidades que ya tenías */
 @layer utilities {
   .bg-bg {
     background: var(--bg)

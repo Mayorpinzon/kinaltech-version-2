@@ -1,17 +1,30 @@
-//src/components/atoms/Container.tsx
-import type { ReactNode } from 'react';
+// src/components/atoms/Container.tsx
+import {
+  forwardRef,
+  type ElementType,
+  type HTMLAttributes,
+  type ReactNode,
+} from "react";
 
-export default function Container({
-  children,
-  className = '',
-}: {
+type BaseProps = {
+  as?: ElementType;
   children: ReactNode;
   className?: string;
-}) {
-  // Un poco más de respiro lateral como en el template
+} & HTMLAttributes<HTMLElement>;
+
+const Container = forwardRef<HTMLElement, BaseProps>(function Container(
+  { as: Tag = "div", children, className = "", ...rest },
+  ref
+) {
   return (
-    <div className={`mx-auto w-full max-w-6xl px-6 md:px-8 ${className}`}>
+    <Tag
+      ref={ref}
+      className={`mx-auto w-full max-w-6xl px-6 md:px-8 ${className}`}
+      {...rest}
+    >
       {children}
-    </div>
+    </Tag>
   );
-}
+});
+
+export default Container;
