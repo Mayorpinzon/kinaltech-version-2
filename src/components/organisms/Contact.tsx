@@ -116,7 +116,9 @@ export default function Contact() {
   useEffect(() => {
     if (!Object.keys(errs).length) return;
     if (!formRef.current) return;
+
     const Schema = makeContactSchema(t);
+
     const fd = new FormData(formRef.current);
     const current = {
       name: String(fd.get("name") || ""),
@@ -124,6 +126,7 @@ export default function Contact() {
       subject: String(fd.get("subject") || ""),
       message: String(fd.get("message") || ""),
     };
+
     const parsed = Schema.safeParse(current);
     if (!parsed.success) {
       setErrs(
@@ -133,6 +136,7 @@ export default function Contact() {
           return acc;
         }, {} as Record<string, string>)
       );
+      setError(t("form.error.fix_fields", "Please fix the highlighted fields."));
     } else {
       setErrs({});
     }
@@ -354,12 +358,12 @@ export default function Contact() {
             </Button>
 
             {error && (
-              <p id="form-error" role="alert" className="text-sm text-[--danger]">
+              <p id="form-error" role="alert" className="text-sm text-[var(--danger)]">
                 {error}
               </p>
             )}
             {ok && (
-              <p id="form-success" aria-live="polite" className="text-sm text-emerald-500">
+              <p id="form-success" aria-live="polite" className="text-sm text-[var(--green-light)]">
                 {ok}
               </p>
             )}
