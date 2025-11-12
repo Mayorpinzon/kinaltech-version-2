@@ -84,12 +84,35 @@ const resources = {
       "contact.hours.value": "Monday – Friday: 10AM – 7PM",
 
       // Form
-      "form.name": "Full Name",
-      "form.email": "Email",
-      "form.subject": "Subject",
-      "form.message": "Message",
-      "form.send": "Send",
-
+      "form": {
+        "send": "Send",
+        "sending": "Sending…",
+        "name": "Full Name",
+        "email": "Email",
+        "subject": "Subject",
+        "message": "Message",
+        "placeholder": {
+          "name": "Your name",
+          "email": "Your email",
+          "subject": "Subject",
+          "message": "Your message"
+        },
+        "error": {
+          "name_full": "Please enter your full name.",
+          "name_max": "Max 30 characters.",
+          "email_invalid": "Please enter a valid email.",
+          "subject_short": "Subject is too short.",
+          "subject_max": "Max 160 characters.",
+          "message_short": "Message should be at least 10 characters.",
+          "message_max": "Max 300 characters.",
+          "too_fast": "Please take a moment to complete the form.",
+          "fix_fields": "Please fix the highlighted fields.",
+          "server": "Server error. Please try again.",
+          "network": "Network error. Please try again.",
+          "captcha": "Captcha verification failed."
+        },
+        "success": "Thanks! We’ll get back to you shortly."
+      },
       // Footer
       "footer.rights": "All rights reserved.",
     },
@@ -171,7 +194,7 @@ const resources = {
       // Contact
       "contact.title": "Contacto",
       "contact.blurb": "¿Listo para impulsar tu negocio? Escríbenos para una consulta rápida, sin compromiso. ",
-      "contact.email.label": "Escribenos",
+      "contact.email.label": "Escríbenos",
       "contact.email.value": "Por favor usa el formulario para contactarnos.\nEn breve te responderemos.",
       "contact.location.label": "Ubicación",
       "contact.location.value": "Kyoto, Japon",
@@ -179,12 +202,35 @@ const resources = {
       "contact.hours.value": "Lunes – Viernes: 10AM – 7PM ",
 
       // Form
-      "form.name": "Nombre",
-      "form.email": "Correo",
-      "form.subject": "Asunto",
-      "form.message": "Mensaje",
-      "form.send": "Enviar",
-
+      "form": {
+        "send": "Enviar",
+        "sending": "Enviando…",
+        "name": "Nombre",
+        "email": "Correo",
+        "subject": "Asunto",
+        "message": "Mensaje",
+        "placeholder": {
+          "name": "Tu nombre",
+          "email": "Tu correo electrónico",
+          "subject": "Asunto",
+          "message": "Tu mensaje"
+        },
+        "error": {
+          "name_full": "Por favor, escribe tu nombre completo.",
+          "name_max": "Máximo 30 caracteres.",
+          "email_invalid": "Por favor, introduce un correo válido.",
+          "subject_short": "El asunto es demasiado corto.",
+          "subject_max": "Máximo 160 caracteres.",
+          "message_short": "El mensaje debe tener al menos 10 caracteres.",
+          "message_max": "Máximo 300 caracteres.",
+          "too_fast": "Tómate un momento para completar el formulario.",
+          "fix_fields": "Por favor corrige los campos marcados.",
+          "server": "Error del servidor. Intenta nuevamente.",
+          "network": "Error de red. Verifica tu conexión.",
+          "captcha": "Error al verificar el captcha."
+        },
+        "success": "¡Gracias! Te responderemos pronto."
+      },
       // Footer
       "footer.rights": "Todos los derechos reservados.",
     },
@@ -273,11 +319,35 @@ const resources = {
 
 
       // Form
-      "form.name": "お名前",
-      "form.email": "メール",
-      "form.subject": "件名",
-      "form.message": "メッセージ",
-      "form.send": "送信",
+      "form": {
+        "send": "送信",
+        "sending": "送信中…",
+        "name": "お名前",
+        "email": "メール",
+        "subject": "件名",
+        "message": "メッセージ",
+        "placeholder": {
+          "name": "お名前",
+          "email": "メールアドレス",
+          "subject": "件名",
+          "message": "メッセージ"
+        },
+        "error": {
+          "name_full": "氏名を正しく入力してください。",
+          "name_max": "30文字以内で入力してください。",
+          "email_invalid": "有効なメールアドレスを入力してください。",
+          "subject_short": "件名が短すぎます。",
+          "subject_max": "160文字以内で入力してください。",
+          "message_short": "メッセージは10文字以上入力してください。",
+          "message_max": "300文字以内で入力してください。",
+          "too_fast": "少し時間をかけてフォームを記入してください。",
+          "fix_fields": "赤い項目を修正してください。",
+          "server": "サーバーエラーが発生しました。もう一度お試しください。",
+          "network": "ネットワークエラーが発生しました。接続を確認してください。",
+          "captcha": "認証に失敗しました。"
+        },
+        "success": "ありがとうございます。追ってご連絡いたします。"
+      },
 
       // Footer
       "footer.rights": "無断転載を禁じます。",

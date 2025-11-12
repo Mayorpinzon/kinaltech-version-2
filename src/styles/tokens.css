@@ -25,6 +25,7 @@ html {
   --green-light: #83CE3F;
   --blue-light: #4EBCE5;
   --button-bg: #03108572;
+  --danger: #dc2626;
 
   /* alfas para fondos translúcidos */
   --surface-a-80: color-mix(in srgb, var(--surface) 80%, transparent);
