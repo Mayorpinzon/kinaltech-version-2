@@ -3,24 +3,32 @@ import { useTranslation } from "react-i18next";
 import Container from "../atoms/Container";
 import { H2, Lead } from "../atoms/Heading";
 import Button from "../atoms/Button";
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useReveal } from "../../hooks/useReveal";
 import { MailIcon, PinIcon, ClockIcon } from "../atoms/Icons";
 import { z } from "zod";
 
+
 declare global {
-  interface Window { turnstile?: any }
+  interface Window {
+    turnstile?: any;
+  }
 }
 
 /* ============================
    UI helpers
    ============================ */
 function InfoRow({
-  icon, title, subtitle,
-}: { icon: ReactNode; title: string; subtitle: string }) {
+  icon,
+  title,
+  subtitle,
+}: {
+  icon: ReactNode;
+  title: string;
+  subtitle: string;
+}) {
   return (
     <div className="flex items-center gap-5 rounded-app bg-transparent p-4">
-      {/* Decorative icon only (visual). */}
       <div
         className="inline-grid h-15 w-15 flex-none shrink-0 place-items-center rounded-2xl text-[--white] bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] shadow-soft"
         aria-hidden
@@ -36,15 +44,29 @@ function InfoRow({
 }
 
 /* ============================
-   UI validation (Zod)
+   Validation Schema (Zod + i18n)
    ============================ */
-const ContactSchema = z.object({
-  name: z.string().min(2, "Please enter your full name.").max(30, "Max 30 characters."),
-  email: z.string().email("Please enter a valid email.").max(160),
-  subject: z.string().min(2, "Subject is too short.").max(160, "Max 160 characters."),
-  message: z.string().min(10, "Message should be at least 10 characters.").max(300, "Max 300 characters."),
-});
-type ContactInput = z.infer<typeof ContactSchema>;
+function makeContactSchema(t: any) {
+  return z.object({
+    name: z
+      .string()
+      .min(2, t("form.error.name_full", "Please enter your full name."))
+      .max(30, t("form.error.name_max", "Max 30 characters.")),
+    email: z
+      .string()
+      .email(t("form.error.email_invalid", "Please enter a valid email."))
+      .max(160),
+    subject: z
+      .string()
+      .min(2, t("form.error.subject_short", "Subject is too short."))
+      .max(160, t("form.error.subject_max", "Max 160 characters.")),
+    message: z
+      .string()
+      .min(10, t("form.error.message_short", "Message should be at least 10 characters."))
+      .max(300, t("form.error.message_max", "Max 300 characters.")),
+  });
+}
+type ContactInput = z.infer<ReturnType<typeof makeContactSchema>>;
 
 function mapIssues(issues: z.ZodIssue[]) {
   const out: Record<string, string> = {};
@@ -55,17 +77,13 @@ function mapIssues(issues: z.ZodIssue[]) {
   return out;
 }
 
-/* Turnstile token (invisible).
-   - If no sitekey or script missing, returns "" (dev fallback).
-   - In prod the backend will require a valid token. */
+/* Turnstile token (invisible) */
 async function getTurnstileToken(sitekey?: string): Promise<string> {
-  if (!sitekey) return ""; // dev without captcha
-
+  if (!sitekey) return ""; // dev mode without captcha
   await new Promise<void>((resolve) => {
     const check = () => (window.turnstile ? resolve() : setTimeout(check, 40));
     check();
   });
-
   return await new Promise<string>((resolve, reject) => {
     try {
       window.turnstile.render("#cf-turnstile", {
@@ -83,14 +101,42 @@ async function getTurnstileToken(sitekey?: string): Promise<string> {
 }
 
 export default function Contact() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const formRef = useRef<HTMLFormElement | null>(null);
   useReveal();
+
+  const ContactSchema = makeContactSchema(t);
 
   const [ok, setOk] = useState("");
   const [error, setError] = useState("");
   const [sending, setSending] = useState(false);
   const [errs, setErrs] = useState<Record<string, string>>({});
-  const [ts] = useState(() => Date.now()); // timestamp used by simple anti-bot
+  const [ts] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (!Object.keys(errs).length) return;
+    if (!formRef.current) return;
+    const Schema = makeContactSchema(t);
+    const fd = new FormData(formRef.current);
+    const current = {
+      name: String(fd.get("name") || ""),
+      email: String(fd.get("email") || ""),
+      subject: String(fd.get("subject") || ""),
+      message: String(fd.get("message") || ""),
+    };
+    const parsed = Schema.safeParse(current);
+    if (!parsed.success) {
+      setErrs(
+        parsed.error.issues.reduce((acc, i) => {
+          const key = i.path.join(".");
+          if (key) acc[key] = i.message;
+          return acc;
+        }, {} as Record<string, string>)
+      );
+    } else {
+      setErrs({});
+    }
+  }, [i18n.language, t]);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -100,9 +146,8 @@ export default function Contact() {
     setOk("");
     setErrs({});
 
-    // anti-speed (2.5s)
     if (Date.now() - ts < 2500) {
-      setError("Please take a moment to complete the form.");
+      setError(t("form.error.too_fast", "Please take a moment to complete the form."));
       return;
     }
 
@@ -112,27 +157,19 @@ export default function Contact() {
       email: String(fd.get("email") || ""),
       subject: String(fd.get("subject") || ""),
       message: String(fd.get("message") || ""),
-      company: String(fd.get("company") || ""), // honeypot
+      company: String(fd.get("company") || ""),
       ts,
     };
 
-    // UI validation
-    const parsed = ContactSchema.safeParse({
-      name: data.name,
-      email: data.email,
-      subject: data.subject,
-      message: data.message,
-    } satisfies ContactInput);
-
+    const parsed = ContactSchema.safeParse(data as ContactInput);
     if (!parsed.success) {
       setErrs(mapIssues(parsed.error.issues));
-      setError("Please fix the highlighted fields.");
+      setError(t("form.error.fix_fields", "Please fix the highlighted fields."));
       return;
     }
 
-    // Honeypot: pretend OK and exit (do not send)
     if (data.company) {
-      setOk("Thanks! We’ll get back to you shortly.");
+      setOk(t("form.success", "Thanks! We’ll get back to you shortly."));
       form.reset();
       return;
     }
@@ -140,7 +177,6 @@ export default function Contact() {
     try {
       setSending(true);
 
-      // Turnstile (token if sitekey exists; empty in dev)
       const sitekey = import.meta.env.VITE_TURNSTILE_SITEKEY as string | undefined;
       const captchaToken = await getTurnstileToken(sitekey);
 
@@ -152,28 +188,29 @@ export default function Contact() {
 
       if (!res.ok) {
         let payload: any = {};
-        try { payload = await res.json(); } catch { }
+        try {
+          payload = await res.json();
+        } catch { }
         if (payload?.issues) {
           setErrs(Object.fromEntries(payload.issues.map((i: any) => [i.path, i.message])));
         }
         throw new Error(payload?.error || `HTTP ${res.status}`);
       }
 
-      try { await res.json(); } catch { }
-      setOk("Thanks! We’ll get back to you shortly.");
+      setOk(t("form.success", "Thanks! We’ll get back to you shortly."));
       setError("");
       form.reset();
     } catch (err: any) {
       console.error("Contact submit failed:", err);
       setOk("");
-      setError(err?.message || "Network error. Please try again.");
+      setError(err?.message || t("form.error.network", "Network error. Please try again."));
     } finally {
       setSending(false);
     }
   };
 
-  // Helper to build IDs for each field's error message
-  const errId = (field: "name" | "email" | "subject" | "message") => `field-${field}-error`;
+  const errId = (field: "name" | "email" | "subject" | "message") =>
+    `field-${field}-error`;
 
   return (
     <section
@@ -183,15 +220,14 @@ export default function Contact() {
       aria-describedby="contact-desc"
     >
       <Container>
-        {/* Heading */}
         <div className="text-center max-w-2xl mx-auto reveal">
           <H2 id="contact-title">{t("contact.title")}</H2>
-          <Lead id="contact-desc" className="mt-3">{t("contact.blurb")}</Lead>
+          <Lead id="contact-desc" className="mt-3">
+            {t("contact.blurb")}
+          </Lead>
         </div>
 
-        {/* Grid */}
         <div className="mt-12 grid gap-8 md:grid-cols-2 ">
-          {/* Left: contact info (static, easy to scan) */}
           <div className="space-y-4 reveal text-left" aria-label={t("contact.title")}>
             <InfoRow
               icon={<MailIcon />}
@@ -210,15 +246,16 @@ export default function Contact() {
             />
           </div>
 
-          {/* Right: form */}
           <form
+            ref={formRef}
             onSubmit={onSubmit}
             className="space-y-4 reveal"
             noValidate
             aria-describedby={error ? "form-error" : ok ? "form-success" : undefined}
           >
-            {/* Accessible honeypot (hidden off-screen) */}
-            <label htmlFor="company" className="sr-only">Company</label>
+            <label htmlFor="company" className="sr-only">
+              Company
+            </label>
             <input
               id="company"
               name="company"
@@ -228,10 +265,7 @@ export default function Contact() {
               className="absolute left-[-9999px] top-auto w-px h-px overflow-hidden"
             />
 
-            {/* client timestamp */}
             <input type="hidden" name="ts" value={ts} />
-
-            {/* Turnstile container (invisible) */}
             <div id="cf-turnstile" className="hidden" aria-hidden="true" />
 
             {(["name", "email", "subject", "message"] as const).map((field) => {
@@ -249,15 +283,14 @@ export default function Contact() {
                           : "Your message",
                 }) || undefined;
 
-              // shared input classes
               const common =
-                "w-full rounded-app border border-[var(--primary)] text-[--text] placeholder-[--muted] " +
-                "focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] ";
+                "w-full rounded-app border border-[var(--primary)] text-[--text] placeholder-[--muted] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)]";
 
-              // native autocomplete hints
               const auto =
-                field === "name" ? "name"
-                  : field === "email" ? "email"
+                field === "name"
+                  ? "name"
+                  : field === "email"
+                    ? "email"
                     : "off";
 
               const invalid = Boolean(errs[field]);
@@ -297,7 +330,11 @@ export default function Contact() {
                   )}
 
                   {errs[field] && (
-                    <p id={errId(field)} className="mt-1 text-sm text-[--danger]" role="alert">
+                    <p
+                      id={errId(field)}
+                      className="mt-1 text-sm text-[var(--danger)]"
+                      role="alert"
+                    >
                       {errs[field]}
                     </p>
                   )}
@@ -311,12 +348,11 @@ export default function Contact() {
               type="submit"
               className="mt-2 h-13 w-50 shadow-lg hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
               disabled={sending}
-              aria-label={sending ? "Sending…" : t("form.send")}
+              aria-label={sending ? t("form.sending") : t("form.send")}
             >
-              {sending ? "Sending..." : t("form.send")}
+              {sending ? t("form.sending", "Sending…") : t("form.send")}
             </Button>
 
-            {/* Live regions for form status */}
             {error && (
               <p id="form-error" role="alert" className="text-sm text-[--danger]">
                 {error}
@@ -334,4 +370,4 @@ export default function Contact() {
   );
 }
 
-export { Contact }
+export { Contact };
