@@ -355,7 +355,7 @@ const resources = {
   },
 } as const;
 
-// Idioma inicial: localStorage > navegador
+// Initial language: localStorage > browser language > default (en)
 const storedLng =
   typeof window !== "undefined" ? localStorage.getItem("lng") : null;
 const browserLng =
@@ -377,12 +377,11 @@ if (!i18n.isInitialized) {
     returnEmptyString: false,
   });
 };
-// Setear idioma inicial en <html lang="...">
-try { document.documentElement.lang = initialLng; } catch { }
+try { document.documentElement.lang = initialLng; } catch (e) { void e; }
 
 /** Persist language + set <html lang="..."> **/
 i18n.on("languageChanged", (lng) => {
-  try { localStorage.setItem("lng", lng); } catch { }
+  try { localStorage.setItem("lng", lng); } catch (e) { void e; }
   document.documentElement.lang = lng;
 });
 

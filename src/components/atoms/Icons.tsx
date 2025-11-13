@@ -1,7 +1,7 @@
+/* eslint-disable react-refresh/only-export-components */
+
 // src/components/atoms/Icons.tsx
-
 import { useId, type SVGProps } from "react";
-
 //       ----------- Services ----------
 // --- Web ---
 export const WebIcon = () => (
