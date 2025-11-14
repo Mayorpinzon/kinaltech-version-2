@@ -1,5 +1,6 @@
 // src/components/organisms/Contact.tsx
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import Container from "../atoms/Container";
 import { H2, Lead } from "../atoms/Heading";
 import Button from "../atoms/Button";
@@ -8,10 +9,22 @@ import { useReveal } from "../../hooks/useReveal";
 import { MailIcon, PinIcon, ClockIcon } from "../atoms/Icons";
 import { z } from "zod";
 
+type TurnstileRenderOptions = {
+  sitekey: string;
+  appearance?: "always" | "execute" | "interaction-only";
+  callback?: (token: string) => void;
+  "error-callback"?: () => void;
+  retry?: "auto" | "never";
+};
+
+type TurnstileInstance = {
+  render: (container: string, options: TurnstileRenderOptions) => unknown;
+  execute: (container: string) => void;
+};
 
 declare global {
   interface Window {
-    turnstile?: any;
+    turnstile?: TurnstileInstance;
   }
 }
 
@@ -46,7 +59,7 @@ function InfoRow({
 /* ============================
    Validation Schema (Zod + i18n)
    ============================ */
-function makeContactSchema(t: any) {
+function makeContactSchema(t: TFunction) {
   return z.object({
     name: z
       .string()
@@ -77,23 +90,38 @@ function mapIssues(issues: z.ZodIssue[]) {
   return out;
 }
 
+type Issue = { path: string; message: string };
+type ErrorPayload = {
+  error?: string;
+  issues?: Issue[];
+};
+
 /* Turnstile token (invisible) */
 async function getTurnstileToken(sitekey?: string): Promise<string> {
   if (!sitekey) return ""; // dev mode without captcha
+
   await new Promise<void>((resolve) => {
     const check = () => (window.turnstile ? resolve() : setTimeout(check, 40));
     check();
   });
+
   return await new Promise<string>((resolve, reject) => {
     try {
-      window.turnstile.render("#cf-turnstile", {
+      const turnstile = window.turnstile;
+
+      if (!turnstile) {
+        reject(new Error("Turnstile not loaded"));
+        return;
+      }
+
+      turnstile.render("#cf-turnstile", {
         sitekey,
         appearance: "execute",
         callback: (token: string) => resolve(token),
         "error-callback": () => reject(new Error("Captcha failed")),
         retry: "auto",
       });
-      window.turnstile.execute("#cf-turnstile");
+      turnstile.execute("#cf-turnstile");
     } catch (e) {
       reject(e);
     }
@@ -140,7 +168,7 @@ export default function Contact() {
     } else {
       setErrs({});
     }
-  }, [i18n.language, t]);
+  }, [i18n.language, t, errs]);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -172,6 +200,7 @@ export default function Contact() {
       return;
     }
 
+    // Honeypot
     if (data.company) {
       setOk(t("form.success", "Thanks! We’ll get back to you shortly."));
       form.reset();
@@ -191,23 +220,38 @@ export default function Contact() {
       });
 
       if (!res.ok) {
-        let payload: any = {};
+        let payload: unknown;
+
         try {
           payload = await res.json();
-        } catch { }
-        if (payload?.issues) {
-          setErrs(Object.fromEntries(payload.issues.map((i: any) => [i.path, i.message])));
+        } catch {
+          payload = undefined;
         }
-        throw new Error(payload?.error || `HTTP ${res.status}`);
+
+        const errorPayload = payload as ErrorPayload | undefined;
+
+        if (errorPayload?.issues) {
+          setErrs(
+            Object.fromEntries(errorPayload.issues.map((i) => [i.path, i.message]))
+          );
+        }
+
+        throw new Error(errorPayload?.error || `HTTP ${res.status}`);
       }
 
       setOk(t("form.success", "Thanks! We’ll get back to you shortly."));
       setError("");
       form.reset();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Contact submit failed:", err);
       setOk("");
-      setError(err?.message || t("form.error.network", "Network error. Please try again."));
+
+      const message =
+        err instanceof Error
+          ? err.message
+          : t("form.error.network", "Network error. Please try again.");
+
+      setError(message);
     } finally {
       setSending(false);
     }
@@ -290,7 +334,7 @@ export default function Contact() {
               const common =
                 "w-full rounded-app border border-[var(--primary)] text-[--text] placeholder-[--muted] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)]";
 
-              const auto =
+              const auto: "name" | "email" | "off" =
                 field === "name"
                   ? "name"
                   : field === "email"
@@ -323,7 +367,7 @@ export default function Contact() {
                       id={field}
                       name={field}
                       type={field === "email" ? "email" : "text"}
-                      autoComplete={auto as any}
+                      autoComplete={auto}
                       placeholder={ph}
                       className={`${common} h-12 px-4 glow-pulse`}
                       required
@@ -363,7 +407,11 @@ export default function Contact() {
               </p>
             )}
             {ok && (
-              <p id="form-success" aria-live="polite" className="text-sm text-[var(--green-light)]">
+              <p
+                id="form-success"
+                aria-live="polite"
+                className="text-sm text-[var(--green-light)]"
+              >
                 {ok}
               </p>
             )}

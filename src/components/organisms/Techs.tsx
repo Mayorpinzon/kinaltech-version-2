@@ -3,38 +3,39 @@ import { useTranslation } from "react-i18next";
 import Container from "../atoms/Container";
 import { H2, Lead } from "../atoms/Heading";
 import { useReveal } from "../../hooks/useReveal";
-import { useState, type ComponentType } from "react";
-
+import { useState, type ComponentType, type SVGProps } from "react";
 import {
   ReactIcon, NextIcon, VueIcon, RNIcon,
-  FlutterIcon, MySQLIcon, GraphQLIcon, ReduxIcon, NodeBadgeIcon, 
+  FlutterIcon, MySQLIcon, GraphQLIcon, ReduxIcon, NodeBadgeIcon,
   JavaScriptBrandIcon, TypeScriptBrandIcon, AngularIcon, PythonIcon,
   HTML5Icon, CSS3Icon
 } from "../atoms/Icons";
 
+type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
+
 type Tech = {
   id: string;
   nameKey: string;
-  color: string;              
-  Icon: ComponentType<any>;   
+  color: string;
+  Icon: IconComponent;
 };
 
 const TECHS: Tech[] = [
-  { id: "react",   nameKey: "tech.react",   color: "#61DAFB", Icon: ReactIcon },
-  { id: "next",    nameKey: "tech.next",    color: "#FFFFFF", Icon: NextIcon },
-  { id: "vue",     nameKey: "tech.vue",     color: "#42B883", Icon: VueIcon },
-  { id: "rn",      nameKey: "tech.rn",      color: "#61DAFB", Icon: RNIcon },
+  { id: "react", nameKey: "tech.react", color: "#61DAFB", Icon: ReactIcon },
+  { id: "next", nameKey: "tech.next", color: "#FFFFFF", Icon: NextIcon },
+  { id: "vue", nameKey: "tech.vue", color: "#42B883", Icon: VueIcon },
+  { id: "rn", nameKey: "tech.rn", color: "#61DAFB", Icon: RNIcon },
   { id: "flutter", nameKey: "tech.flutter", color: "#55C0F9", Icon: FlutterIcon },
-  { id: "mysql",   nameKey: "tech.mysql",   color: "#4479A1", Icon: MySQLIcon },
+  { id: "mysql", nameKey: "tech.mysql", color: "#4479A1", Icon: MySQLIcon },
   { id: "graphql", nameKey: "tech.graphql", color: "#E535AB", Icon: GraphQLIcon },
-  { id: "redux",   nameKey: "tech.redux",   color: "#764ABC", Icon: ReduxIcon },
-  { id: "nodeJs",  nameKey: "tech.nodeJs",  color: "#83CD29", Icon: NodeBadgeIcon },
-  { id: "javaScript",  nameKey: "tech.javaScript", color:"#000000", Icon: JavaScriptBrandIcon },
-  { id: "typeScript",  nameKey: "tech.typeScript", color:"#000000", Icon: TypeScriptBrandIcon },
-  { id: "python",  nameKey: "tech.python", color:"#ffffff", Icon: PythonIcon },
-  { id: "angular",  nameKey: "tech.angular", color:"#ffffff", Icon: AngularIcon },
-  { id: "html5",  nameKey: "tech.html5", color:"#ffffff", Icon: HTML5Icon },
-  { id: "css",  nameKey: "tech.css", color:"#ffffff", Icon: CSS3Icon },
+  { id: "redux", nameKey: "tech.redux", color: "#764ABC", Icon: ReduxIcon },
+  { id: "nodeJs", nameKey: "tech.nodeJs", color: "#83CD29", Icon: NodeBadgeIcon },
+  { id: "javaScript", nameKey: "tech.javaScript", color: "#000000", Icon: JavaScriptBrandIcon },
+  { id: "typeScript", nameKey: "tech.typeScript", color: "#000000", Icon: TypeScriptBrandIcon },
+  { id: "python", nameKey: "tech.python", color: "#ffffff", Icon: PythonIcon },
+  { id: "angular", nameKey: "tech.angular", color: "#ffffff", Icon: AngularIcon },
+  { id: "html5", nameKey: "tech.html5", color: "#ffffff", Icon: HTML5Icon },
+  { id: "css", nameKey: "tech.css", color: "#ffffff", Icon: CSS3Icon },
 ];
 
 function Chip({ tech }: { tech: Tech }) {
@@ -97,7 +98,7 @@ function Techs() {
         {/* Carrusel / pasarela superior (usa animations.css) */}
         <div className="mt-7 overflow-hidden mask-edges reveal  " aria-hidden="true">
           {/* Pista duplicada para loop continuo. Claves únicas con índice. */}
-          <div className="inline-flex h-17 items-center gap-4 animate-slide"> 
+          <div className="inline-flex h-17 items-center gap-4 animate-slide">
             {[...TECHS, ...TECHS].map((tech, i) => (
               <Chip key={`${tech.id}-${i}`} tech={tech} />
             ))}
