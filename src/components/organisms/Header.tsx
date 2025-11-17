@@ -57,7 +57,7 @@ export default function Header() {
     <>
       {/* Accessible skip link (keyboard users can jump directly to content) */}
       <a
-        href="#main"
+        href="#content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60]
                    focus:bg-[var(--surface)] focus:text-[var(--text)]
                    focus:px-3 focus:py-2 focus:rounded-md focus:shadow-soft"
