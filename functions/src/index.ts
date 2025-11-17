@@ -2,10 +2,17 @@
 import * as functions from "firebase-functions";
 import type { Request, Response } from "express";
 import { z } from "zod";
+import * as admin from "firebase-admin";
+import sgMail from "@sendgrid/mail";
 
-// --- Config / Secrets --------------------------------------------------------
-// Expect TURNSTILE_SECRET to be set via env/secrets in Functions (never in client).
-const TURNSTILE_SECRET = process.env.TURNSTILE_SECRET ?? "";
+// --- Runtime config (Spark-friendly) -----------------------------------------
+// Set these with: firebase functions:config:set ...
+const runtimeConfig = functions.config();
+
+const TURNSTILE_SECRET: string = runtimeConfig.turnstile?.secret ?? "";
+const SENDGRID_API_KEY: string = runtimeConfig.sendgrid?.key ?? "";
+const CONTACT_TO: string = runtimeConfig.contact?.to ?? "";
+const CONTACT_FROM: string = runtimeConfig.contact?.from ?? "";
 
 // Allowed origins for CORS (adjust to your domains or keep '*' during testing)
 const ALLOWED_ORIGINS = new Set<string>([
@@ -13,6 +20,19 @@ const ALLOWED_ORIGINS = new Set<string>([
   "http://127.0.0.1:5173",
   // "https://your-domain.com",
 ]);
+
+// --- Firebase Admin (Firestore) ----------------------------------------------
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
+const db = admin.firestore();
+
+// --- SendGrid setup ----------------------------------------------------------
+if (SENDGRID_API_KEY) {
+  sgMail.setApiKey(SENDGRID_API_KEY);
+} else {
+  functions.logger.warn("SENDGRID_API_KEY is not set; emails will not be sent.");
+}
 
 // --- Utilities ---------------------------------------------------------------
 
@@ -83,7 +103,7 @@ type ErrorBody = { error: string; issues?: Issue[] };
 async function verifyTurnstile(token: string, ip: string | undefined): Promise<boolean> {
   if (!TURNSTILE_SECRET) {
     // In dev, skip verification but stay explicit
-    return false; // force backend to fail if you want strict; set to true to bypass in dev
+    return false; // set to true to bypass in dev if needed
   }
   try {
     const resp = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
@@ -100,6 +120,61 @@ async function verifyTurnstile(token: string, ip: string | undefined): Promise<b
   } catch {
     return false;
   }
+}
+
+// --- Persistence + Email helpers --------------------------------------------
+
+async function saveContactToFirestore(clean: ContactPayload): Promise<void> {
+  const doc = {
+    ...clean,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
+  await db.collection("contactMessages").add(doc);
+}
+
+async function sendContactEmail(clean: ContactPayload): Promise<void> {
+  if (!SENDGRID_API_KEY || !CONTACT_TO || !CONTACT_FROM) {
+    functions.logger.warn(
+      "Email config incomplete (SENDGRID_API_KEY / contact.to / contact.from). Skipping email send."
+    );
+    return;
+  }
+
+  const recipients = CONTACT_TO.split(",").map((e) => e.trim()).filter(Boolean);
+
+  if (!recipients.length) {
+    functions.logger.warn("CONTACT_TO is empty after parsing. Skipping email send.");
+    return;
+  }
+
+  const safeName = sanitizeText(clean.name, 60) || "No name";
+  const safeSubject =
+    sanitizeText(clean.subject, 160) || "New contact form message (no subject)";
+  const preview = sanitizeText(clean.message, 200);
+
+  const msg = {
+    to: recipients,
+    from: CONTACT_FROM,
+    subject: `New contact form message: ${safeSubject}`,
+    text:
+      `You have received a new contact form submission:\n\n` +
+      `Name: ${safeName}\n` +
+      `Email: ${clean.email}\n` +
+      `Subject: ${safeSubject}\n\n` +
+      `Message:\n${clean.message}\n\n`,
+    html:
+      `<p>You have received a new contact form submission:</p>` +
+      `<p><strong>Name:</strong> ${safeName}</p>` +
+      `<p><strong>Email:</strong> ${clean.email}</p>` +
+      `<p><strong>Subject:</strong> ${safeSubject}</p>` +
+      `<p><strong>Message:</strong></p>` +
+      `<pre style="white-space:pre-wrap;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">${clean.message}</pre>` +
+      `<hr />` +
+      `<p>Preview:</p>` +
+      `<p>${preview}</p>`,
+  };
+
+  await sgMail.send(msg);
 }
 
 // --- Main handler ------------------------------------------------------------
@@ -174,26 +249,26 @@ export const contact = functions.https.onRequest(async (req: Request, res: Respo
     subject: sanitizeText(body.subject, 180),
     message: sanitizeText(body.message, 1000),
   };
-  console.log("contact payload", {  
+  console.log("contact payload", {
     name: clean.name,
     email: clean.email,
     subject: clean.subject,
     msgLen: clean.message.length,
   });
 
-  // TODO: persist or dispatch (email, database, queue). Keep types strict.
-  // Example placeholder (no empty blocks):
   try {
-    // await sendEmail(clean)
-    // await db.save(clean)
-} catch (e) {
-  functions.logger.error("contact handler failed", e);
+    await Promise.all([
+      saveContactToFirestore(clean),
+      sendContactEmail(clean),
+    ]);
+  } catch (e) {
+    functions.logger.error("contact handler failed", e);
 
-  res.status(500).json({
-    error: "Server error. Please try again later.",
-  } satisfies ErrorBody);
-  return;
-}
+    res.status(500).json({
+      error: "Server error. Please try again later.",
+    } satisfies ErrorBody);
+    return;
+  }
 
   res.status(200).json({ ok: true });
 });
