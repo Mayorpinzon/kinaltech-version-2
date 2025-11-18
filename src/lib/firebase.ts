@@ -1,5 +1,6 @@
 // src/lib/firebase.ts
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp, getApp, getApps } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string,
@@ -11,4 +12,7 @@ const firebaseConfig = {
 };
 
 // Evita re-inicializar si ya existe
-export const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
+// Firestore para guardar los mensajes de contacto
+export const db = getFirestore(app);

@@ -8,6 +8,8 @@ import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "rea
 import { useReveal } from "../../hooks/useReveal";
 import { MailIcon, PinIcon, ClockIcon } from "../atoms/Icons";
 import { z } from "zod";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 
 type TurnstileRenderOptions = {
   sitekey: string;
@@ -90,13 +92,7 @@ function mapIssues(issues: z.ZodIssue[]) {
   return out;
 }
 
-type Issue = { path: string; message: string };
-type ErrorPayload = {
-  error?: string;
-  issues?: Issue[];
-};
-
-/* Turnstile token (invisible) */
+/* Turnstile token helper (kept for future backend use) */
 async function getTurnstileToken(sitekey?: string): Promise<string> {
   if (!sitekey) return ""; // dev mode without captcha
 
@@ -200,7 +196,7 @@ export default function Contact() {
       return;
     }
 
-    // Honeypot
+    // Honeypot: si el bot llena "company", simulamos éxito pero no guardamos nada
     if (data.company) {
       setOk(t("form.success", "Thanks! We’ll get back to you shortly."));
       form.reset();
@@ -210,34 +206,26 @@ export default function Contact() {
     try {
       setSending(true);
 
+      // Intentar usar Turnstile si está configurado (no es obligatorio para guardar en Firestore)
       const sitekey = import.meta.env.VITE_TURNSTILE_SITEKEY as string | undefined;
-      const captchaToken = await getTurnstileToken(sitekey);
-
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, captcha: captchaToken }),
-      });
-
-      if (!res.ok) {
-        let payload: unknown;
-
+      if (sitekey) {
         try {
-          payload = await res.json();
-        } catch {
-          payload = undefined;
+          await getTurnstileToken(sitekey);
+        } catch (err) {
+          console.warn("Turnstile skipped:", err);
         }
-
-        const errorPayload = payload as ErrorPayload | undefined;
-
-        if (errorPayload?.issues) {
-          setErrs(
-            Object.fromEntries(errorPayload.issues.map((i) => [i.path, i.message]))
-          );
-        }
-
-        throw new Error(errorPayload?.error || `HTTP ${res.status}`);
       }
+
+      // Guardar el mensaje en Firestore (sin Cloud Functions)
+      await addDoc(collection(db, "contactMessages"), {
+        name: data.name,
+        email: data.email,
+        subject: data.subject,
+        message: data.message,
+        ts: data.ts,
+        createdAt: serverTimestamp(),
+        lang: i18n.language,
+      });
 
       setOk(t("form.success", "Thanks! We’ll get back to you shortly."));
       setError("");
