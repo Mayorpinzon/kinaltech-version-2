@@ -1,0 +1,20 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Mensajes enviados desde el formulario de contacto
+    match /contactMessages/{docId} {
+      // Permitir solo escritura (create) desde el frontend
+      allow create: if true;
+
+      // No permitir lecturas, actualizaciones ni borrados desde el cliente
+      allow read, update, delete: if false;
+    }
+
+    // Denegar todo lo demás por defecto
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
