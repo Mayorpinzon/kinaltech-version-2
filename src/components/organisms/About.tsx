@@ -1,9 +1,34 @@
 // src/components/organisms/About.tsx
 import { useTranslation } from "react-i18next";
 import Container from "../atoms/Container";
-import { H2 } from "../atoms/Heading";
+import { H2, Lead } from "../atoms/Heading";
 import Button from "../atoms/Button";
 import { useReveal } from "../../hooks/useReveal";
+
+type TeamMember = {
+  id: string;
+  avatar: string;
+  nameKey: string;
+  roleKey: string;
+  bioKey: string;
+};
+
+const TEAM_MEMBERS: TeamMember[] = [
+  {
+    id: "dev1",
+    avatar: "/KinalGabAzul.png",
+    nameKey: "about.team.dev1.name",
+    roleKey: "about.team.dev1.role",
+    bioKey: "about.team.dev1.bio",
+  },
+  {
+    id: "dev2",
+    avatar: "/KinalMarConverse.png",
+    nameKey: "about.team.dev2.name",
+    roleKey: "about.team.dev2.role",
+    bioKey: "about.team.dev2.bio",
+  },
+];
 
 export function About() {
   const { t } = useTranslation();
@@ -19,7 +44,17 @@ export function About() {
       aria-labelledby="about-title"
       aria-describedby="about-desc"
     >
-      <Container className="grid gap-10 md:grid-cols-2 items-center">
+      <Container className="max-w-2xl mx-auto text-[var(--text)] text-center mb-20 reveal">
+        <H2>{t("about.sectionTitle")}</H2>
+        <Lead className="mt-3">
+          {t(
+            "about.sectionLead",
+          )}
+        </Lead>
+      </Container>
+
+      {/* Bloque 1: KinalTech overview */}
+      <Container className="grid gap-10 md:grid-cols-2 items-center mb-28">
         {/* Text column */}
         <div className="text-[var(--text)]">
           {/* Section heading used as label for the landmark */}
@@ -37,7 +72,9 @@ export function About() {
             variant="outline"
             movingBorder
             aria-label={t("about.cta_aria", { defaultValue: t("about.cta") })}
-            onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() =>
+              document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })
+            }
             className="mt-5 shadow-lg hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
           >
             {t("about.cta")}
@@ -56,11 +93,51 @@ export function About() {
             width={1280}
             height={720}
           />
-          {caption && (
-            <figcaption className="sr-only">{caption}</figcaption>
-          )}
+          {caption && <figcaption className="sr-only">{caption}</figcaption>}
         </figure>
+      </Container>
+
+      {/* Bloque 2: Team / Developers */}
+      <Container className="mt-16">
+        <div className="max-w-3xl mx-auto text-center reveal">
+          <H2 className="text-[var(--text)] " id="about-team-title">{t("about.team.title", "About us")}</H2>
+          <Lead className="mt-3">
+            {t(
+              "about.team.lead"
+            )}
+          </Lead>
+        </div>
+
+        <div className="mt-10 grid gap-10 sm:grid-cols-1 lg:grid-cols-2">
+          {TEAM_MEMBERS.map((member) => (
+            <article
+              key={member.id}
+              className="reveal flex flex-col items-center text-center rounded-app border border-[var(--border)] bg-card/60 px-6 py-7 shadow-soft backdrop-blur-sm  shadow-lg hover:border-[var(--primary)] hover:shadow-md
+        transition-colors glow-pulse"
+            >
+              <div className="h-40 w-25 rounded-full overflow-hidden border border-[var(--primary)] bg-[var(--surface)] shadow-soft mb-4">
+                <img
+                  src={member.avatar}
+                  alt={t(member.nameKey)}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <h3 className="text-base font-semibold text-[var(--text)] text-aline-justify">
+                {t(member.nameKey)}
+              </h3>
+              <p className="mt-1 text-xs uppercase tracking-wide text-[var(--muted)]">
+                {t(member.roleKey)}
+              </p>
+              <p className="mt-3 text-sm text-[var(--muted)]" style={{ textAlign: "justify" }}>
+                {t(member.bioKey)}
+              </p>
+            </article>
+          ))}
+        </div>
       </Container>
     </section>
   );
 }
+

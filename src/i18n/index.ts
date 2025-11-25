@@ -64,6 +64,8 @@ const resources = {
       "tech.css": "CSS3",
 
       // About
+      "about.sectionTitle": "About us",
+      "about.sectionLead": "Discover who we are and the passionate team driving KinalTech forward.",
       "about.title": "About KinalTech",
       "about.p1":
         "KinalTech blends precision with imagination. We’re a frontend team that turns ideas into efficient, scalable, high-performance products.",
@@ -72,6 +74,14 @@ const resources = {
       "about.p3":
         "Beyond code, we craft experiences that run in harmony—clear, dependable, and built to keep evolving.",
       "about.cta": "Start Your Project",
+      "about.team.title": "Our team:",
+      "about.team.lead": "Meet the developers behind KinalTech and the minds that bring each project to life.",
+      "about.team.dev1.name": "Gabriel",
+      "about.team.dev2.name": "Mario Alberto",
+      "about.team.dev1.role": "AI/Frontend developer..",
+      "about.team.dev2.role": "Frontend developer.",
+      "about.team.dev1.bio": "... (Texto pendiente por escribir)",
+      "about.team.dev2.bio": "Self-taught developer with experience in frontend web development. Focused on creating clear, accessible, and efficient user interfaces. His background in business allows him to better understand client needs and transform them into result-driven digital solutions.",
 
       // Contact
       "contact.title": "Contact",
@@ -183,6 +193,8 @@ const resources = {
 
 
       // About
+      "about.sectionTitle": "Sobre nosotros",
+      "about.sectionLead": "Descubre quiénes somos y el equipo apasionado que impulsa KinalTech.",
       "about.title": "Sobre KinalTech",
       "about.p1":
         "En KinalTech creemos que la precisión y la creatividad pueden convivir. Somos un equipo de desarrolladores frontend comprometidos con crear soluciones eficientes, escalables y de alto rendimiento que transforman la manera en que las personas interactúan con la tecnología.",
@@ -191,6 +203,15 @@ const resources = {
       "about.p3":
         "Más que escribir código, construimos experiencias digitales que funcionan con la misma armonía que un sistema bien diseñado: claras, estables y en constante evolución.",
       "about.cta": "Inicia tu proyecto",
+      "about.team.title": "Nuestro equipo:",
+      "about.team.lead": "Conoce a los desarrolladores detrás de KinalTech y a las mentes que dan vida a cada proyecto.",
+      "about.team.dev1.name": "Gabriel",
+      "about.team.dev2.name": "Mario Alberto",
+      "about.team.dev1.role": "Desarrollador de IA y Frontend.",
+      "about.team.dev2.role": "Desarrollador Frontend.",
+      "about.team.dev1.bio": "... (Texto pendiente por escribir)",
+      "about.team.dev2.bio": "Desarrollador autodidacta con experiencia en desarrollo web frontend. Enfocado en crear interfaces claras, accesibles y eficientes. Su formación en negocios le permite comprender mejor las necesidades del cliente y transformarlas en soluciones digitales orientadas a resultados.",
+
       // Contact
       "contact.title": "Contacto",
       "contact.blurb": "¿Listo para impulsar tu negocio? Escríbenos para una consulta rápida, sin compromiso. ",
@@ -298,6 +319,8 @@ const resources = {
       "tech.css": "CSS3",
 
       // About
+      "about.sectionTitle": "私たちについて",
+      "about.sectionLead": "KinalTech を支える開発者たちと、各プロジェクトに命を吹き込むメンバーをご紹介します。",
       "about.title": "KinalTech について",
       "about.p1":
         "KinalTech は精度と創造性が共存できると信じています。私たちは効率的でスケーラブル、かつ高性能なソリューションを提供し、人々がテクノロジーと関わる方法を変えることを目指すフロントエンド開発チームです。",
@@ -306,6 +329,14 @@ const resources = {
       "about.p3":
         "単なるコード以上のものを作ります。明快で安定し、常に進化し続けるデジタル体験——それが私たちの目指す形です。",
       "about.cta": "プロジェクトを始める",
+      "about.team.title": "私たちのチーム:",
+      "about.team.lead": "KinalTech を支える開発者たちと、各プロジェクトに命を吹き込むメンバーをご紹介します。",
+      "about.team.dev1.name": "ガブリエル",
+      "about.team.dev2.name": "マリオ アルベルト",
+      "about.team.dev1.role": "AI／フロントエンド開発者。",
+      "about.team.dev2.role": "フロントエンド開発者。",
+      "about.team.dev1.bio": "…（テキストは後で追加されます）",
+      "about.team.dev2.bio": "独学でスキルを身につけ、フロントエンドWeb開発の経験を持つ開発者。分かりやすく、アクセシブルで、効率的なインターフェースの構築に注力している。ビジネス分野での知識を活かし、クライアントのニーズを深く理解し、それを成果につながるデジタルソリューションへと結び付けている。",
 
       // Contact
       "contact.title": "お問い合わせ",
