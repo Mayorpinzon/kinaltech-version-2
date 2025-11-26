@@ -80,7 +80,7 @@ const resources = {
       "about.team.dev2.name": "Mario Alberto",
       "about.team.dev1.role": "AI/Frontend developer..",
       "about.team.dev2.role": "Frontend developer.",
-      "about.team.dev1.bio": "... (Texto pendiente por escribir)",
+      "about.team.dev1.bio": "Machine learning specialist with several years of experience leading technical initiatives and managing development teams. Oversees a team of developers, implementing efficient pipelines, strong version-control practices, and collaborative workflows. His approach combines technical vision, solid organization, and an excellent ability to identify issues and propose effective solutions.",
       "about.team.dev2.bio": "Self-taught developer with experience in frontend web development. Focused on creating clear, accessible, and efficient user interfaces. His background in business allows him to better understand client needs and transform them into result-driven digital solutions.",
 
       // Contact
@@ -209,7 +209,7 @@ const resources = {
       "about.team.dev2.name": "Mario Alberto",
       "about.team.dev1.role": "Desarrollador de IA y Frontend.",
       "about.team.dev2.role": "Desarrollador Frontend.",
-      "about.team.dev1.bio": "... (Texto pendiente por escribir)",
+      "about.team.dev1.bio": "Especialista en machine learning con varios años liderando iniciativas técnicas y gestionando equipos de desarrollo. Dirige un equipo de developers, implementando pipelines eficientes, buenas prácticas de control de versiones y flujos colaborativos. Su enfoque combina visión técnica, organización y una excelente capacidad para identificar errores y proponer soluciones.",
       "about.team.dev2.bio": "Desarrollador autodidacta con experiencia en desarrollo web frontend. Enfocado en crear interfaces claras, accesibles y eficientes. Su formación en negocios le permite comprender mejor las necesidades del cliente y transformarlas en soluciones digitales orientadas a resultados.",
 
       // Contact
@@ -335,7 +335,7 @@ const resources = {
       "about.team.dev2.name": "マリオ アルベルト",
       "about.team.dev1.role": "AI／フロントエンド開発者。",
       "about.team.dev2.role": "フロントエンド開発者。",
-      "about.team.dev1.bio": "…（テキストは後で追加されます）",
+      "about.team.dev1.bio": "機械学習のスペシャリストとして、複数年にわたり技術的な取り組みをリードし、開発チームをマネジメントしてきたエンジニア。開発者チームを指揮し、効率的なパイプライン、適切なバージョン管理、そして協調的なワークフローを構築・運用している。技術的な視点と組織力に加え、問題を的確に見極めて効果的な解決策を提案する優れた能力を持つ。",
       "about.team.dev2.bio": "独学でスキルを身につけ、フロントエンドWeb開発の経験を持つ開発者。分かりやすく、アクセシブルで、効率的なインターフェースの構築に注力している。ビジネス分野での知識を活かし、クライアントのニーズを深く理解し、それを成果につながるデジタルソリューションへと結び付けている。",
 
       // Contact
