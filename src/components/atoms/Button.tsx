@@ -10,7 +10,7 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
   loading?: boolean;
 };
 
-export default function Button({
+export function Button({
   children,
   className = "",
   variant = "solid",

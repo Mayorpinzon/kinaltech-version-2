@@ -1,7 +1,6 @@
 // src/components/organisms/Techs.tsx
 import { useTranslation } from "react-i18next";
-import Container from "../atoms/Container";
-import { H2, Lead } from "../atoms/Heading";
+import { Container, H2, Lead } from "../atoms";
 import { useReveal } from "../../hooks/useReveal";
 import { useState, type ComponentType, type SVGProps } from "react";
 import {
@@ -9,7 +8,7 @@ import {
   FlutterIcon, MySQLIcon, GraphQLIcon, ReduxIcon, NodeBadgeIcon,
   JavaScriptBrandIcon, TypeScriptBrandIcon, AngularIcon, PythonIcon,
   HTML5Icon, CSS3Icon
-} from "../atoms/Icons";
+} from "../atoms";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -119,4 +118,3 @@ function Techs() {
 }
 
 export default Techs;
-export { Techs };

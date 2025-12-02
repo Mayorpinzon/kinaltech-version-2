@@ -1,9 +1,8 @@
 // src/components/organisms/Footer.tsx
-import Container from "../atoms/Container";
+import { Container, KinalTechLogo } from "../atoms";
 import { useTranslation } from "react-i18next";
-import { KinalTechLogo } from "../atoms/Icons";
 
-export function Footer() {
+export default function Footer() {
   const { t } = useTranslation();
   const y = new Date().getFullYear();
 

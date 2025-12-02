@@ -1,6 +1,6 @@
 // src/App.tsx
 import "./i18n";
-import Home from "./components/pages/Home";
+import { Home } from "./components/pages";
 import { useScrolledAttr } from "./hooks/useScrolledAttr";
 
 export default function App() {

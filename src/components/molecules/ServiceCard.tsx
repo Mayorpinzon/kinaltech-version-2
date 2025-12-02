@@ -1,7 +1,7 @@
 // src/components/molecules/ServiceCard.tsx
 import type { ReactNode, CSSProperties } from "react";
 
-export default function ServiceCard({
+export function ServiceCard({
   icon,
   title,
   children,

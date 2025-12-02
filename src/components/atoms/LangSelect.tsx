@@ -128,5 +128,3 @@ export function LangSelect({ size = "md" }: Props) {
     </div>
   );
 }
-
-export default LangSelect;

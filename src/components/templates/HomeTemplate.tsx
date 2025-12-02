@@ -1,11 +1,5 @@
 //src/components/templates/HomeTemplate.tsx
-import Header from '../organisms/Header';
-import Hero from '../organisms/Hero';
-import Services from '../organisms/Services';
-import { Techs } from '../organisms/Techs';
-import { About } from '../organisms/About';
-import { Contact } from '../organisms/Contact';
-import { Footer } from '../organisms/Footer';
+import { Header, Hero, Services, Techs, About, Contact, Footer } from '../organisms';
 
 export default function HomeTemplate() {
   return (

@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Nav } from "../molecules/Nav";
-import { ThemeToggle } from "../atoms/ThemeToggle";
-import { LangSelect } from "../atoms/LangSelect";
-import { KinalTechLogo } from "../atoms/Icons";
+import { Nav } from "../molecules";
+import { ThemeToggle, LangSelect, KinalTechLogo } from "../atoms";
 
 export default function Header() {
   const { t } = useTranslation();
