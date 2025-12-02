@@ -84,7 +84,7 @@ export function LangSelect({ size = "md" }: Props) {
           </g>
         </svg>
 
-        <span className="font-medium max-[430px]:hidden">{label[current]}</span>
+        <span className="font-medium max-[450px]:hidden">{label[current]}</span>
 
         <svg
           width="16"
