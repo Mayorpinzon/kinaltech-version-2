@@ -1,8 +1,6 @@
 // src/components/organisms/Hero.tsx
 import { useTranslation } from "react-i18next";
-import Container from "../atoms/Container";
-import { H1, Lead } from "../atoms/Heading";
-import Button from "../atoms/Button";
+import { Container, H1, Lead, Button } from "../atoms";
 import { useReveal } from "../../hooks/useReveal";
 import { useEffect, useState } from "react";
 

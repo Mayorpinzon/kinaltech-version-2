@@ -1,7 +1,6 @@
 import { useTranslation } from "react-i18next";
-import Container from "../atoms/Container";
-import { H2, Lead } from "../atoms/Heading";
-import ServiceCard from "../molecules/ServiceCard";
+import { Container, H2, Lead } from "../atoms";
+import { ServiceCard } from "../molecules";
 import { useReveal } from "../../hooks/useReveal";
 import {
   WebIcon,
@@ -9,7 +8,7 @@ import {
   UIUXIcon,
   IA_Icon,
   TeamworkIcon,
-} from "../atoms/Icons";
+} from "../atoms";
 
 export default function Services() {
   const { t } = useTranslation();

@@ -12,7 +12,7 @@ type BaseProps = {
   className?: string;
 } & HTMLAttributes<HTMLElement>;
 
-const Container = forwardRef<HTMLElement, BaseProps>(function Container(
+export const Container = forwardRef<HTMLElement, BaseProps>(function Container(
   { as: Tag = "div", children, className = "", ...rest },
   ref
 ) {
@@ -26,5 +26,3 @@ const Container = forwardRef<HTMLElement, BaseProps>(function Container(
     </Tag>
   );
 });
-
-export default Container;

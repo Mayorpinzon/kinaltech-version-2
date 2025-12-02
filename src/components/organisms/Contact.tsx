@@ -1,12 +1,9 @@
 // src/components/organisms/Contact.tsx
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
-import Container from "../atoms/Container";
-import { H2, Lead } from "../atoms/Heading";
-import Button from "../atoms/Button";
+import { Container, H2, Lead, Button, MailIcon, PinIcon, ClockIcon } from "../atoms";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useReveal } from "../../hooks/useReveal";
-import { MailIcon, PinIcon, ClockIcon } from "../atoms/Icons";
 import { z } from "zod";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../lib/firebase";
@@ -409,5 +406,3 @@ export default function Contact() {
     </section>
   );
 }
-
-export { Contact };

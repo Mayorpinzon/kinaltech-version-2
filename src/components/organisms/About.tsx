@@ -1,8 +1,6 @@
 // src/components/organisms/About.tsx
 import { useTranslation } from "react-i18next";
-import Container from "../atoms/Container";
-import { H2, Lead } from "../atoms/Heading";
-import Button from "../atoms/Button";
+import { Container, H2, Lead, Button } from "../atoms";
 import { useReveal } from "../../hooks/useReveal";
 
 type TeamMember = {
@@ -30,7 +28,7 @@ const TEAM_MEMBERS: TeamMember[] = [
   },
 ];
 
-export function About() {
+export default function About() {
   const { t } = useTranslation();
   useReveal();
 
