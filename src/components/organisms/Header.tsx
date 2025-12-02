@@ -86,7 +86,7 @@ export default function Header() {
                          focus:outline-none focus-visible:ring-2
                          focus-visible:ring-[--accent] rounded-md"
             >
-              <KinalTechLogo className="h-13 w-auto md:h-13 max-[420px]:h-8" aria-hidden />
+              <KinalTechLogo className="h-8 w-auto sm:h-13" aria-hidden />
               <span className="sr-only">KinalTech</span>
             </a>
 

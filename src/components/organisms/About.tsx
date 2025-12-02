@@ -80,7 +80,7 @@ export default function About() {
         </div>
 
         {/* Visual column */}
-        <figure className="reveal rounded-app overflow-hidden shadow-soft aspect-video bg-card h-full">
+        <figure className="reveal rounded-app overflow-hidden shadow-soft aspect-video bg-card h-full max-w-full">
           <img
             className="w-full h-full object-cover"
             src="/AboutStructure.JPG"
