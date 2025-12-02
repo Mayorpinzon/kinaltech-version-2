@@ -43,7 +43,7 @@ function InfoRow({
   subtitle: string;
 }) {
   return (
-    <div className="flex items-center gap-5 rounded-app bg-transparent p-4">
+    <div className="flex items-start gap-5 rounded-app bg-transparent p-4">
       <div
         className="inline-grid h-15 w-15 flex-none shrink-0 place-items-center rounded-2xl text-[--white] bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] shadow-soft"
         aria-hidden
