@@ -1,6 +1,7 @@
 // src/components/atoms/ThemeToggle.tsx
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { ANIMATION_DURATIONS } from "../../constants/animations";
 
 type Props = { size?: "sm" | "md" };
 
@@ -43,7 +44,7 @@ export function ThemeToggle({ size = "md" }: Props) {
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     if (reduce) return;
     setAnim(true);
-    window.setTimeout(() => setAnim(false), 320);
+    window.setTimeout(() => setAnim(false), ANIMATION_DURATIONS.THEME_TOGGLE);
   }, []);
 
   const btnBase =

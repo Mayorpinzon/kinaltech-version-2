@@ -59,16 +59,16 @@ body.dark {
 /* Button shadow easing kept; only property + duration tuned */
 .btn-shadow-slow {
   transition-property: box-shadow;
-  transition-duration: 1.22s;
-  transition-timing-function: cubic-bezier(.2, .8, .2, 1);
+  transition-duration: var(--anim-duration-slow);
+  transition-timing-function: var(--anim-ease-base);
 }
 
 /* Respect reduced motion globally (caps long animations/transforms) */
 @media (prefers-reduced-motion: reduce) {
   * {
-    animation-duration: 0.01ms !important;
+    animation-duration: var(--anim-duration-reduced) !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    transition-duration: var(--anim-duration-reduced) !important;
     scroll-behavior: auto !important;
   }
 }

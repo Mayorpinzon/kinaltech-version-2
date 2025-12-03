@@ -9,6 +9,7 @@ import {
   IA_Icon,
   TeamworkIcon,
 } from "../atoms";
+import { getStaggeredDelay } from "../../constants/animations";
 
 export default function Services() {
   const { t } = useTranslation();
@@ -21,35 +22,30 @@ export default function Services() {
       icon: <WebIcon aria-hidden="true" />,
       title: t("services.items.web.title"),
       text: t("services.items.web.text"),
-      delay: "0ms",
     },
     {
       id: "mobile",
       icon: <MobileIcon aria-hidden="true" />,
       title: t("services.items.mobile.title"),
       text: t("services.items.mobile.text"),
-      delay: "160ms",
     },
     {
       id: "uiux",
       icon: <UIUXIcon aria-hidden="true" />,
       title: t("services.items.ui.title"),
       text: t("services.items.ui.text"),
-      delay: "180ms",
     },
     {
       id: "ia",
       icon: <IA_Icon aria-hidden="true" />,
       title: t("services.items.ia.title"),
       text: t("services.items.ia.text"),
-      delay: "200ms",
     },
     {
       id: "phi",
       icon: <TeamworkIcon aria-hidden="true" />,
       title: t("services.items.phi.title"),
       text: t("services.items.phi.text"),
-      delay: "220ms",
     },
   ];
 
@@ -77,7 +73,7 @@ export default function Services() {
           role="list"
           aria-label={t("services.title")}
         >
-          {services.map(({ id, icon, title, text, delay }) => (
+          {services.map(({ id, icon, title, text }, index) => (
             <li
               key={id}
               className="col-span-12 sm:col-span-6 lg:col-span-4"
@@ -85,7 +81,7 @@ export default function Services() {
             >
               <ServiceCard
                 className="reveal"
-                style={{ transitionDelay: delay }}
+                style={{ transitionDelay: getStaggeredDelay(index) }}
                 icon={icon}
                 title={<span id={`service-${id}-title`}>{title}</span>}
               >
