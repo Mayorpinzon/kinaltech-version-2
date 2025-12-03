@@ -1,6 +1,7 @@
 // src/components/molecules/Nav.tsx
 import { useTranslation } from "react-i18next";
 import { useSectionSpy } from "../../hooks/useSectionSpy";
+import type { TranslationKey } from "../../i18n/types";
 
 type Props = {
   variant: "desktop" | "mobile";
@@ -9,12 +10,12 @@ type Props = {
 
 /** Centralized list of in-page sections for both nav variants */
 const SECTIONS = [
-  { id: "hero",     key: "nav.home",    href: "#hero" },
-  { id: "services", key: "nav.services", href: "#services" },
-  { id: "techs",    key: "nav.techs",   href: "#techs" },
-  { id: "about",    key: "nav.about",   href: "#about" },
-  { id: "contact",  key: "nav.contact", href: "#contact" },
-];
+  { id: "hero",     key: "nav.home" as TranslationKey,    href: "#hero" },
+  { id: "services", key: "nav.services" as TranslationKey, href: "#services" },
+  { id: "techs",    key: "nav.techs" as TranslationKey,   href: "#techs" },
+  { id: "about",    key: "nav.about" as TranslationKey,   href: "#about" },
+  { id: "contact",  key: "nav.contact" as TranslationKey, href: "#contact" },
+] as const;
 
 export function Nav({ variant, onNavigate }: Props) {
   const { t } = useTranslation();
@@ -44,7 +45,7 @@ export function Nav({ variant, onNavigate }: Props) {
                   // Announce the current location to assistive tech
                   aria-current={active ? "page" : undefined}
                 >
-                  {t(key)}
+                  {t(key as TranslationKey)}
                 </a>
               </li>
             );
@@ -73,7 +74,7 @@ export function Nav({ variant, onNavigate }: Props) {
                 ].join(" ")}
                 aria-current={active ? "page" : undefined}
               >
-                {t(key)}
+                {t(key as TranslationKey)}
               </a>
             </li>
           );
