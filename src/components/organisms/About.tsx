@@ -2,29 +2,30 @@
 import { useTranslation } from "react-i18next";
 import { Container, H2, Lead, Button } from "../atoms";
 import { useReveal } from "../../hooks/useReveal";
+import type { TranslationKey } from "../../i18n/types";
 
 type TeamMember = {
   id: string;
   avatar: string;
-  nameKey: string;
-  roleKey: string;
-  bioKey: string;
+  nameKey: TranslationKey;
+  roleKey: TranslationKey;
+  bioKey: TranslationKey;
 };
 
 const TEAM_MEMBERS: TeamMember[] = [
   {
     id: "dev1",
     avatar: "/KinalGabAzul.png",
-    nameKey: "about.team.dev1.name",
-    roleKey: "about.team.dev1.role",
-    bioKey: "about.team.dev1.bio",
+    nameKey: "about.team.dev1.name" as TranslationKey,
+    roleKey: "about.team.dev1.role" as TranslationKey,
+    bioKey: "about.team.dev1.bio" as TranslationKey,
   },
   {
     id: "dev2",
     avatar: "/KinalMarConverse.png",
-    nameKey: "about.team.dev2.name",
-    roleKey: "about.team.dev2.role",
-    bioKey: "about.team.dev2.bio",
+    nameKey: "about.team.dev2.name" as TranslationKey,
+    roleKey: "about.team.dev2.role" as TranslationKey,
+    bioKey: "about.team.dev2.bio" as TranslationKey,
   },
 ];
 

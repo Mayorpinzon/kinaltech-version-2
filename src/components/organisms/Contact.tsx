@@ -7,6 +7,7 @@ import { useReveal } from "../../hooks/useReveal";
 import { z } from "zod";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../../lib/firebase";
+import { ENV } from "../../lib/env";
 
 type TurnstileRenderOptions = {
   sitekey: string;
@@ -203,11 +204,9 @@ export default function Contact() {
     try {
       setSending(true);
 
-      // Intentar usar Turnstile si está configurado (no es obligatorio para guardar en Firestore)
-      const sitekey = import.meta.env.VITE_TURNSTILE_SITEKEY as string | undefined;
-      if (sitekey) {
+      if (ENV.TURNSTILE_SITEKEY) {
         try {
-          await getTurnstileToken(sitekey);
+          await getTurnstileToken(ENV.TURNSTILE_SITEKEY);
         } catch (err) {
           console.warn("Turnstile skipped:", err);
         }

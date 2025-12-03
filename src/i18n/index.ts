@@ -1,8 +1,9 @@
 // src/i18n/index.ts
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import "./i18next.d.ts"; // Load type augmentations
 
-const resources = {
+export const resources = {
   en: {
     translation: {
       // Header / Nav
@@ -14,10 +15,26 @@ const resources = {
         techs: "Technologies",
         about: "About",
         contact: "Contact",
+        open: "Open menu",
+        close: "Close menu",
       },
       actions: {
         changeLanguage: "Change language",
         toggleTheme: "Toggle theme",
+      },
+
+      // Language selection
+      lang: {
+        es: "Español",
+        en: "English",
+        ja: "日本語",
+        select: "Select language",
+      },
+
+      // Theme
+      theme: {
+        light: "Switch to light theme",
+        dark: "Switch to dark theme",
       },
 
       // Hero
@@ -25,10 +42,14 @@ const resources = {
       "hero.subtitle": "KinalTech is a team of independent frontend developers creating web and mobile experiences that elevate your digital products.",
       "hero.cta1": "Our Services",
       "hero.cta2": "Get In Touch",
+      "hero.cta1_aria": "Navigate to services section",
+      "hero.cta2_aria": "Navigate to contact section",
+      "hero.imageAlt": "KinalTech team working on digital solutions",
 
       // Services
       "services.title": "Our Services",
       "services.lead": "We offer comprehensive frontend development solutions tailored to your business needs:",
+      "services.blurb": "We offer comprehensive frontend development solutions tailored to your business needs:",
       "services.items.web.title": "Web Development",
       "services.items.web.text":
         "Responsive, accessible websites with React/Next/Vue.",
@@ -74,6 +95,9 @@ const resources = {
       "about.p3":
         "Beyond code, we craft experiences that run in harmony—clear, dependable, and built to keep evolving.",
       "about.cta": "Start Your Project",
+      "about.cta_aria": "Start your project with KinalTech",
+      "about.imageCaption": "",
+      "about.imageAlt": "KinalTech team members",
       "about.team.title": "Our team:",
       "about.team.lead": "Meet the developers behind KinalTech and the minds that bring each project to life.",
       "about.team.dev1.name": "Gabriel",
@@ -125,6 +149,7 @@ const resources = {
       },
       // Footer
       "footer.rights": "All rights reserved.",
+      "footer.aria": "Site footer",
     },
   },
 
@@ -139,10 +164,26 @@ const resources = {
         techs: "Tecnologías",
         about: "Nosotros",
         contact: "Contacto",
+        open: "Abrir menú",
+        close: "Cerrar menú",
       },
       actions: {
         changeLanguage: "Cambiar idioma",
         toggleTheme: "Alternar tema",
+      },
+
+      // Language selection
+      lang: {
+        es: "Español",
+        en: "English",
+        ja: "日本語",
+        select: "Seleccionar idioma",
+      },
+
+      // Theme
+      theme: {
+        light: "Cambiar a tema claro",
+        dark: "Cambiar a tema oscuro",
       },
 
       // Hero
@@ -152,10 +193,14 @@ const resources = {
         "KinalTech es un equipo de desarrolladores frontend independientes que crea experiencias web y móviles para impulsar tus productos digitales.",
       "hero.cta1": "Nuestros Servicios",
       "hero.cta2": "Contáctanos",
+      "hero.cta1_aria": "Ir a la sección de servicios",
+      "hero.cta2_aria": "Ir a la sección de contacto",
+      "hero.imageAlt": "Equipo de KinalTech trabajando en soluciones digitales",
 
       // Services
       "services.title": "Nuestros Servicios",
       "services.lead": "Ofrecemos soluciones integrales de frontend adaptadas a las necesidades de tu negocio:",
+      "services.blurb": "Ofrecemos soluciones integrales de frontend adaptadas a las necesidades de tu negocio:",
       "services.items.web.title": "Desarrollo Web",
       "services.items.web.text":
         "Sitios responsivos y accesibles con React/Next/Vue.",
@@ -203,6 +248,9 @@ const resources = {
       "about.p3":
         "Más que escribir código, construimos experiencias digitales que funcionan con la misma armonía que un sistema bien diseñado: claras, estables y en constante evolución.",
       "about.cta": "Inicia tu proyecto",
+      "about.cta_aria": "Inicia tu proyecto con KinalTech",
+      "about.imageCaption": "",
+      "about.imageAlt": "Miembros del equipo de KinalTech",
       "about.team.title": "Nuestro equipo:",
       "about.team.lead": "Conoce a los desarrolladores detrás de KinalTech y a las mentes que dan vida a cada proyecto.",
       "about.team.dev1.name": "Gabriel",
@@ -254,6 +302,7 @@ const resources = {
       },
       // Footer
       "footer.rights": "Todos los derechos reservados.",
+      "footer.aria": "Pie de página del sitio",
     },
   },
 
@@ -274,15 +323,33 @@ const resources = {
         toggleTheme: "テーマを切替",
       },
 
+      // Language selection
+      lang: {
+        es: "Español",
+        en: "English",
+        ja: "日本語",
+        select: "言語を選択",
+      },
+
+      // Theme
+      theme: {
+        light: "ライトテーマに切り替え",
+        dark: "ダークテーマに切り替え",
+      },
+
       // Hero
       "hero.title": "熟練したフロントエンド開発でデジタル体験を向上",
       "hero.subtitle": "KinalTechは、独立したフロントエンド開発者チームとして、Webやモバイルであなたのデジタル製品を引き立てる体験を創り出します。",
       "hero.cta1": "サービスを見る",
       "hero.cta2": "お問い合わせ",
+      "hero.cta1_aria": "サービスセクションへ移動",
+      "hero.cta2_aria": "お問い合わせセクションへ移動",
+      "hero.imageAlt": "デジタルソリューションに取り組むKinalTechチーム",
 
       // Services
       "services.title": "提供サービス",
       "services.lead": "ビジネスに最適化したフロントエンド開発を提供",
+      "services.blurb": "ビジネスに最適化したフロントエンド開発を提供",
       "services.items.web.title": "Web 開発",
       "services.items.web.text":
         "React/Next/Vue によるレスポンシブでアクセシブルなサイト。",
@@ -329,6 +396,9 @@ const resources = {
       "about.p3":
         "単なるコード以上のものを作ります。明快で安定し、常に進化し続けるデジタル体験——それが私たちの目指す形です。",
       "about.cta": "プロジェクトを始める",
+      "about.cta_aria": "KinalTechでプロジェクトを始める",
+      "about.imageCaption": "",
+      "about.imageAlt": "KinalTechチームメンバー",
       "about.team.title": "私たちのチーム:",
       "about.team.lead": "KinalTech を支える開発者たちと、各プロジェクトに命を吹き込むメンバーをご紹介します。",
       "about.team.dev1.name": "ガブリエル",
@@ -382,6 +452,7 @@ const resources = {
 
       // Footer
       "footer.rights": "無断転載を禁じます。",
+      "footer.aria": "サイトフッター",
     },
   },
 } as const;
