@@ -2,7 +2,7 @@
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { Container, H2, Lead, Button, MailIcon, PinIcon, ClockIcon } from "../atoms";
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, useCallback, type FormEvent, type ReactNode } from "react";
 import { useReveal } from "../../hooks/useReveal";
 import { z } from "zod";
 import { addDoc, serverTimestamp } from "firebase/firestore";
@@ -137,37 +137,41 @@ export default function Contact() {
   const [ts] = useState(() => Date.now());
 
   // This unified function is used by both onSubmit and language-change re-validation.
-  function validateForm(form: HTMLFormElement | null): {
-    success: boolean;
-    data?: ContactInput;
-    errors: Record<string, string>;
-  } {
-    if (!form) {
-      return { success: false, errors: {} };
-    }
+  // Wrapped in useCallback to ensure stable reference for useEffect dependency.
+  const validateForm = useCallback(
+    (form: HTMLFormElement | null): {
+      success: boolean;
+      data?: ContactInput;
+      errors: Record<string, string>;
+    } => {
+      if (!form) {
+        return { success: false, errors: {} };
+      }
 
-    const fd = new FormData(form);
-    const formData = {
-      name: String(fd.get("name") || ""),
-      email: String(fd.get("email") || ""),
-      subject: String(fd.get("subject") || ""),
-      message: String(fd.get("message") || ""),
-    };
-
-    const parsed = ContactSchema.safeParse(formData);
-    if (!parsed.success) {
-      return {
-        success: false,
-        errors: mapIssues(parsed.error.issues),
+      const fd = new FormData(form);
+      const formData = {
+        name: String(fd.get("name") || ""),
+        email: String(fd.get("email") || ""),
+        subject: String(fd.get("subject") || ""),
+        message: String(fd.get("message") || ""),
       };
-    }
 
-    return {
-      success: true,
-      data: parsed.data,
-      errors: {},
-    };
-  }
+      const parsed = ContactSchema.safeParse(formData);
+      if (!parsed.success) {
+        return {
+          success: false,
+          errors: mapIssues(parsed.error.issues),
+        };
+      }
+
+      return {
+        success: true,
+        data: parsed.data,
+        errors: {},
+      };
+    },
+    [ContactSchema]
+  );
 
   useEffect(() => {
     if (!Object.keys(errs).length) return;
@@ -180,7 +184,7 @@ export default function Contact() {
     } else {
       setErrs({});
     }
-  }, [i18n.language, t, errs]);
+  }, [i18n.language, t, errs, validateForm]);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
