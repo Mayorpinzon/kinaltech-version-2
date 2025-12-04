@@ -14,20 +14,20 @@ export default function Header() {
 
   // Close mobile panel when resizing to desktop
   useEffect(() => {
-    const onResize = () => { if (window.innerWidth >= 768) setOpen(false); };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const onResize = () => { if (globalThis.innerWidth >= 768) setOpen(false); };
+    globalThis.addEventListener("resize", onResize);
+    return () => globalThis.removeEventListener("resize", onResize);
   }, []);
 
   // Close on Escape + lock scroll when open
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
     if (open) {
-      window.addEventListener("keydown", onKey);
+      globalThis.addEventListener("keydown", onKey);
       const prev = document.body.style.overflow;
       document.body.style.overflow = "hidden";
       return () => {
-        window.removeEventListener("keydown", onKey);
+        globalThis.removeEventListener("keydown", onKey);
         document.body.style.overflow = prev;
       };
     }
@@ -126,15 +126,15 @@ export default function Header() {
                            hover:bg-[--surface] focus:outline-none focus-visible:ring-2 
                            focus-visible:ring-[--accent]"
               >
-                {!open ? (
-                  // Hamburger icon
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-                    <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" strokeWidth="1.5" />
-                  </svg>
-                ) : (
+                {open ? (
                   // Close (X) icon
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
                     <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                ) : (
+                  // Hamburger icon
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+                    <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" strokeWidth="1.5" />
                   </svg>
                 )}
               </button>

@@ -1,14 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { Container, H2, Lead } from "../atoms";
+import { Container, H2, Lead, WebIcon, MobileIcon, UIUXIcon, IA_Icon, TeamworkIcon } from "../atoms";
 import { ServiceCard } from "../molecules";
 import { useReveal } from "../../hooks/useReveal";
-import {
-  WebIcon,
-  MobileIcon,
-  UIUXIcon,
-  IA_Icon,
-  TeamworkIcon,
-} from "../atoms";
 import { getStaggeredDelay } from "../../constants/animations";
 
 export default function Services() {

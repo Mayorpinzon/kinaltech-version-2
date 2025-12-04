@@ -27,6 +27,7 @@ declare global {
   interface Window {
     turnstile?: TurnstileInstance;
   }
+  var turnstile: TurnstileInstance | undefined;
 }
 
 /* ============================
@@ -36,11 +37,11 @@ function InfoRow({
   icon,
   title,
   subtitle,
-}: {
+}: Readonly<{
   icon: ReactNode;
   title: string;
   subtitle: string;
-}) {
+}>) {
   return (
     <div className="flex items-start gap-5 rounded-app bg-transparent p-4">
       <div
@@ -68,7 +69,7 @@ function makeContactSchema(t: TFunction) {
       .max(30, t("form.error.name_max", "Max 30 characters.")),
     email: z
       .string()
-      .email(t("form.error.email_invalid", "Please enter a valid email."))
+      .email({ message: t("form.error.email_invalid", "Please enter a valid email.") })
       .max(160),
     subject: z
       .string()
@@ -96,13 +97,13 @@ async function getTurnstileToken(sitekey?: string): Promise<string> {
   if (!sitekey) return ""; // dev mode without captcha
 
   await new Promise<void>((resolve) => {
-    const check = () => (window.turnstile ? resolve() : setTimeout(check, 40));
+    const check = () => (globalThis.turnstile ? resolve() : setTimeout(check, 40));
     check();
   });
 
   return await new Promise<string>((resolve, reject) => {
     try {
-      const turnstile = window.turnstile;
+      const turnstile = globalThis.turnstile;
 
       if (!turnstile) {
         reject(new Error("Turnstile not loaded"));
@@ -174,7 +175,7 @@ export default function Contact() {
   );
 
   useEffect(() => {
-    if (!Object.keys(errs).length) return;
+    if (Object.keys(errs).length === 0) return;
     if (!formRef.current) return;
 
     const result = validateForm(formRef.current);
@@ -264,12 +265,14 @@ export default function Contact() {
     }
   };
 
-  const errId = (field: "name" | "email" | "subject" | "message") =>
+  type FormFieldName = "name" | "email" | "subject" | "message";
+
+  const errId = (field: FormFieldName) =>
     `field-${field}-error`;
 
   // Helper functions to reduce cognitive complexity
-  const getPlaceholderDefault = (field: "name" | "email" | "subject" | "message"): string => {
-    const defaults: Record<typeof field, string> = {
+  const getPlaceholderDefault = (field: FormFieldName): string => {
+    const defaults: Record<FormFieldName, string> = {
       name: "Your name",
       email: "Your email",
       subject: "Subject",
@@ -278,13 +281,13 @@ export default function Contact() {
     return defaults[field];
   };
 
-  const getAutoComplete = (field: "name" | "email" | "subject" | "message"): "name" | "email" | "off" => {
+  const getAutoComplete = (field: FormFieldName): "name" | "email" | "off" => {
     if (field === "name") return "name";
     if (field === "email") return "email";
     return "off";
   };
 
-  const getInputType = (field: "name" | "email" | "subject" | "message"): string => {
+  const getInputType = (field: FormFieldName): string => {
     return field === "email" ? "email" : "text";
   };
 

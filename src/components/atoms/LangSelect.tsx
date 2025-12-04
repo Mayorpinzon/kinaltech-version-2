@@ -2,10 +2,10 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-type Props = {
+type Props = Readonly<{
   size?: "sm" | "md";
   variant?: "default" | "pill";
-};
+}>;
 
 export function LangSelect({ size = "md" }: Props) {
   const { i18n, t } = useTranslation();

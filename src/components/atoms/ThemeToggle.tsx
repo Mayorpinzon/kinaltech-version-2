@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { ANIMATION_DURATIONS } from "../../constants/animations";
 
-type Props = { size?: "sm" | "md" };
+type Props = Readonly<{ size?: "sm" | "md" }>;
 
 export function ThemeToggle({ size = "md" }: Props) {
   const { t } = useTranslation();
@@ -13,7 +13,7 @@ export function ThemeToggle({ size = "md" }: Props) {
     if (typeof document === "undefined") return "light";
     const stored = localStorage.getItem("theme") as "light" | "dark" | null;
     if (stored === "light" || stored === "dark") return stored;
-    return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    return globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   }, []);
 
   const [theme, setTheme] = React.useState<"light" | "dark">(initial);
@@ -28,7 +28,7 @@ export function ThemeToggle({ size = "md" }: Props) {
 
   // Listen to OS theme changes and update (only if user hasn't overridden in this session)
   React.useEffect(() => {
-    const mq = window.matchMedia?.("(prefers-color-scheme: dark)");
+    const mq = globalThis.matchMedia?.("(prefers-color-scheme: dark)");
     if (!mq) return;
     const onChange = (e: MediaQueryListEvent) => {
       // If user explicitly clicked, we still respect their choice; this keeps in sync if not set yet
@@ -41,10 +41,10 @@ export function ThemeToggle({ size = "md" }: Props) {
 
   // Trigger a short transform animation when toggling (unless reduced motion)
   const playAnim = React.useCallback(() => {
-    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+    const reduce = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
     if (reduce) return;
     setAnim(true);
-    window.setTimeout(() => setAnim(false), ANIMATION_DURATIONS.THEME_TOGGLE);
+    globalThis.setTimeout(() => setAnim(false), ANIMATION_DURATIONS.THEME_TOGGLE);
   }, []);
 
   const btnBase =

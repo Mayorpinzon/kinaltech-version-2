@@ -1,15 +1,12 @@
 // src/components/organisms/Techs.tsx
 import { useTranslation } from "react-i18next";
-import { Container, H2, Lead } from "../atoms";
+import { Container, H2, Lead, ReactIcon, NextIcon, VueIcon, RNIcon,
+  FlutterIcon, MySQLIcon, GraphQLIcon, ReduxIcon, NodeBadgeIcon,
+  JavaScriptBrandIcon, TypeScriptBrandIcon, AngularIcon, PythonIcon,
+  HTML5Icon, CSS3Icon } from "../atoms";
 import { useReveal } from "../../hooks/useReveal";
 import { useState, type ComponentType, type SVGProps } from "react";
 import type { TranslationKey } from "../../i18n/types";
-import {
-  ReactIcon, NextIcon, VueIcon, RNIcon,
-  FlutterIcon, MySQLIcon, GraphQLIcon, ReduxIcon, NodeBadgeIcon,
-  JavaScriptBrandIcon, TypeScriptBrandIcon, AngularIcon, PythonIcon,
-  HTML5Icon, CSS3Icon
-} from "../atoms";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -38,7 +35,7 @@ const TECHS: Tech[] = [
   { id: "css", nameKey: "tech.css" as TranslationKey, color: "#ffffff", Icon: CSS3Icon },
 ];
 
-function Chip({ tech }: { tech: Tech }) {
+function Chip({ tech }: Readonly<{ tech: Tech }>) {
   const { t } = useTranslation();
   const { Icon, color, nameKey } = tech;
 
@@ -58,7 +55,7 @@ function Chip({ tech }: { tech: Tech }) {
   );
 }
 
-function Card({ tech }: { tech: Tech }) {
+function Card({ tech }: Readonly<{ tech: Tech }>) {
   const { t } = useTranslation();
   const { Icon, color, nameKey } = tech;
 

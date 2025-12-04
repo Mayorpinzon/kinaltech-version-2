@@ -3,18 +3,18 @@ import { useTranslation } from "react-i18next";
 import { useSectionSpy } from "../../hooks/useSectionSpy";
 import type { TranslationKey } from "../../i18n/types";
 
-type Props = {
+type Props = Readonly<{
   variant: "desktop" | "mobile";
   onNavigate?: () => void;
-};
+}>;
 
 /** Centralized list of in-page sections for both nav variants */
 const SECTIONS = [
-  { id: "hero",     key: "nav.home" as TranslationKey,    href: "#hero" },
-  { id: "services", key: "nav.services" as TranslationKey, href: "#services" },
-  { id: "techs",    key: "nav.techs" as TranslationKey,   href: "#techs" },
-  { id: "about",    key: "nav.about" as TranslationKey,   href: "#about" },
-  { id: "contact",  key: "nav.contact" as TranslationKey, href: "#contact" },
+  { id: "hero",     key: "nav.home",    href: "#hero" },
+  { id: "services", key: "nav.services", href: "#services" },
+  { id: "techs",    key: "nav.techs",   href: "#techs" },
+  { id: "about",    key: "nav.about",   href: "#about" },
+  { id: "contact",  key: "nav.contact", href: "#contact" },
 ] as const;
 
 export function Nav({ variant, onNavigate }: Props) {

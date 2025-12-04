@@ -459,14 +459,16 @@ export const resources = {
 
 // Initial language: localStorage > browser language > default (en)
 const storedLng =
-  typeof window !== "undefined" ? localStorage.getItem("lng") : null;
+  typeof globalThis.window !== "undefined" ? localStorage.getItem("lng") : null;
 const browserLng =
   typeof navigator !== "undefined" ? navigator.language : "en";
 const getInitialLanguage = (stored: string | null, browser: string): string => {
-  if (stored) return stored;
-  if (browser.startsWith("es")) return "es";
-  if (browser.startsWith("ja")) return "ja";
-  return "en";
+  if (stored === null) {
+    if (browser.startsWith("es")) return "es";
+    if (browser.startsWith("ja")) return "ja";
+    return "en";
+  }
+  return stored;
 };
 
 const initialLng = getInitialLanguage(storedLng, browserLng);
