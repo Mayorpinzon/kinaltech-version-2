@@ -5,9 +5,10 @@ import { Container, H2, Lead, Button, MailIcon, PinIcon, ClockIcon } from "../at
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useReveal } from "../../hooks/useReveal";
 import { z } from "zod";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { addDoc, serverTimestamp } from "firebase/firestore";
+import { contactMessagesRef } from "../../lib/firebase";
 import { ENV } from "../../lib/env";
+import type { ContactMessageInput } from "../../types/contact";
 
 type TurnstileRenderOptions = {
   sitekey: string;
@@ -135,29 +136,46 @@ export default function Contact() {
   const [errs, setErrs] = useState<Record<string, string>>({});
   const [ts] = useState(() => Date.now());
 
-  useEffect(() => {
-    if (!Object.keys(errs).length) return;
-    if (!formRef.current) return;
+  // This unified function is used by both onSubmit and language-change re-validation.
+  function validateForm(form: HTMLFormElement | null): {
+    success: boolean;
+    data?: ContactInput;
+    errors: Record<string, string>;
+  } {
+    if (!form) {
+      return { success: false, errors: {} };
+    }
 
-    const Schema = makeContactSchema(t);
-
-    const fd = new FormData(formRef.current);
-    const current = {
+    const fd = new FormData(form);
+    const formData = {
       name: String(fd.get("name") || ""),
       email: String(fd.get("email") || ""),
       subject: String(fd.get("subject") || ""),
       message: String(fd.get("message") || ""),
     };
 
-    const parsed = Schema.safeParse(current);
+    const parsed = ContactSchema.safeParse(formData);
     if (!parsed.success) {
-      setErrs(
-        parsed.error.issues.reduce((acc, i) => {
-          const key = i.path.join(".");
-          if (key) acc[key] = i.message;
-          return acc;
-        }, {} as Record<string, string>)
-      );
+      return {
+        success: false,
+        errors: mapIssues(parsed.error.issues),
+      };
+    }
+
+    return {
+      success: true,
+      data: parsed.data,
+      errors: {},
+    };
+  }
+
+  useEffect(() => {
+    if (!Object.keys(errs).length) return;
+    if (!formRef.current) return;
+
+    const result = validateForm(formRef.current);
+    if (!result.success) {
+      setErrs(result.errors);
       setError(t("form.error.fix_fields", "Please fix the highlighted fields."));
     } else {
       setErrs({});
@@ -177,22 +195,21 @@ export default function Contact() {
       return;
     }
 
-    const fd = new FormData(form);
-    const data = {
-      name: String(fd.get("name") || ""),
-      email: String(fd.get("email") || ""),
-      subject: String(fd.get("subject") || ""),
-      message: String(fd.get("message") || ""),
-      company: String(fd.get("company") || ""),
-      ts,
-    };
-
-    const parsed = ContactSchema.safeParse(data as ContactInput);
-    if (!parsed.success) {
-      setErrs(mapIssues(parsed.error.issues));
+    // Use unified validation function
+    const validationResult = validateForm(form);
+    if (!validationResult.success) {
+      setErrs(validationResult.errors);
       setError(t("form.error.fix_fields", "Please fix the highlighted fields."));
       return;
     }
+
+    // Extract additional fields needed for submission (honeypot, timestamp)
+    const fd = new FormData(form);
+    const data = {
+      ...validationResult.data!,
+      company: String(fd.get("company") || ""),
+      ts,
+    };
 
     // Honeypot: si el bot llena "company", simulamos éxito pero no guardamos nada
     if (data.company) {
@@ -213,7 +230,8 @@ export default function Contact() {
       }
 
       // Guardar el mensaje en Firestore (sin Cloud Functions)
-      await addDoc(collection(db, "contactMessages"), {
+      // Using typed collection reference for type safety
+      const contactMessage: ContactMessageInput = {
         name: data.name,
         email: data.email,
         subject: data.subject,
@@ -221,7 +239,8 @@ export default function Contact() {
         ts: data.ts,
         createdAt: serverTimestamp(),
         lang: i18n.language,
-      });
+      };
+      await addDoc(contactMessagesRef, contactMessage);
 
       setOk(t("form.success", "Thanks! We’ll get back to you shortly."));
       setError("");
