@@ -51,10 +51,13 @@ export function useReveal(selector: string = DEFAULT_SELECTOR) {
 
     observerRef.current = io;
 
+    // Capture the current set reference for cleanup
+    const currentObservedSet = observedElementsRef.current;
+
     // Observe all elements that need revealing
     elementsToObserve.forEach((el) => {
       io.observe(el);
-      observedElementsRef.current.add(el);
+      currentObservedSet.add(el);
     });
 
     // Cleanup function (runs on unmount or selector change)
@@ -63,7 +66,8 @@ export function useReveal(selector: string = DEFAULT_SELECTOR) {
         observerRef.current.disconnect();
         observerRef.current = null;
       }
-      observedElementsRef.current.clear();
+      // Use the captured set reference instead of the ref's current value
+      currentObservedSet.clear();
     };
   }, [selector]);
 }
