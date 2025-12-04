@@ -1,7 +1,8 @@
 // src/lib/firebase.ts
 import { initializeApp, getApp, getApps } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, collection, type CollectionReference } from "firebase/firestore";
 import { ENV } from "./env";
+import type { ContactMessage } from "../types/contact";
 
 const firebaseConfig = {
   apiKey: ENV.FIREBASE_API_KEY,
@@ -17,3 +18,8 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 // Firestore instance for saving contact messages
 export const db = getFirestore(app);
+
+export const contactMessagesRef = collection(
+  db,
+  "contactMessages"
+) as CollectionReference<ContactMessage>;

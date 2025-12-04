@@ -5,9 +5,10 @@ import { Container, H2, Lead, Button, MailIcon, PinIcon, ClockIcon } from "../at
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useReveal } from "../../hooks/useReveal";
 import { z } from "zod";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { addDoc, serverTimestamp } from "firebase/firestore";
+import { contactMessagesRef } from "../../lib/firebase";
 import { ENV } from "../../lib/env";
+import type { ContactMessageInput } from "../../types/contact";
 
 type TurnstileRenderOptions = {
   sitekey: string;
@@ -229,7 +230,8 @@ export default function Contact() {
       }
 
       // Guardar el mensaje en Firestore (sin Cloud Functions)
-      await addDoc(collection(db, "contactMessages"), {
+      // Using typed collection reference for type safety
+      const contactMessage: ContactMessageInput = {
         name: data.name,
         email: data.email,
         subject: data.subject,
@@ -237,7 +239,8 @@ export default function Contact() {
         ts: data.ts,
         createdAt: serverTimestamp(),
         lang: i18n.language,
-      });
+      };
+      await addDoc(contactMessagesRef, contactMessage);
 
       setOk(t("form.success", "Thanks! We’ll get back to you shortly."));
       setError("");
