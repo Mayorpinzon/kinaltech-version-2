@@ -267,6 +267,27 @@ export default function Contact() {
   const errId = (field: "name" | "email" | "subject" | "message") =>
     `field-${field}-error`;
 
+  // Helper functions to reduce cognitive complexity
+  const getPlaceholderDefault = (field: "name" | "email" | "subject" | "message"): string => {
+    const defaults: Record<typeof field, string> = {
+      name: "Your name",
+      email: "Your email",
+      subject: "Subject",
+      message: "Your message",
+    };
+    return defaults[field];
+  };
+
+  const getAutoComplete = (field: "name" | "email" | "subject" | "message"): "name" | "email" | "off" => {
+    if (field === "name") return "name";
+    if (field === "email") return "email";
+    return "off";
+  };
+
+  const getInputType = (field: "name" | "email" | "subject" | "message"): string => {
+    return field === "email" ? "email" : "text";
+  };
+
   return (
     <section
       id="contact"
@@ -306,7 +327,11 @@ export default function Contact() {
             onSubmit={onSubmit}
             className="space-y-4 reveal"
             noValidate
-            aria-describedby={error ? "form-error" : ok ? "form-success" : undefined}
+            aria-describedby={(() => {
+              if (error) return "form-error";
+              if (ok) return "form-success";
+              return undefined;
+            })()}
           >
             <label htmlFor="company" className="sr-only">
               Company
@@ -326,29 +351,17 @@ export default function Contact() {
             {(["name", "email", "subject", "message"] as const).map((field) => {
               const isTextArea = field === "message";
               const label = t(`form.${field}`);
-              const ph =
-                t(`form.placeholder.${field}`, {
-                  defaultValue:
-                    field === "name"
-                      ? "Your name"
-                      : field === "email"
-                        ? "Your email"
-                        : field === "subject"
-                          ? "Subject"
-                          : "Your message",
-                }) || undefined;
+              const placeholder = t(`form.placeholder.${field}`, {
+                defaultValue: getPlaceholderDefault(field),
+              }) || undefined;
 
               const common =
                 "w-full rounded-app border border-[var(--primary)] text-[--text] placeholder-[--muted] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)]";
 
-              const auto: "name" | "email" | "off" =
-                field === "name"
-                  ? "name"
-                  : field === "email"
-                    ? "email"
-                    : "off";
-
+              const autoComplete = getAutoComplete(field);
+              const inputType = getInputType(field);
               const invalid = Boolean(errs[field]);
+              const errorId = errId(field);
 
               return (
                 <div key={field}>
@@ -361,32 +374,32 @@ export default function Contact() {
                       id={field}
                       name={field}
                       rows={6}
-                      placeholder={ph}
+                      placeholder={placeholder}
                       className={`${common} px-4 py-3 glow-pulse`}
                       autoComplete="off"
                       required
                       aria-required="true"
                       aria-invalid={invalid}
-                      aria-describedby={invalid ? errId(field) : undefined}
+                      aria-describedby={invalid ? errorId : undefined}
                     />
                   ) : (
                     <input
                       id={field}
                       name={field}
-                      type={field === "email" ? "email" : "text"}
-                      autoComplete={auto}
-                      placeholder={ph}
+                      type={inputType}
+                      autoComplete={autoComplete}
+                      placeholder={placeholder}
                       className={`${common} h-12 px-4 glow-pulse`}
                       required
                       aria-required="true"
                       aria-invalid={invalid}
-                      aria-describedby={invalid ? errId(field) : undefined}
+                      aria-describedby={invalid ? errorId : undefined}
                     />
                   )}
 
                   {errs[field] && (
                     <p
-                      id={errId(field)}
+                      id={errorId}
                       className="mt-1 text-sm text-[var(--danger)]"
                       role="alert"
                     >

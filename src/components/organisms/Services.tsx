@@ -70,7 +70,6 @@ export default function Services() {
         {/* Semantic list for better SEO and screen reader navigation */}
         <ul
           className="grid grid-cols-12 gap-5 md:gap-6"
-          role="list"
           aria-label={t("services.title")}
         >
           {services.map(({ id, icon, title, text }, index) => (

@@ -22,7 +22,7 @@ export function ThemeToggle({ size = "md" }: Props) {
   // Apply theme to DOM + persist
   React.useEffect(() => {
     document.body.classList.toggle("dark", theme === "dark");
-    document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.dataset.theme = theme;
     localStorage.setItem("theme", theme);
   }, [theme]);
 

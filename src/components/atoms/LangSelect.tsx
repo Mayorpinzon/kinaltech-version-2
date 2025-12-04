@@ -98,33 +98,44 @@ export function LangSelect({ size = "md" }: Props) {
       </button>
 
       {/* Dropdown */}
-      <div
-        role="listbox"
-        aria-label={t("lang.select", "Select language")}
-        hidden={!open}
-        className="absolute right-0 min-w-[9rem] overflow-hidden rounded-2xl 
-        border border-[var(--border)] bg-[var(--primary)] shadow-xl text-white transition-colors"
-      >
-        {(["es", "en", "ja"] as const).map((code) => (
-          <button
-            key={code}
-            role="option"
-            aria-selected={current === code}
-            className="flex w-full items-center justify-between px-4 py-2 
-            text-left text-sm data-[active=true]:font-semibold text-white
-            hover:bg-blue-400 transition-colors"
-            data-active={current === code}
-            onClick={() => change(code)}
+      {open && (
+        <div
+          className="absolute right-0 min-w-[9rem] overflow-hidden rounded-2xl 
+          border border-[var(--border)] bg-[var(--primary)] shadow-xl text-white transition-colors"
+        >
+          <select
+            value={current}
+            onChange={(e) => change(e.target.value as "en" | "es" | "ja")}
+            className="sr-only"
+            aria-label={t("lang.select", "Select language")}
           >
-            <span>{label[code]}</span>
-            {current === code ? (
-              <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden>
-                <path d="M5 12l4 4 10-10" fill="none" stroke="currentColor" strokeWidth="1.5" />
-              </svg>
-            ) : null}
-          </button>
-        ))}
-      </div>
+            {(["es", "en", "ja"] as const).map((code) => (
+              <option key={code} value={code}>
+                {label[code]}
+              </option>
+            ))}
+          </select>
+          <div className="py-1">
+            {(["es", "en", "ja"] as const).map((code) => (
+              <button
+                key={code}
+                className="flex w-full items-center justify-between px-4 py-2 
+                text-left text-sm data-[active=true]:font-semibold text-white
+                hover:bg-blue-400 transition-colors"
+                data-active={current === code}
+                onClick={() => change(code)}
+              >
+                <span>{label[code]}</span>
+                {current === code ? (
+                  <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden>
+                    <path d="M5 12l4 4 10-10" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                ) : null}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

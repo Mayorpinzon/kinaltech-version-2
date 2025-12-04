@@ -144,15 +144,16 @@ export default function Header() {
 
         {/* Mobile overlay and sheet */}
         <div
-          id="mobile-menu"
+          id="mobile-menu-overlay"
           hidden={!open}
           data-state={open ? "open" : "closed"}
           className="md:hidden fixed inset-0 z-40 bg-[color:rgba(0,0,0,.25)] backdrop-blur-sm"
-          onClick={() => setOpen(false)} // closes when clicking outside
+          aria-hidden="true"
         >
           <div
-            role="dialog"
+            id="mobile-menu"
             aria-modal="true"
+            aria-label="Mobile navigation"
             ref={panelRef}
             className="
               menu-panel absolute inset-x-2 top-16
@@ -160,7 +161,6 @@ export default function Header() {
               bg-[var(--shell)] backdrop-blur 
               shadow-xl
             "
-            onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
           >
             {/* Top row inside the mobile menu */}
             <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--primary)] min-h-[48px]">

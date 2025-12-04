@@ -43,8 +43,7 @@ function Chip({ tech }: { tech: Tech }) {
   const { Icon, color, nameKey } = tech;
 
   return (
-    <span
-      role="listitem"
+    <li
       className="
         inline-flex items-center gap-4 rounded-full px-5 h-15 mx-2
         border border-[var(--border)]
@@ -55,7 +54,7 @@ function Chip({ tech }: { tech: Tech }) {
         <Icon />
       </span>
       <span className="text-sm">{t(nameKey)}</span>
-    </span>
+    </li>
   );
 }
 

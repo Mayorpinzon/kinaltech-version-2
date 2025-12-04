@@ -462,13 +462,14 @@ const storedLng =
   typeof window !== "undefined" ? localStorage.getItem("lng") : null;
 const browserLng =
   typeof navigator !== "undefined" ? navigator.language : "en";
-const initialLng = storedLng
-  ? storedLng
-  : browserLng.startsWith("es")
-    ? "es"
-    : browserLng.startsWith("ja")
-      ? "ja"
-      : "en";
+const getInitialLanguage = (stored: string | null, browser: string): string => {
+  if (stored) return stored;
+  if (browser.startsWith("es")) return "es";
+  if (browser.startsWith("ja")) return "ja";
+  return "en";
+};
+
+const initialLng = getInitialLanguage(storedLng, browserLng);
 
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({
@@ -479,11 +480,19 @@ if (!i18n.isInitialized) {
     returnEmptyString: false,
   });
 };
-try { document.documentElement.lang = initialLng; } catch (e) { void e; }
+try { 
+  document.documentElement.lang = initialLng; 
+} catch {
+  // Ignore error if document is not available
+}
 
 /** Persist language + set <html lang="..."> **/
 i18n.on("languageChanged", (lng) => {
-  try { localStorage.setItem("lng", lng); } catch (e) { void e; }
+  try { 
+    localStorage.setItem("lng", lng); 
+  } catch {
+    // Ignore error if localStorage is not available
+  }
   document.documentElement.lang = lng;
 });
 
