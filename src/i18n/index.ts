@@ -1,7 +1,9 @@
 // src/i18n/index.ts
-import i18n from "i18next";
+import i18nLib from "i18next";
 import { initReactI18next } from "react-i18next";
 import "./i18next.d.ts"; // Load type augmentations
+
+const i18n = i18nLib;
 
 export const resources = {
   en: {
@@ -459,16 +461,16 @@ export const resources = {
 
 // Initial language: localStorage > browser language > default (en)
 const storedLng =
-  typeof globalThis.window !== "undefined" ? localStorage.getItem("lng") : null;
+  globalThis.window === undefined ? null : localStorage.getItem("lng");
 const browserLng =
-  typeof navigator !== "undefined" ? navigator.language : "en";
+  navigator === undefined ? "en" : navigator.language;
 const getInitialLanguage = (stored: string | null, browser: string): string => {
-  if (stored === null) {
-    if (browser.startsWith("es")) return "es";
-    if (browser.startsWith("ja")) return "ja";
-    return "en";
+  if (stored !== null) {
+    return stored;
   }
-  return stored;
+  if (browser.startsWith("es")) return "es";
+  if (browser.startsWith("ja")) return "ja";
+  return "en";
 };
 
 const initialLng = getInitialLanguage(storedLng, browserLng);

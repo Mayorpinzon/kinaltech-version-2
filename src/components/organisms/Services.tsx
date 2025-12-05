@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Container, H2, Lead, WebIcon, MobileIcon, UIUXIcon, IA_Icon, TeamworkIcon } from "../atoms";
+import { Container, H2, Lead, WebIcon, MobileIcon, UIUXIcon, IAIcon, TeamworkIcon } from "../atoms";
 import { ServiceCard } from "../molecules";
 import { useReveal } from "../../hooks/useReveal";
 import { getStaggeredDelay } from "../../constants/animations";
@@ -30,7 +30,7 @@ export default function Services() {
     },
     {
       id: "ia",
-      icon: <IA_Icon aria-hidden="true" />,
+      icon: <IAIcon aria-hidden="true" />,
       title: t("services.items.ia.title"),
       text: t("services.items.ia.text"),
     },

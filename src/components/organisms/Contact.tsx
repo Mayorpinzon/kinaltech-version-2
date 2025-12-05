@@ -69,7 +69,7 @@ function makeContactSchema(t: TFunction) {
       .max(30, t("form.error.name_max", "Max 30 characters.")),
     email: z
       .string()
-      .email({ message: t("form.error.email_invalid", "Please enter a valid email.") })
+      .email(t("form.error.email_invalid", "Please enter a valid email."))
       .max(160),
     subject: z
       .string()
@@ -83,7 +83,7 @@ function makeContactSchema(t: TFunction) {
 }
 type ContactInput = z.infer<ReturnType<typeof makeContactSchema>>;
 
-function mapIssues(issues: z.ZodIssue[]) {
+function mapIssues(issues: z.ZodError["issues"]) {
   const out: Record<string, string> = {};
   for (const i of issues) {
     const key = i.path.join(".");
@@ -150,11 +150,15 @@ export default function Contact() {
       }
 
       const fd = new FormData(form);
+      const getStringValue = (key: string): string => {
+        const value = fd.get(key);
+        return typeof value === "string" ? value : "";
+      };
       const formData = {
-        name: String(fd.get("name") || ""),
-        email: String(fd.get("email") || ""),
-        subject: String(fd.get("subject") || ""),
-        message: String(fd.get("message") || ""),
+        name: getStringValue("name"),
+        email: getStringValue("email"),
+        subject: getStringValue("subject"),
+        message: getStringValue("message"),
       };
 
       const parsed = ContactSchema.safeParse(formData);
@@ -179,11 +183,11 @@ export default function Contact() {
     if (!formRef.current) return;
 
     const result = validateForm(formRef.current);
-    if (!result.success) {
+    if (result.success) {
+      setErrs({});
+    } else {
       setErrs(result.errors);
       setError(t("form.error.fix_fields", "Please fix the highlighted fields."));
-    } else {
-      setErrs({});
     }
   }, [i18n.language, t, errs, validateForm]);
 
@@ -210,9 +214,10 @@ export default function Contact() {
 
     // Extract additional fields needed for submission (honeypot, timestamp)
     const fd = new FormData(form);
+    const companyValue = fd.get("company");
     const data = {
       ...validationResult.data!,
-      company: String(fd.get("company") || ""),
+      company: typeof companyValue === "string" ? companyValue : "",
       ts,
     };
 

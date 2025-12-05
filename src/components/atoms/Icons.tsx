@@ -104,7 +104,7 @@ export const UIUXIcon = () => (
   </svg>
 );
 // --- IA ---
-export const IA_Icon = (props: SVGProps<SVGSVGElement>) => (
+export const IAIcon = (props: SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 512 512" fill="none" className="h-full w-full" aria-hidden {...props}>
     <path
       fill="currentColor"
