@@ -163,15 +163,6 @@ function Techs() {
           <H2>{t("techs.title")}</H2>
           <Lead className="mt-3">{t("techs.blurb")}</Lead>
         </div>
-        {/* Carrusel / pasarela superior (usa animations.css) */}
-        <div className="mt-7 overflow-hidden mask-edges reveal  " aria-hidden="true">
-          {/* Pista duplicada para loop continuo. Claves únicas con índice. */}
-          <div className="inline-flex h-17 items-center gap-4 animate-slide">
-            {[...TECHS, ...TECHS].map((tech, i) => (
-              <Chip key={`${tech.id}-${i}`} tech={tech} />
-            ))}
-          </div>
-        </div>
 
         {/* Grid de cards inferior */}
         <div
