@@ -92,20 +92,20 @@ export default function Header() {
 
             {/* Centered desktop navigation */}
             <div className="pointer-events-none absolute left-1/2 top-1/2 hidden 
-                            -translate-x-1/2 -translate-y-1/2 md:block">
+                            -translate-x-1/2 -translate-y-1/2 min-[960px]:block">
               <div className="pointer-events-auto">
                 <Nav variant="desktop" />
               </div>
             </div>
 
             {/* Right-side actions (desktop only) */}
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden min-[960px]:flex items-center gap-3">
               <LangSelect variant="pill" />
               <ThemeToggle size="sm" />
             </div>
 
             {/* Mobile actions */}
-            <div className="md:hidden flex items-center gap-2.5">
+            <div className="max-[959px]:flex hidden items-center gap-2.5">
               {/* Hide language selector on very narrow screens */}
               <div className="max-[380px]:hidden">
                 <LangSelect size="sm" />
@@ -147,7 +147,7 @@ export default function Header() {
           id="mobile-menu"
           hidden={!open}
           data-state={open ? "open" : "closed"}
-          className="md:hidden fixed inset-0 z-40 bg-[color:rgba(0,0,0,.25)] backdrop-blur-sm"
+          className="max-[959px]:fixed inset-0 z-40 bg-[color:rgba(0,0,0,.25)] backdrop-blur-sm"
           onClick={() => setOpen(false)} // closes when clicking outside
         >
           <div
