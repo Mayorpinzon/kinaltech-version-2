@@ -11,7 +11,7 @@ export default function Hero() {
   // Respect user prefers-reduced-motion: disable autoplay if set
   const [canAutoplay, setCanAutoplay] = useState(true);
   useEffect(() => {
-    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
+    const mq = globalThis.matchMedia?.("(prefers-reduced-motion: reduce)");
     const update = () => setCanAutoplay(!mq?.matches);
     update();
     mq?.addEventListener?.("change", update);

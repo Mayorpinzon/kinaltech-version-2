@@ -7,12 +7,11 @@ import sgMail from "@sendgrid/mail";
 
 // --- Runtime config (Spark-friendly) -----------------------------------------
 // Set these with: firebase functions:config:set ...
-const runtimeConfig = functions.config();
-
-const TURNSTILE_SECRET: string = runtimeConfig.turnstile?.secret ?? "";
-const SENDGRID_API_KEY: string = runtimeConfig.sendgrid?.key ?? "";
-const CONTACT_TO: string = runtimeConfig.contact?.to ?? "";
-const CONTACT_FROM: string = runtimeConfig.contact?.from ?? "";
+// Using process.env as alternative to deprecated functions.config()
+const TURNSTILE_SECRET: string = process.env.TURNSTILE_SECRET ?? "";
+const SENDGRID_API_KEY: string = process.env.SENDGRID_API_KEY ?? "";
+const CONTACT_TO: string = process.env.CONTACT_TO ?? "";
+const CONTACT_FROM: string = process.env.CONTACT_FROM ?? "";
 
 // Allowed origins for CORS (adjust to your domains or keep '*' during testing)
 const ALLOWED_ORIGINS = new Set<string>([
@@ -40,7 +39,7 @@ if (SENDGRID_API_KEY) {
 function stripControlChars(value: string): string {
   let out = "";
   for (let i = 0; i < value.length; i++) {
-    const code = value.charCodeAt(i);
+    const code = value.codePointAt(i) ?? 0;
     // Deja solo caracteres imprimibles
     if (code >= 32 && code !== 127) {
       out += value[i];
@@ -85,7 +84,7 @@ function applyCors(req: Request, res: Response): boolean {
 /** Keep in sync with the frontend Contact form */
 const ContactSchema = z.object({
   name: z.string().min(2).max(30),
-  email: z.string().email().max(160),
+  email: z.string().email({ message: "Invalid email format" }).max(160),
   subject: z.string().min(2).max(160),
   message: z.string().min(10).max(300),
   // optional metadata:

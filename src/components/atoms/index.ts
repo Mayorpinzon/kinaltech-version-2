@@ -8,7 +8,7 @@ export {
   WebIcon,
   MobileIcon,
   UIUXIcon,
-  IA_Icon,
+  IAIcon,
   TeamworkIcon,
   MailIcon,
   PinIcon,

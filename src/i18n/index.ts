@@ -1,7 +1,9 @@
 // src/i18n/index.ts
-import i18n from "i18next";
+import i18nLib from "i18next";
 import { initReactI18next } from "react-i18next";
 import "./i18next.d.ts"; // Load type augmentations
+
+const i18n = i18nLib;
 
 export const resources = {
   en: {
@@ -504,16 +506,19 @@ export const resources = {
 
 // Initial language: localStorage > browser language > default (en)
 const storedLng =
-  typeof window !== "undefined" ? localStorage.getItem("lng") : null;
+  globalThis.window === undefined ? null : localStorage.getItem("lng");
 const browserLng =
-  typeof navigator !== "undefined" ? navigator.language : "en";
-const initialLng = storedLng
-  ? storedLng
-  : browserLng.startsWith("es")
-    ? "es"
-    : browserLng.startsWith("ja")
-      ? "ja"
-      : "en";
+  navigator === undefined ? "en" : navigator.language;
+const getInitialLanguage = (stored: string | null, browser: string): string => {
+  if (stored !== null) {
+    return stored;
+  }
+  if (browser.startsWith("es")) return "es";
+  if (browser.startsWith("ja")) return "ja";
+  return "en";
+};
+
+const initialLng = getInitialLanguage(storedLng, browserLng);
 
 if (!i18n.isInitialized) {
   i18n.use(initReactI18next).init({
@@ -524,11 +529,19 @@ if (!i18n.isInitialized) {
     returnEmptyString: false,
   });
 };
-try { document.documentElement.lang = initialLng; } catch (e) { void e; }
+try { 
+  document.documentElement.lang = initialLng; 
+} catch {
+  // Ignore error if document is not available
+}
 
 /** Persist language + set <html lang="..."> **/
 i18n.on("languageChanged", (lng) => {
-  try { localStorage.setItem("lng", lng); } catch (e) { void e; }
+  try { 
+    localStorage.setItem("lng", lng); 
+  } catch {
+    // Ignore error if localStorage is not available
+  }
   document.documentElement.lang = lng;
 });
 

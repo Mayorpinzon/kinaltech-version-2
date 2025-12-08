@@ -1,14 +1,24 @@
 // src/components/organisms/Techs.tsx
 import { useTranslation } from "react-i18next";
-import { Container, H2, Lead } from "../atoms";
-import { useReveal } from "../../hooks/useReveal";
-import { useState, useEffect, type ComponentType, type SVGProps } from "react";
-import type { TranslationKey } from "../../i18n/types";
 import {
-  ReactIcon, NextIcon, VueIcon, RNIcon,
-  FlutterIcon, MySQLIcon, GraphQLIcon, ReduxIcon, NodeBadgeIcon,
-  JavaScriptBrandIcon, TypeScriptBrandIcon, AngularIcon, PythonIcon,
-  HTML5Icon, CSS3Icon,
+  Container,
+  H2,
+  Lead,
+  ReactIcon,
+  NextIcon,
+  VueIcon,
+  RNIcon,
+  FlutterIcon,
+  MySQLIcon,
+  GraphQLIcon,
+  ReduxIcon,
+  NodeBadgeIcon,
+  JavaScriptBrandIcon,
+  TypeScriptBrandIcon,
+  AngularIcon,
+  PythonIcon,
+  HTML5Icon,
+  CSS3Icon,
   GitIcon,
   GitHubIcon,
   JiraIcon,
@@ -24,6 +34,9 @@ import {
   TeamsIcon,
   AsanaIcon,
 } from "../atoms";
+import { useReveal } from "../../hooks/useReveal";
+import { useState, useEffect, type ComponentType, type SVGProps } from "react";
+import type { TranslationKey } from "../../i18n/types";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -70,14 +83,13 @@ const EVERYDAY_TOOLS: Tech[] = [
   { id: "asana", nameKey: "tools.asana" as TranslationKey, color: "#F06A6A", Icon: AsanaIcon },
 ];
 
-function Chip({ tech }: { tech: Tech }) {
-  const { t } = useTranslation();
-  const { Icon, color, darkColor, nameKey } = tech;
+// Shared hook for theme detection
+function useThemeDetection() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     const checkTheme = () => {
-      const isDarkMode = document.documentElement.getAttribute("data-theme") === "dark" ||
+      const isDarkMode = document.documentElement.dataset.theme === "dark" ||
         document.body.classList.contains("dark");
       setIsDark(isDarkMode);
     };
@@ -90,11 +102,18 @@ function Chip({ tech }: { tech: Tech }) {
     return () => observer.disconnect();
   }, []);
 
+  return isDark;
+}
+
+function Chip({ tech }: Readonly<{ tech: Tech }>) {
+  const { t } = useTranslation();
+  const { Icon, color, darkColor, nameKey } = tech;
+  const isDark = useThemeDetection();
+
   const iconColor = isDark && darkColor ? darkColor : color;
 
   return (
-    <span
-      role="listitem"
+    <li
       className="
         inline-flex items-center gap-4 rounded-full px-5 h-15 mx-2
         border border-[var(--border)]
@@ -105,29 +124,14 @@ function Chip({ tech }: { tech: Tech }) {
         <Icon />
       </span>
       <span className="text-sm">{t(nameKey)}</span>
-    </span>
+    </li>
   );
 }
 
-function Card({ tech }: { tech: Tech }) {
+function Card({ tech }: Readonly<{ tech: Tech }>) {
   const { t } = useTranslation();
   const { Icon, color, darkColor, nameKey } = tech;
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const checkTheme = () => {
-      const isDarkMode = document.documentElement.getAttribute("data-theme") === "dark" ||
-        document.body.classList.contains("dark");
-      setIsDark(isDarkMode);
-    };
-
-    checkTheme();
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-
-    return () => observer.disconnect();
-  }, []);
+  const isDark = useThemeDetection();
 
   const iconColor = isDark && darkColor ? darkColor : color;
 

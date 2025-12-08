@@ -14,20 +14,20 @@ export default function Header() {
 
   // Close mobile panel when resizing to desktop
   useEffect(() => {
-    const onResize = () => { if (window.innerWidth >= 768) setOpen(false); };
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const onResize = () => { if (globalThis.innerWidth >= 768) setOpen(false); };
+    globalThis.addEventListener("resize", onResize);
+    return () => globalThis.removeEventListener("resize", onResize);
   }, []);
 
   // Close on Escape + lock scroll when open
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
     if (open) {
-      window.addEventListener("keydown", onKey);
+      globalThis.addEventListener("keydown", onKey);
       const prev = document.body.style.overflow;
       document.body.style.overflow = "hidden";
       return () => {
-        window.removeEventListener("keydown", onKey);
+        globalThis.removeEventListener("keydown", onKey);
         document.body.style.overflow = prev;
       };
     }
@@ -126,15 +126,15 @@ export default function Header() {
                            hover:bg-[--surface] focus:outline-none focus-visible:ring-2 
                            focus-visible:ring-[--accent]"
               >
-                {!open ? (
-                  // Hamburger icon
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
-                    <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" strokeWidth="1.5" />
-                  </svg>
-                ) : (
+                {open ? (
                   // Close (X) icon
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
                     <path d="M6 6l12 12M18 6l-12 12" stroke="currentColor" strokeWidth="1.5" />
+                  </svg>
+                ) : (
+                  // Hamburger icon
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden>
+                    <path d="M3 7h18M3 12h18M3 17h18" stroke="currentColor" strokeWidth="1.5" />
                   </svg>
                 )}
               </button>
@@ -144,15 +144,16 @@ export default function Header() {
 
         {/* Mobile overlay and sheet */}
         <div
-          id="mobile-menu"
+          id="mobile-menu-overlay"
           hidden={!open}
           data-state={open ? "open" : "closed"}
           className="max-[959px]:fixed inset-0 z-40 bg-[color:rgba(0,0,0,.25)] backdrop-blur-sm"
-          onClick={() => setOpen(false)} // closes when clicking outside
+          aria-hidden="true"
         >
           <div
-            role="dialog"
+            id="mobile-menu"
             aria-modal="true"
+            aria-label="Mobile navigation"
             ref={panelRef}
             className="
               menu-panel absolute inset-x-2 top-16
@@ -160,7 +161,6 @@ export default function Header() {
               bg-[var(--shell)] backdrop-blur 
               shadow-xl
             "
-            onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
           >
             {/* Top row inside the mobile menu */}
             <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--primary)] min-h-[48px]">

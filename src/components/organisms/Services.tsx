@@ -1,14 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { Container, H2, Lead } from "../atoms";
+import { Container, H2, Lead, WebIcon, MobileIcon, UIUXIcon, IAIcon, TeamworkIcon } from "../atoms";
 import { ServiceCard } from "../molecules";
 import { useReveal } from "../../hooks/useReveal";
-import {
-  WebIcon,
-  MobileIcon,
-  UIUXIcon,
-  IA_Icon,
-  TeamworkIcon,
-} from "../atoms";
 import { getStaggeredDelay } from "../../constants/animations";
 
 export default function Services() {
@@ -37,7 +30,7 @@ export default function Services() {
     },
     {
       id: "ia",
-      icon: <IA_Icon aria-hidden="true" />,
+      icon: <IAIcon aria-hidden="true" />,
       title: t("services.items.ia.title"),
       text: t("services.items.ia.text"),
     },
@@ -70,7 +63,6 @@ export default function Services() {
         {/* Semantic list for better SEO and screen reader navigation */}
         <ul
           className="grid grid-cols-12 gap-5 md:gap-6"
-          role="list"
           aria-label={t("services.title")}
         >
           {services.map(({ id, icon, title, text }, index) => (

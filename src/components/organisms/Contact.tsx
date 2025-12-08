@@ -24,6 +24,7 @@ declare global {
   interface Window {
     turnstile?: TurnstileInstance;
   }
+  var turnstile: TurnstileInstance | undefined;
 }
 
 /* ============================
@@ -33,11 +34,11 @@ function InfoRow({
   icon,
   title,
   subtitle,
-}: {
+}: Readonly<{
   icon: ReactNode;
   title: string;
   subtitle: string;
-}) {
+}>) {
   return (
     <div className="flex items-start gap-5 rounded-app bg-transparent p-4">
       <div
@@ -65,7 +66,10 @@ function makeContactSchema(t: TFunction) {
       .max(30, t("form.error.name_max", "Max 30 characters.")),
     email: z
       .string()
-      .email(t("form.error.email_invalid", "Please enter a valid email."))
+      .regex(
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        t("form.error.email_invalid", "Please enter a valid email.")
+      )
       .max(160),
     subject: z
       .string()
@@ -79,7 +83,7 @@ function makeContactSchema(t: TFunction) {
 }
 type ContactInput = z.infer<ReturnType<typeof makeContactSchema>>;
 
-function mapIssues(issues: z.ZodIssue[]) {
+function mapIssues(issues: z.ZodError["issues"]) {
   const out: Record<string, string> = {};
   for (const i of issues) {
     const key = i.path.join(".");
@@ -93,13 +97,13 @@ async function getTurnstileToken(sitekey?: string): Promise<string> {
   if (!sitekey) return ""; // dev mode without captcha
 
   await new Promise<void>((resolve) => {
-    const check = () => (window.turnstile ? resolve() : setTimeout(check, 40));
+    const check = () => (globalThis.turnstile ? resolve() : setTimeout(check, 40));
     check();
   });
 
   return await new Promise<string>((resolve, reject) => {
     try {
-      const turnstile = window.turnstile;
+      const turnstile = globalThis.turnstile;
 
       if (!turnstile) {
         reject(new Error("Turnstile not loaded"));
@@ -152,11 +156,15 @@ export default function Contact() {
       }
 
       const fd = new FormData(form);
+      const getStringValue = (key: string): string => {
+        const value = fd.get(key);
+        return typeof value === "string" ? value : "";
+      };
       const formData = {
-        name: String(fd.get("name") || ""),
-        email: String(fd.get("email") || ""),
-        subject: String(fd.get("subject") || ""),
-        message: String(fd.get("message") || ""),
+        name: getStringValue("name"),
+        email: getStringValue("email"),
+        subject: getStringValue("subject"),
+        message: getStringValue("message"),
       };
 
       const parsed = ContactSchema.safeParse(formData);
@@ -177,15 +185,15 @@ export default function Contact() {
   );
 
   useEffect(() => {
-    if (!Object.keys(errs).length) return;
+    if (Object.keys(errs).length === 0) return;
     if (!formRef.current) return;
 
     const result = validateForm(formRef.current);
-    if (!result.success) {
+    if (result.success) {
+      setErrs({});
+    } else {
       setErrs(result.errors);
       setError(t("form.error.fix_fields", "Please fix the highlighted fields."));
-    } else {
-      setErrs({});
     }
   }, [i18n.language, t, errs, validateForm]);
 
@@ -212,9 +220,10 @@ export default function Contact() {
 
     // Extract additional fields needed for submission (honeypot, timestamp)
     const fd = new FormData(form);
+    const companyValue = fd.get("company");
     const data = {
       ...validationResult.data!,
-      company: String(fd.get("company") || ""),
+      company: typeof companyValue === "string" ? companyValue : "",
       ts,
     };
 
@@ -304,8 +313,31 @@ export default function Contact() {
     }
   };
 
-  const errId = (field: "name" | "email" | "subject" | "message") =>
+  type FormFieldName = "name" | "email" | "subject" | "message";
+
+  const errId = (field: FormFieldName) =>
     `field-${field}-error`;
+
+  // Helper functions to reduce cognitive complexity
+  const getPlaceholderDefault = (field: FormFieldName): string => {
+    const defaults: Record<FormFieldName, string> = {
+      name: "Your name",
+      email: "Your email",
+      subject: "Subject",
+      message: "Your message",
+    };
+    return defaults[field];
+  };
+
+  const getAutoComplete = (field: FormFieldName): "name" | "email" | "off" => {
+    if (field === "name") return "name";
+    if (field === "email") return "email";
+    return "off";
+  };
+
+  const getInputType = (field: FormFieldName): string => {
+    return field === "email" ? "email" : "text";
+  };
 
   return (
     <section
@@ -346,7 +378,11 @@ export default function Contact() {
             onSubmit={onSubmit}
             className="space-y-4 reveal"
             noValidate
-            aria-describedby={error ? "form-error" : ok ? "form-success" : undefined}
+            aria-describedby={(() => {
+              if (error) return "form-error";
+              if (ok) return "form-success";
+              return undefined;
+            })()}
           >
             <label htmlFor="company" className="sr-only">
               Company
@@ -366,29 +402,17 @@ export default function Contact() {
             {(["name", "email", "subject", "message"] as const).map((field) => {
               const isTextArea = field === "message";
               const label = t(`form.${field}`);
-              const ph =
-                t(`form.placeholder.${field}`, {
-                  defaultValue:
-                    field === "name"
-                      ? "Your name"
-                      : field === "email"
-                        ? "Your email"
-                        : field === "subject"
-                          ? "Subject"
-                          : "Your message",
-                }) || undefined;
+              const placeholder = t(`form.placeholder.${field}`, {
+                defaultValue: getPlaceholderDefault(field),
+              }) || undefined;
 
               const common =
                 "w-full rounded-app border border-[var(--primary)] text-[--text] placeholder-[--muted] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)]";
 
-              const auto: "name" | "email" | "off" =
-                field === "name"
-                  ? "name"
-                  : field === "email"
-                    ? "email"
-                    : "off";
-
+              const autoComplete = getAutoComplete(field);
+              const inputType = getInputType(field);
               const invalid = Boolean(errs[field]);
+              const errorId = errId(field);
 
               return (
                 <div key={field}>
@@ -401,32 +425,32 @@ export default function Contact() {
                       id={field}
                       name={field}
                       rows={6}
-                      placeholder={ph}
+                      placeholder={placeholder}
                       className={`${common} px-4 py-3 glow-pulse`}
                       autoComplete="off"
                       required
                       aria-required="true"
                       aria-invalid={invalid}
-                      aria-describedby={invalid ? errId(field) : undefined}
+                      aria-describedby={invalid ? errorId : undefined}
                     />
                   ) : (
                     <input
                       id={field}
                       name={field}
-                      type={field === "email" ? "email" : "text"}
-                      autoComplete={auto}
-                      placeholder={ph}
+                      type={inputType}
+                      autoComplete={autoComplete}
+                      placeholder={placeholder}
                       className={`${common} h-12 px-4 glow-pulse`}
                       required
                       aria-required="true"
                       aria-invalid={invalid}
-                      aria-describedby={invalid ? errId(field) : undefined}
+                      aria-describedby={invalid ? errorId : undefined}
                     />
                   )}
 
                   {errs[field] && (
                     <p
-                      id={errId(field)}
+                      id={errorId}
                       className="mt-1 text-sm text-[var(--danger)]"
                       role="alert"
                     >
