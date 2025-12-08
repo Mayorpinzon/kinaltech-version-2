@@ -69,7 +69,10 @@ function makeContactSchema(t: TFunction) {
       .max(30, t("form.error.name_max", "Max 30 characters.")),
     email: z
       .string()
-      .email(t("form.error.email_invalid", "Please enter a valid email."))
+      .regex(
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        t("form.error.email_invalid", "Please enter a valid email.")
+      )
       .max(160),
     subject: z
       .string()

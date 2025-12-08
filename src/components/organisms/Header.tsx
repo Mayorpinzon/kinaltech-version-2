@@ -148,7 +148,7 @@ export default function Header() {
           hidden={!open}
           data-state={open ? "open" : "closed"}
           className="max-[959px]:fixed inset-0 z-40 bg-[color:rgba(0,0,0,.25)] backdrop-blur-sm"
-          onClick={() => setOpen(false)} // closes when clicking outside
+          aria-hidden="true"
         >
           <div
             id="mobile-menu"

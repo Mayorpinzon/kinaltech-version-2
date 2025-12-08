@@ -83,14 +83,13 @@ const EVERYDAY_TOOLS: Tech[] = [
   { id: "asana", nameKey: "tools.asana" as TranslationKey, color: "#F06A6A", Icon: AsanaIcon },
 ];
 
-function Chip({ tech }: Readonly<{ tech: Tech }>) {
-  const { t } = useTranslation();
-  const { Icon, color, darkColor, nameKey } = tech;
+// Shared hook for theme detection
+function useThemeDetection() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
     const checkTheme = () => {
-      const isDarkMode = document.documentElement.getAttribute("data-theme") === "dark" ||
+      const isDarkMode = document.documentElement.dataset.theme === "dark" ||
         document.body.classList.contains("dark");
       setIsDark(isDarkMode);
     };
@@ -102,6 +101,14 @@ function Chip({ tech }: Readonly<{ tech: Tech }>) {
 
     return () => observer.disconnect();
   }, []);
+
+  return isDark;
+}
+
+function Chip({ tech }: Readonly<{ tech: Tech }>) {
+  const { t } = useTranslation();
+  const { Icon, color, darkColor, nameKey } = tech;
+  const isDark = useThemeDetection();
 
   const iconColor = isDark && darkColor ? darkColor : color;
 
@@ -124,22 +131,7 @@ function Chip({ tech }: Readonly<{ tech: Tech }>) {
 function Card({ tech }: Readonly<{ tech: Tech }>) {
   const { t } = useTranslation();
   const { Icon, color, darkColor, nameKey } = tech;
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const checkTheme = () => {
-      const isDarkMode = document.documentElement.getAttribute("data-theme") === "dark" ||
-        document.body.classList.contains("dark");
-      setIsDark(isDarkMode);
-    };
-
-    checkTheme();
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-
-    return () => observer.disconnect();
-  }, []);
+  const isDark = useThemeDetection();
 
   const iconColor = isDark && darkColor ? darkColor : color;
 
