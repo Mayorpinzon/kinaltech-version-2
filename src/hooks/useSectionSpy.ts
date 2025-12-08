@@ -71,7 +71,7 @@ export function useSectionSpy(opts: Opts = {}) {
     const onScroll = () => {
       if (scrollTimeoutRef.current !== null) return;
 
-      scrollTimeoutRef.current = window.setTimeout(() => {
+      scrollTimeoutRef.current = globalThis.setTimeout(() => {
         compute();
         scrollTimeoutRef.current = null;
       }, SCROLL_THROTTLE_MS);
@@ -81,28 +81,28 @@ export function useSectionSpy(opts: Opts = {}) {
     const onResize = () => {
       if (resizeTimeoutRef.current !== null) return;
 
-      resizeTimeoutRef.current = window.setTimeout(() => {
+      resizeTimeoutRef.current = globalThis.setTimeout(() => {
         compute();
         resizeTimeoutRef.current = null;
       }, RESIZE_THROTTLE_MS);
     };
 
     // Add event listeners with passive flag for better scroll performance
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize, { passive: true });
+    globalThis.addEventListener("scroll", onScroll, { passive: true });
+    globalThis.addEventListener("resize", onResize, { passive: true });
 
     // Cleanup function
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
+      globalThis.removeEventListener("scroll", onScroll);
+      globalThis.removeEventListener("resize", onResize);
 
       // Clear any pending timeouts
       if (scrollTimeoutRef.current !== null) {
-        window.clearTimeout(scrollTimeoutRef.current);
+        globalThis.clearTimeout(scrollTimeoutRef.current);
         scrollTimeoutRef.current = null;
       }
       if (resizeTimeoutRef.current !== null) {
-        window.clearTimeout(resizeTimeoutRef.current);
+        globalThis.clearTimeout(resizeTimeoutRef.current);
         resizeTimeoutRef.current = null;
       }
     };

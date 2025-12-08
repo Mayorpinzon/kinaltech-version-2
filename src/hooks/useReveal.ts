@@ -29,7 +29,7 @@ export function useReveal(selector: string = DEFAULT_SELECTOR) {
     // Create IntersectionObserver with optimized options
     const io = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        for (const entry of entries) {
           if (entry.isIntersecting) {
             const target = entry.target as HTMLElement;
 
@@ -40,7 +40,7 @@ export function useReveal(selector: string = DEFAULT_SELECTOR) {
             io.unobserve(target);
             observedElementsRef.current.delete(target);
           }
-        });
+        }
       },
       {
         threshold: REVEAL_THRESHOLD,
@@ -55,10 +55,10 @@ export function useReveal(selector: string = DEFAULT_SELECTOR) {
     const currentObservedSet = observedElementsRef.current;
 
     // Observe all elements that need revealing
-    elementsToObserve.forEach((el) => {
+    for (const el of elementsToObserve) {
       io.observe(el);
       currentObservedSet.add(el);
-    });
+    }
 
     // Cleanup function (runs on unmount or selector change)
     return () => {

@@ -7,13 +7,13 @@ export function ServiceCard({
   children,
   className = "",
   style,
-}: {
+}: Readonly<{
   icon: ReactNode;
   title: ReactNode;                 
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
-}) {
+}>) {
   return (
     <article
       className={[
