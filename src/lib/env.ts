@@ -47,6 +47,12 @@ export const ENV = {
 
   // Turnstile (Optional - only needed if using captcha)
   TURNSTILE_SITEKEY: optionalEnv("VITE_TURNSTILE_SITEKEY"),
+
+  // Contact API URL (Cloudflare Worker endpoint)
+  CONTACT_API_URL: requireEnv(
+    "VITE_CONTACT_API_URL",
+    "Contact form API endpoint (Cloudflare Worker)"
+  ),
 } as const;
 
 export type Env = typeof ENV;
