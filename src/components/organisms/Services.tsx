@@ -45,7 +45,7 @@ export default function Services() {
   return (
     <section
       id="services"
-      className="py-25 md:py-28 bg-[var(--surface)] text-body dark:text-white scroll-mt-20"
+      className="py-25 md:py-28 bg-(--surface) text-body dark:text-white scroll-mt-20"
       aria-labelledby="services-title"
       aria-describedby="services-desc"
     >

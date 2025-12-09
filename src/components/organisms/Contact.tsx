@@ -44,10 +44,10 @@ function InfoRow({
   return (
     <div className="flex items-start gap-5 rounded-app bg-transparent p-4">
       <div
-        className="inline-grid h-15 w-15 flex-none shrink-0 place-items-center rounded-2xl text-[--white] bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] shadow-soft"
+        className="inline-grid h-15 w-15 flex-none shrink-0 place-items-center rounded-2xl text-[--white] bg-linear-to-br from-(--primary) to-(--accent) shadow-soft"
         aria-hidden
       >
-        <div className="h-6 w-6 text-[var(--white)]">{icon}</div>
+        <div className="h-6 w-6 text-(--white)">{icon}</div>
       </div>
       <div className="min-w-0">
         <p className="text-md font-semibold text-[--text]">{title}</p>
@@ -483,7 +483,7 @@ export default function Contact() {
                   {errs[field] && (
                     <p
                       id={errorId}
-                      className="mt-1 text-sm text-[var(--danger)]"
+                      className="mt-1 text-sm text-(--danger)"
                       role="alert"
                     >
                       {errs[field]}
@@ -505,7 +505,7 @@ export default function Contact() {
             </Button>
 
             {error && (
-              <p id="form-error" role="alert" className="text-sm text-[var(--danger)]">
+              <p id="form-error" role="alert" className="text-sm text-(--danger)">
                 {error}
               </p>
             )}
@@ -513,7 +513,7 @@ export default function Contact() {
               <p
                 id="form-success"
                 aria-live="polite"
-                className="text-sm text-[var(--green-light)]"
+                className="text-sm text-(--green-light)"
               >
                 {ok}
               </p>
