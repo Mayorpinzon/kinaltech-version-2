@@ -1,0 +1,30 @@
+# workers/contact/wrangler.toml
+# Cloudflare Worker configuration
+
+name = "contact"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# KV Namespace binding (create in Cloudflare Dashboard first)
+# After creating the KV namespace, bind it here:
+[[kv_namespaces]]
+binding = "CONTACT_KV"
+id = "514ecb70d3744a498c37e3f2a7ba8920"
+
+# Environment variables (secrets should be set via: wrangler secret put <NAME>)
+# Or in Cloudflare Dashboard > Workers > contact > Settings > Variables
+# Required secrets:
+# - TURNSTILE_SECRET
+# - SENDGRID_API_KEY
+# - CONTACT_TO (comma-separated email addresses)
+# - CONTACT_FROM (sender email address)
+
+# Routes (optional - can also use workers.dev subdomain)
+# routes = [
+#   { pattern = "api.yourdomain.com/contact", zone_name = "yourdomain.com" }
+# ]
+
+# Development settings
+[env.development]
+# For local development with wrangler dev
+

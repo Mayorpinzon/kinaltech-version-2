@@ -4,13 +4,15 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  server: {
-    proxy: {
-      '/api': {
-        target: 'http://127.0.0.1:5001',
-        changeOrigin: true,
-        rewrite: p => p.replace(/^\/api/, '/kinaltech-dev/us-central1'),
-      },
-    },
-  },
+  // Proxy removed - contact form now uses Cloudflare Worker
+  // If you need to proxy to Cloudflare Worker in development, uncomment and update:
+  // server: {
+  //   proxy: {
+  //     '/api/contact': {
+  //       target: 'https://contact.your-subdomain.workers.dev',
+  //       changeOrigin: true,
+  //       rewrite: (path) => path.replace(/^\/api\/contact/, '/contact'),
+  //     },
+  //   },
+  // },
 })

@@ -5,10 +5,7 @@ import { Container, H2, Lead, Button, MailIcon, PinIcon, ClockIcon } from "../at
 import { useEffect, useRef, useState, useCallback, type FormEvent, type ReactNode } from "react";
 import { useReveal } from "../../hooks/useReveal";
 import { z } from "zod";
-import { addDoc, serverTimestamp } from "firebase/firestore";
-import { contactMessagesRef } from "../../lib/firebase";
 import { ENV } from "../../lib/env";
-import type { ContactMessageInput } from "../../types/contact";
 
 type TurnstileRenderOptions = {
   sitekey: string;
@@ -95,7 +92,7 @@ function mapIssues(issues: z.ZodError["issues"]) {
   return out;
 }
 
-/* Turnstile token helper (kept for future backend use) */
+/* Turnstile token helper - gets token for backend verification */
 async function getTurnstileToken(sitekey?: string): Promise<string> {
   if (!sitekey) return ""; // dev mode without captcha
 
@@ -111,6 +108,12 @@ async function getTurnstileToken(sitekey?: string): Promise<string> {
       if (!turnstile) {
         reject(new Error("Turnstile not loaded"));
         return;
+      }
+
+      // Clear any existing widget
+      const container = document.getElementById("cf-turnstile");
+      if (container) {
+        container.innerHTML = "";
       }
 
       turnstile.render("#cf-turnstile", {
@@ -234,30 +237,67 @@ export default function Contact() {
     try {
       setSending(true);
 
+      // Get Turnstile token if available
+      let captchaToken = "";
       if (ENV.TURNSTILE_SITEKEY) {
         try {
-          await getTurnstileToken(ENV.TURNSTILE_SITEKEY);
+          captchaToken = await getTurnstileToken(ENV.TURNSTILE_SITEKEY);
         } catch (err) {
           console.warn("Turnstile skipped:", err);
+          // Continue without token if Turnstile fails (backend will handle)
         }
       }
 
-      // Guardar el mensaje en Firestore (sin Cloud Functions)
-      // Using typed collection reference for type safety
-      const contactMessage: ContactMessageInput = {
+      // Send to Cloudflare Worker
+      const payload = {
         name: data.name,
         email: data.email,
         subject: data.subject,
         message: data.message,
         ts: data.ts,
-        createdAt: serverTimestamp(),
         lang: i18n.language,
+        ...(captchaToken ? { captcha: captchaToken } : {}),
       };
-      await addDoc(contactMessagesRef, contactMessage);
 
-      setOk(t("form.success", "Thanks! We’ll get back to you shortly."));
-      setError("");
-      form.reset();
+      const response = await fetch(ENV.CONTACT_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorData = (await response.json()) as
+          | { error: string; issues?: Array<{ path: string; message: string }> }
+          | undefined;
+
+        // Handle validation errors
+        if (errorData?.issues && Array.isArray(errorData.issues)) {
+          const fieldErrors: Record<string, string> = {};
+          for (const issue of errorData.issues) {
+            if (issue.path) {
+              fieldErrors[issue.path] = issue.message;
+            }
+          }
+          if (Object.keys(fieldErrors).length > 0) {
+            setErrs(fieldErrors);
+          }
+        }
+
+        throw new Error(
+          errorData?.error || `Server error: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const result = (await response.json()) as { ok?: boolean };
+      if (result.ok) {
+        setOk(t("form.success", "Thanks! We'll get back to you shortly."));
+        setError("");
+        form.reset();
+      } else {
+        throw new Error(t("form.error.network", "Network error. Please try again."));
+      }
     } catch (err: unknown) {
       console.error("Contact submit failed:", err);
       setOk("");
