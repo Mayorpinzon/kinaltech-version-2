@@ -3,41 +3,15 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { ANIMATION_DURATIONS } from "../../constants/animations";
 
-type Props = Readonly<{ size?: "sm" | "md" }>;
+type Props = Readonly<{
+  size?: "sm" | "md";
+  theme: "light" | "dark";
+  onToggle: (nextTheme: "light" | "dark") => void;
+}>;
 
-export function ThemeToggle({ size = "md" }: Props) {
+export function ThemeToggle({ size = "md", theme, onToggle }: Props) {
   const { t } = useTranslation();
-
-  // Read initial theme (SSR-safe)
-  const initial = React.useMemo<"light" | "dark">(() => {
-    if (typeof document === "undefined") return "light";
-    const stored = localStorage.getItem("theme") as "light" | "dark" | null;
-    if (stored === "light" || stored === "dark") return stored;
-    return globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  }, []);
-
-  const [theme, setTheme] = React.useState<"light" | "dark">(initial);
   const [anim, setAnim] = React.useState(false);
-
-  // Apply theme to DOM + persist
-  React.useEffect(() => {
-    document.body.classList.toggle("dark", theme === "dark");
-    document.documentElement.dataset.theme = theme;
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  // Listen to OS theme changes and update (only if user hasn't overridden in this session)
-  React.useEffect(() => {
-    const mq = globalThis.matchMedia?.("(prefers-color-scheme: dark)");
-    if (!mq) return;
-    const onChange = (e: MediaQueryListEvent) => {
-      // If user explicitly clicked, we still respect their choice; this keeps in sync if not set yet
-      const stored = localStorage.getItem("theme");
-      if (!stored) setTheme(e.matches ? "dark" : "light");
-    };
-    mq.addEventListener?.("change", onChange);
-    return () => mq.removeEventListener?.("change", onChange);
-  }, []);
 
   // Trigger a short transform animation when toggling (unless reduced motion)
   const playAnim = React.useCallback(() => {
@@ -63,8 +37,9 @@ export function ThemeToggle({ size = "md" }: Props) {
       ? (t("theme.light") ?? "Switch to light theme")
       : (t("theme.dark") ?? "Switch to dark theme");
 
-  const onToggle = () => {
-    setTheme((t0) => (t0 === "dark" ? "light" : "dark"));
+  const handleClick = () => {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    onToggle(nextTheme);
     playAnim();
   };
 
@@ -74,7 +49,7 @@ export function ThemeToggle({ size = "md" }: Props) {
       aria-label={nextLabel}
       aria-pressed={theme === "dark"} // pressed = dark mode ON
       className={`${btnBase} ${btnSize} ${btnHover}`}
-      onClick={onToggle}
+      onClick={handleClick}
     >
       <span className={iconWrap} aria-hidden>
         {theme === "dark" ? (
