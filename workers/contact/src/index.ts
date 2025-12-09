@@ -8,8 +8,8 @@ import { z } from "zod";
 interface Env {
   TURNSTILE_SECRET: string;
   SENDGRID_API_KEY: string;
-  CONTACT_TO: string;
-  CONTACT_FROM: string;
+  SENDGRID_TO: string;
+  SENDGRID_FROM: string;
   CONTACT_KV: KVNamespace; // Cloudflare KV namespace for storing messages
   // Optional: For Firestore fallback (if needed)
   FIREBASE_PROJECT_ID?: string;
@@ -20,8 +20,7 @@ interface Env {
 const ALLOWED_ORIGINS = new Set<string>([
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  // Add your production domain here
-  // "https://your-domain.com",
+  "https://kinaltech-dev.web.app",
 ]);
 
 // --- Utilities ---
@@ -269,7 +268,6 @@ export default {
 
       // Honeypot check
       if (body.company && body.company.trim().length > 0) {
-        // Pretend success, don't process further
         const origin = request.headers.get("Origin");
         const headers = getCorsHeaders(origin);
         headers.set("Content-Type", "application/json");
@@ -326,9 +324,8 @@ export default {
       // Process in parallel: save to KV and send email
       await Promise.all([
         saveContactToKV(clean, env.CONTACT_KV, body.lang),
-        sendContactEmail(clean, env.SENDGRID_API_KEY, env.CONTACT_TO, env.CONTACT_FROM).catch(
+        sendContactEmail(clean, env.SENDGRID_API_KEY, env.SENDGRID_TO, env.SENDGRID_FROM).catch(
           (err) => {
-            // Log email errors but don't fail the request
             console.error("Email send failed:", err);
           }
         ),
