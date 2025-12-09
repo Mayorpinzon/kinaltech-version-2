@@ -18,6 +18,8 @@ type TurnstileRenderOptions = {
 type TurnstileInstance = {
   render: (container: string, options: TurnstileRenderOptions) => unknown;
   execute: (container: string) => void;
+  reset?: (widgetId: string | unknown) => void;
+  remove?: (widgetId: string | unknown) => void;
 };
 
 declare global {
@@ -93,6 +95,8 @@ function mapIssues(issues: z.ZodError["issues"]) {
 }
 
 /* Turnstile token helper - gets token for backend verification */
+let turnstileWidgetId: string | null = null;
+
 async function getTurnstileToken(sitekey?: string): Promise<string> {
   if (!sitekey) return ""; // dev mode without captcha
 
@@ -110,20 +114,48 @@ async function getTurnstileToken(sitekey?: string): Promise<string> {
         return;
       }
 
-      // Clear any existing widget
       const container = document.getElementById("cf-turnstile");
-      if (container) {
-        container.innerHTML = "";
+      if (!container) {
+        reject(new Error("Turnstile container not found"));
+        return;
       }
 
-      turnstile.render("#cf-turnstile", {
-        sitekey,
-        appearance: "execute",
-        callback: (token: string) => resolve(token),
-        "error-callback": () => reject(new Error("Captcha failed")),
-        retry: "auto",
-      });
-      turnstile.execute("#cf-turnstile");
+      // If widget already exists, reset it before executing
+      if (turnstileWidgetId !== null) {
+        try {
+          if (turnstile.reset) {
+            turnstile.reset(turnstileWidgetId);
+          } else if (turnstile.remove) {
+            turnstile.remove(turnstileWidgetId);
+            container.innerHTML = "";
+            turnstileWidgetId = null;
+          } else {
+            // Fallback: clear container and re-render
+            container.innerHTML = "";
+            turnstileWidgetId = null;
+          }
+        } catch {
+          // If reset fails, clear and re-render
+          container.innerHTML = "";
+          turnstileWidgetId = null;
+        }
+      }
+
+      // Render widget if it doesn't exist
+      if (turnstileWidgetId === null) {
+        turnstileWidgetId = turnstile.render("#cf-turnstile", {
+          sitekey,
+          appearance: "execute",
+          callback: (token: string) => resolve(token),
+          "error-callback": () => reject(new Error("Captcha failed")),
+          retry: "auto",
+        }) as string;
+      }
+
+      // Execute the widget
+      if (turnstileWidgetId) {
+        turnstile.execute("#cf-turnstile");
+      }
     } catch (e) {
       reject(e);
     }
