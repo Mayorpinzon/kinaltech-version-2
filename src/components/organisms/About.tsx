@@ -43,7 +43,7 @@ export default function About() {
       aria-labelledby="about-title"
       aria-describedby="about-desc"
     >
-      <Container className="max-w-2xl mx-auto text-[var(--text)] text-center mb-20 reveal">
+      <Container className="max-w-2xl mx-auto text-(--text) text-center mb-20 reveal">
         <H2>{t("about.sectionTitle")}</H2>
         <Lead className="mt-3">
           {t(
@@ -55,16 +55,16 @@ export default function About() {
       {/* Bloque 1: KinalTech overview */}
       <Container className="grid gap-10 md:grid-cols-2 items-center mb-28">
         {/* Text column */}
-        <div className="text-[var(--text)]">
+        <div className="text-(--text)">
           {/* Section heading used as label for the landmark */}
           <H2 id="about-title">{t("about.title")}</H2>
 
           {/* First paragraph doubles as section description for AT/SEO */}
-          <p id="about-desc" className="mt-3 text-[var(--muted)]">
+          <p id="about-desc" className="mt-3 text-(--muted)">
             {t("about.p1")}
           </p>
-          <p className="mt-3 text-[var(--muted)]">{t("about.p2")}</p>
-          <p className="mt-2 text-[var(--muted)]">{t("about.p3")}</p>
+          <p className="mt-3 text-(--muted)">{t("about.p2")}</p>
+          <p className="mt-2 text-(--muted)">{t("about.p3")}</p>
 
           {/* Clear action; aria-label falls back to button text if *_aria is missing */}
           <Button
@@ -99,7 +99,7 @@ export default function About() {
       {/* Bloque 2: Team / Developers */}
       <Container className="mt-16">
         <div className="max-w-3xl mx-auto text-center reveal">
-          <H2 className="text-[var(--text)] " id="about-team-title">{t("about.team.title", "About us")}</H2>
+          <H2 className="text-(--text) " id="about-team-title">{t("about.team.title", "About us")}</H2>
           <Lead className="mt-3">
             {t(
               "about.team.lead"
@@ -111,10 +111,10 @@ export default function About() {
           {TEAM_MEMBERS.map((member) => (
             <article
               key={member.id}
-              className="reveal flex flex-col items-center text-center rounded-app border border-[var(--border)] bg-card/60 px-6 py-7 shadow-soft backdrop-blur-sm  shadow-lg hover:border-[var(--primary)] hover:shadow-md
+              className="reveal flex flex-col items-center text-center rounded-app border border-(--border) bg-card/60 px-6 py-7 shadow-soft backdrop-blur-sm  shadow-lg hover:border-(--primary) hover:shadow-md
         transition-colors glow-pulse"
             >
-              <div className="h-40 w-25 rounded-full overflow-hidden border border-[var(--primary)] bg-[var(--surface)] shadow-soft mb-4">
+              <div className="h-40 w-25 rounded-full overflow-hidden border border-(--primary) bg-(--surface) shadow-soft mb-4">
                 <img
                   src={member.avatar}
                   alt={t(member.nameKey)}
@@ -123,13 +123,13 @@ export default function About() {
                   decoding="async"
                 />
               </div>
-              <h3 className="text-base font-semibold text-[var(--text)] text-aline-justify">
+              <h3 className="text-base font-semibold text-(--text) text-aline-justify">
                 {t(member.nameKey)}
               </h3>
-              <p className="mt-1 text-xs uppercase tracking-wide text-[var(--muted)]">
+              <p className="mt-1 text-xs uppercase tracking-wide text-(--muted)">
                 {t(member.roleKey)}
               </p>
-              <p className="mt-3 text-sm text-[var(--muted)]" style={{ textAlign: "justify" }}>
+              <p className="mt-3 text-sm text-(--muted)" style={{ textAlign: "justify" }}>
                 {t(member.bioKey)}
               </p>
             </article>

@@ -89,8 +89,8 @@ export default function Header() {
       {/* Accessible skip link (keyboard users can jump directly to content) */}
       <a
         href="#content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60]
-                   focus:bg-[var(--surface)] focus:text-[var(--text)]
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-60
+                   focus:bg-(--surface) focus:text-(--text)
                    focus:px-3 focus:py-2 focus:rounded-md focus:shadow-soft"
       >
         Skip to content
@@ -101,11 +101,11 @@ export default function Header() {
         role="banner"
         className="
           site-header sticky top-0 z-50
-          border-b border-[color:var(--border)]
-          bg-[color:var(--header-glass-base)]
+          border-b border-(--border)
+          bg-(--header-glass-base)
           backdrop-blur
           transition-[background,box-shadow,border-color] duration-300
-          text-[var(--text)]
+          text-(--text)
         "
       >
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -154,7 +154,7 @@ export default function Header() {
                 aria-expanded={open}
                 aria-controls="mobile-menu"
                 onClick={() => setOpen((v) => !v)}
-                className="inline-flex items-center text-[var(--primary)] justify-center 
+                className="inline-flex items-center text-(--primary) justify-center 
                            rounded-xl h-9 w-9 border border-[--border] bg-[--surface] 
                            hover:bg-[--surface] focus:outline-none focus-visible:ring-2 
                            focus-visible:ring-[--accent]"
@@ -180,7 +180,7 @@ export default function Header() {
           id="mobile-menu-overlay"
           hidden={!open}
           data-state={open ? "open" : "closed"}
-          className="max-[959px]:fixed inset-0 z-40 bg-[color:rgba(0,0,0,.25)] backdrop-blur-sm"
+          className="max-[959px]:fixed inset-0 z-40 bg-[rgba(0,0,0,.25)] backdrop-blur-sm"
           aria-hidden="true"
         >
           <div
@@ -190,13 +190,13 @@ export default function Header() {
             ref={panelRef}
             className="
               menu-panel absolute inset-x-2 top-16
-              rounded-2xl border border-[var(--primary)]
-              bg-[var(--shell)] backdrop-blur 
+              rounded-2xl border border-(--primary)
+              bg-(--shell) backdrop-blur 
               shadow-xl
             "
           >
             {/* Top row inside the mobile menu */}
-            <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-[var(--primary)] min-h-[48px]">
+            <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-(--primary) min-h-[48px]">
               <a
                 href="#hero"
                 className="flex items-center gap-2 font-semibold text-[--text]
@@ -215,7 +215,7 @@ export default function Header() {
                   className="h-9 w-9 inline-flex items-center justify-center rounded-lg 
                              border border-[--border] hover:bg-[--surface] 
                              focus:outline-none focus-visible:ring-2 
-                             focus-visible:ring-[--accent] text-[var(--primary)]"
+                             focus-visible:ring-[--accent] text-(--primary)"
                   onClick={() => setOpen(false)}
                   aria-label={t("nav.close") ?? "Close menu"}
                 >

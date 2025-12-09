@@ -13,7 +13,7 @@ export default function Footer() {
       aria-label={t("footer.aria") ?? "Site footer"}
       className="
         bg-surface text-sm text-muted
-        border-t border-[var(--footerBorder,var(--border))]
+        border-t border-(--footerBorder,var(--border))
         py-3
       "
     >

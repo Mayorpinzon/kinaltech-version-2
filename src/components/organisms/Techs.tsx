@@ -116,7 +116,7 @@ function Chip({ tech }: Readonly<{ tech: Tech }>) {
     <li
       className="
         inline-flex items-center gap-4 rounded-full px-5 h-15 mx-2
-        border border-[var(--border)]
+        border border-(--border)
         bg-[--surface] text-[--text] font-medium
         transition-colors shrink-0"
     >
@@ -138,8 +138,8 @@ function Card({ tech }: Readonly<{ tech: Tech }>) {
   return (
     <article
       className="
-        rounded-[16px] border border-[var(--border)] bg-card p-6 text-center
-        shadow-soft hover:border-[var(--primary)] hover:shadow-md
+        rounded-[16px] border border-(--border) bg-card p-6 text-center
+        shadow-soft hover:border-(--primary) hover:shadow-md
         transition-colors glow-pulse
       "
     >
@@ -170,7 +170,7 @@ function Techs() {
 
         {/* Grid de cards inferior */}
         <div
-          className=" mt-9 grid gap-6 reveal [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))] "
+          className=" mt-9 grid gap-6 reveal grid-cols-[repeat(auto-fit,minmax(180px,1fr))] "
         >
           {TECHS.map((t) => (
             <Card key={t.id} tech={t} />
@@ -179,7 +179,7 @@ function Techs() {
 
         {/* Everyday Tools Section */}
         <div className="mt-16 text-center max-w-3xl mx-auto reveal">
-          <H2 className="break-words hyphens-auto">{t("tools.title")}</H2>
+          <H2 className="wrap-break-word hyphens-auto">{t("tools.title")}</H2>
         </div>
         {/* Everyday Tools Carousel */}
         <div className="mt-7 overflow-hidden mask-edges reveal" aria-label={t("tools.title")}>
