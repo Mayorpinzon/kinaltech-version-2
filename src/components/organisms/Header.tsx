@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Nav } from "../molecules";
 import { ThemeToggle, LangSelect, KinalTechLogo } from "../atoms";
@@ -7,6 +7,39 @@ export default function Header() {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+
+  // Single source of truth for theme state
+  const initialTheme = useMemo<"light" | "dark">(() => {
+    if (typeof document === "undefined") return "light";
+    const stored = localStorage.getItem("theme") as "light" | "dark" | null;
+    if (stored === "light" || stored === "dark") return stored;
+    return globalThis.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }, []);
+
+  const [theme, setTheme] = useState<"light" | "dark">(initialTheme);
+
+  useEffect(() => {
+    document.body.classList.toggle("dark", theme === "dark");
+    document.documentElement.dataset.theme = theme;
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  // Listen to OS theme changes and update (only if user hasn't overridden)
+  useEffect(() => {
+    const mq = globalThis.matchMedia?.("(prefers-color-scheme: dark)");
+    if (!mq) return;
+    const onChange = (e: MediaQueryListEvent) => {
+      // If user explicitly set a theme, we respect their choice; otherwise sync with OS
+      const stored = localStorage.getItem("theme");
+      if (!stored) setTheme(e.matches ? "dark" : "light");
+    };
+    mq.addEventListener?.("change", onChange);
+    return () => mq.removeEventListener?.("change", onChange);
+  }, []);
+
+  const handleThemeToggle = (nextTheme: "light" | "dark") => {
+    setTheme(nextTheme);
+  };
 
   /* ============================
      Responsive + accessibility
@@ -101,7 +134,7 @@ export default function Header() {
             {/* Right-side actions (desktop only) */}
             <div className="hidden min-[960px]:flex items-center gap-3">
               <LangSelect variant="pill" />
-              <ThemeToggle size="sm" />
+              <ThemeToggle size="sm" theme={theme} onToggle={handleThemeToggle} />
             </div>
 
             {/* Mobile actions */}
@@ -110,7 +143,7 @@ export default function Header() {
               <div className="max-[380px]:hidden">
                 <LangSelect size="sm" />
               </div>
-              <ThemeToggle size="sm" />
+              <ThemeToggle size="sm" theme={theme} onToggle={handleThemeToggle} />
               <button
                 type="button"
                 aria-label={
@@ -177,7 +210,7 @@ export default function Header() {
                 <div className="min-[381px]:hidden">
                   <LangSelect size="sm" />
                 </div>
-                <ThemeToggle size="sm" />
+                <ThemeToggle size="sm" theme={theme} onToggle={handleThemeToggle} />
                 <button
                   className="h-9 w-9 inline-flex items-center justify-center rounded-lg 
                              border border-[--border] hover:bg-[--surface] 
