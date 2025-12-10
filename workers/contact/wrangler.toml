@@ -11,6 +11,11 @@ compatibility_date = "2024-01-01"
 binding = "CONTACT_KV"
 id = "514ecb70d3744a498c37e3f2a7ba8920"
 
+# Rate limiting KV namespace (for IP and email rate limiting)
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "bdf0b2236fc84f35b03b3e0dd4429d75"
+
 # Environment variables (secrets should be set via: wrangler secret put <NAME>)
 # Or in Cloudflare Dashboard > Workers > contact > Settings > Variables
 # Required secrets:
