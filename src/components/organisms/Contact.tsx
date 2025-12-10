@@ -98,7 +98,7 @@ function mapIssues(issues: z.ZodError["issues"]) {
 let turnstileWidgetId: string | null = null;
 
 async function getTurnstileToken(sitekey?: string): Promise<string> {
-  if (!sitekey) return ""; // dev mode without captcha
+  if (!sitekey) return "";
 
   await new Promise<void>((resolve) => {
     const check = () => (globalThis.turnstile ? resolve() : setTimeout(check, 40));
@@ -134,7 +134,7 @@ async function getTurnstileToken(sitekey?: string): Promise<string> {
             container.innerHTML = "";
             turnstileWidgetId = null;
           }
-        } catch {
+        } catch (err) {
           // If reset fails, clear and re-render
           container.innerHTML = "";
           turnstileWidgetId = null;
@@ -142,19 +142,25 @@ async function getTurnstileToken(sitekey?: string): Promise<string> {
       }
 
       // Render widget if it doesn't exist
-      turnstileWidgetId ??= turnstile.render("#cf-turnstile", {
-        sitekey,
-        appearance: "execute",
-        callback: (token: string) => resolve(token),
-        "error-callback": () => reject(new Error("Captcha failed")),
-        retry: "auto",
-      }) as string;
-
-      // Execute the widget
-      if (turnstileWidgetId) {
+      const isNewWidget = turnstileWidgetId === null;
+      if (isNewWidget) {
+        turnstileWidgetId = turnstile.render("#cf-turnstile", {
+          sitekey,
+          appearance: "execute",
+          callback: (token: string) => resolve(token),
+          "error-callback": () => {
+            console.error("[Turnstile] Error callback triggered");
+            reject(new Error("Captcha failed"));
+          },
+          retry: "auto",
+        }) as string;
+        // Widget with appearance: "execute" auto-executes, no need to call execute() manually
+      } else {
+        // Widget already exists and was reset, need to execute manually
         turnstile.execute("#cf-turnstile");
       }
     } catch (e) {
+      console.error("[Turnstile] Error in getTurnstileToken", e);
       reject(e);
     }
   });
@@ -308,6 +314,12 @@ export default function Contact() {
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
+
+    // Prevent double submission
+    if (sending) {
+      console.warn("[Contact] Form submission blocked: already sending");
+      return;
+    }
 
     setError("");
     setOk("");
