@@ -134,7 +134,7 @@ async function getTurnstileToken(sitekey?: string): Promise<string> {
             container.innerHTML = "";
             turnstileWidgetId = null;
           }
-        } catch (err) {
+        } catch {
           // If reset fails, clear and re-render
           container.innerHTML = "";
           turnstileWidgetId = null;
