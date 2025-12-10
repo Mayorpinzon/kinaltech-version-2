@@ -174,10 +174,35 @@ export default function Contact() {
   const ContactSchema = makeContactSchema(t);
 
   const [ok, setOk] = useState("");
-  const [error, setError] = useState("");
+  const [errorCode, setErrorCode] = useState<string | null>(null); // Store error code instead of message
   const [sending, setSending] = useState(false);
   const [errs, setErrs] = useState<Record<string, string>>({});
+  const [errCodes, setErrCodes] = useState<Record<string, string>>({}); // Store error codes for field errors
   const [ts] = useState(() => Date.now());
+
+  // Translate error code to localized message
+  const getErrorMessage = useCallback(
+    (code: string | null): string => {
+      if (!code) return "";
+      return t(code, code); // Use code as fallback if translation not found
+    },
+    [t]
+  );
+
+  // Re-render error messages when language changes
+  useEffect(() => {
+    if (errorCode) {
+      // Error message will be re-rendered automatically via getErrorMessage
+    }
+    if (Object.keys(errCodes).length > 0) {
+      // Re-translate field errors
+      const translatedErrs: Record<string, string> = {};
+      for (const [field, code] of Object.entries(errCodes)) {
+        translatedErrs[field] = t(code, code);
+      }
+      setErrs(translatedErrs);
+    }
+  }, [i18n.language, errorCode, errCodes, t]);
 
   // This unified function is used by both onSubmit and language-change re-validation.
   // Wrapped in useCallback to ensure stable reference for useEffect dependency.
@@ -227,9 +252,10 @@ export default function Contact() {
     const result = validateForm(formRef.current);
     if (result.success) {
       setErrs({});
+      setErrorCode(null);
     } else {
       setErrs(result.errors);
-      setError(t("form.error.fix_fields", "Please fix the highlighted fields."));
+      setErrorCode("form.error.fix_fields");
     }
   }, [i18n.language, t, errs, validateForm]);
 
@@ -265,26 +291,35 @@ export default function Contact() {
   const handleErrorResponse = useCallback(
     async (response: Response) => {
       const errorData = (await response.json()) as
-        | { error: string; issues?: Array<{ path: string; message: string }> }
+        | { 
+            error: string; 
+            errorCode?: string;
+            issues?: Array<{ path: string; message: string; code?: string }> 
+          }
         | undefined;
 
       if (errorData?.issues && Array.isArray(errorData.issues)) {
+        const fieldErrorCodes: Record<string, string> = {};
         const fieldErrors: Record<string, string> = {};
         for (const issue of errorData.issues) {
           if (issue.path) {
-            fieldErrors[issue.path] = issue.message;
+            // Use error code if available, otherwise use message
+            const code = issue.code || `form.error.${issue.path}`;
+            fieldErrorCodes[issue.path] = code;
+            fieldErrors[issue.path] = t(code, issue.message);
           }
         }
-        if (Object.keys(fieldErrors).length > 0) {
+        if (Object.keys(fieldErrorCodes).length > 0) {
+          setErrCodes(fieldErrorCodes);
           setErrs(fieldErrors);
         }
       }
 
-      throw new Error(
-        errorData?.error || `Server error: ${response.status} ${response.statusText}`
-      );
+      // Store error code for main error message
+      const mainErrorCode = errorData?.errorCode || "form.error.network";
+      throw new Error(mainErrorCode);
     },
-    []
+    [t]
   );
 
   // Helper: Submit form to API
@@ -305,7 +340,7 @@ export default function Contact() {
 
       const result = (await response.json()) as { ok?: boolean };
       if (!result.ok) {
-        throw new Error(t("form.error.network", "Network error. Please try again."));
+        throw new Error("form.error.network");
       }
     },
     [handleErrorResponse, t]
@@ -321,19 +356,21 @@ export default function Contact() {
       return;
     }
 
-    setError("");
+    setErrorCode(null);
     setOk("");
     setErrs({});
+    setErrCodes({});
 
     if (Date.now() - ts < 2500) {
-      setError(t("form.error.too_fast", "Please take a moment to complete the form."));
+      setErrorCode("form.error.too_fast");
       return;
     }
 
     const validationResult = validateForm(form);
     if (!validationResult.success) {
+      // Field errors are already translated by validateForm
       setErrs(validationResult.errors);
-      setError(t("form.error.fix_fields", "Please fix the highlighted fields."));
+      setErrorCode("form.error.fix_fields");
       return;
     }
 
@@ -359,18 +396,24 @@ export default function Contact() {
       await submitContactForm(payload);
 
       setOk(t("form.success", "Thanks! We'll get back to you shortly."));
-      setError("");
+      setErrorCode(null);
       form.reset();
     } catch (err: unknown) {
       console.error("Contact submit failed:", err);
       setOk("");
 
-      const message =
+      // Error message is an error code (i18n key) from backend or frontend
+      const errorCodeValue =
         err instanceof Error
           ? err.message
-          : t("form.error.network", "Network error. Please try again.");
+          : "form.error.network";
 
-      setError(message);
+      // Check if it's already an i18n key (starts with "form.error.")
+      const finalErrorCode = errorCodeValue.startsWith("form.error.")
+        ? errorCodeValue
+        : "form.error.network";
+
+      setErrorCode(finalErrorCode);
     } finally {
       setSending(false);
     }
@@ -442,7 +485,7 @@ export default function Contact() {
             className="space-y-4 reveal"
             noValidate
             aria-describedby={(() => {
-              if (error) return "form-error";
+              if (errorCode) return "form-error";
               if (ok) return "form-success";
               return undefined;
             })()}
@@ -535,9 +578,9 @@ export default function Contact() {
               {sending ? t("form.sending", "Sending…") : t("form.send")}
             </Button>
 
-            {error && (
+            {errorCode && (
               <p id="form-error" role="alert" className="text-sm text-(--danger)">
-                {error}
+                {getErrorMessage(errorCode)}
               </p>
             )}
             {ok && (
