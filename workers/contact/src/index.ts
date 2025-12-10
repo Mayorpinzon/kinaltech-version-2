@@ -29,9 +29,9 @@ const ALLOWED_ORIGINS = new Set<string>([
 function stripControlChars(value: string): string {
   let out = "";
   for (let i = 0; i < value.length; i++) {
-    const code = value.charCodeAt(i);
+    const code = value.codePointAt(i);
     // Keep only printable characters
-    if (code >= 32 && code !== 127) {
+    if (code !== undefined && code >= 32 && code !== 127) {
       out += value[i];
     } else {
       out += " ";
@@ -78,7 +78,13 @@ function handleCors(request: Request): Response | null {
 // --- Validation Schema (matches frontend) ---
 const ContactSchema = z.object({
   name: z.string().min(2).max(30),
-  email: z.string().email().max(160),
+  email: z
+    .string()
+    .regex(
+      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+      "Please enter a valid email."
+    )
+    .max(160),
   subject: z.string().min(2).max(160),
   message: z.string().min(10).max(300),
   // Optional metadata
@@ -117,7 +123,7 @@ async function verifyTurnstile(
       body: formData,
     });
 
-    const data = (await resp.json()) as { success?: boolean };
+    const data: { success?: boolean } = await resp.json();
     return Boolean(data.success);
   } catch {
     return false;
@@ -130,7 +136,7 @@ async function saveContactToKV(
   kv: KVNamespace,
   lang?: string
 ): Promise<void> {
-  const key = `contact:${Date.now()}:${Math.random().toString(36).substring(7)}`;
+  const key = `contact:${Date.now()}:${crypto.randomUUID()}`;
   const value = JSON.stringify({
     ...clean,
     lang: lang || "en",
@@ -230,7 +236,7 @@ export default {
 
     // Ensure JSON content type
     const contentType = request.headers.get("Content-Type");
-    if (!contentType || !contentType.includes("application/json")) {
+    if (!contentType?.includes("application/json")) {
       const origin = request.headers.get("Origin");
       const headers = getCorsHeaders(origin);
       headers.set("Content-Type", "application/json");

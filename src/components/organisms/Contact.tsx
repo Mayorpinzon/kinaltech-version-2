@@ -18,8 +18,8 @@ type TurnstileRenderOptions = {
 type TurnstileInstance = {
   render: (container: string, options: TurnstileRenderOptions) => unknown;
   execute: (container: string) => void;
-  reset?: (widgetId: string | unknown) => void;
-  remove?: (widgetId: string | unknown) => void;
+  reset?: (widgetId: string) => void;
+  remove?: (widgetId: string) => void;
 };
 
 declare global {
@@ -142,15 +142,13 @@ async function getTurnstileToken(sitekey?: string): Promise<string> {
       }
 
       // Render widget if it doesn't exist
-      if (turnstileWidgetId === null) {
-        turnstileWidgetId = turnstile.render("#cf-turnstile", {
-          sitekey,
-          appearance: "execute",
-          callback: (token: string) => resolve(token),
-          "error-callback": () => reject(new Error("Captcha failed")),
-          retry: "auto",
-        }) as string;
-      }
+      turnstileWidgetId ??= turnstile.render("#cf-turnstile", {
+        sitekey,
+        appearance: "execute",
+        callback: (token: string) => resolve(token),
+        "error-callback": () => reject(new Error("Captcha failed")),
+        retry: "auto",
+      }) as string;
 
       // Execute the widget
       if (turnstileWidgetId) {
@@ -229,6 +227,84 @@ export default function Contact() {
     }
   }, [i18n.language, t, errs, validateForm]);
 
+  // Helper: Get captcha token
+  const getCaptchaToken = useCallback(async (): Promise<string> => {
+    if (!ENV.TURNSTILE_SITEKEY) return "";
+
+    try {
+      return await getTurnstileToken(ENV.TURNSTILE_SITEKEY);
+    } catch (err) {
+      console.warn("Turnstile skipped:", err);
+      return "";
+    }
+  }, []);
+
+  // Helper: Build payload for submission
+  const buildPayload = useCallback(
+    (data: ContactInput & { company: string; ts: number }, captchaToken: string) => {
+      return {
+        name: data.name,
+        email: data.email,
+        subject: data.subject,
+        message: data.message,
+        ts: data.ts,
+        lang: i18n.language,
+        ...(captchaToken ? { captcha: captchaToken } : {}),
+      };
+    },
+    [i18n.language]
+  );
+
+  // Helper: Handle error response from server
+  const handleErrorResponse = useCallback(
+    async (response: Response) => {
+      const errorData = (await response.json()) as
+        | { error: string; issues?: Array<{ path: string; message: string }> }
+        | undefined;
+
+      if (errorData?.issues && Array.isArray(errorData.issues)) {
+        const fieldErrors: Record<string, string> = {};
+        for (const issue of errorData.issues) {
+          if (issue.path) {
+            fieldErrors[issue.path] = issue.message;
+          }
+        }
+        if (Object.keys(fieldErrors).length > 0) {
+          setErrs(fieldErrors);
+        }
+      }
+
+      throw new Error(
+        errorData?.error || `Server error: ${response.status} ${response.statusText}`
+      );
+    },
+    []
+  );
+
+  // Helper: Submit form to API
+  const submitContactForm = useCallback(
+    async (payload: ReturnType<typeof buildPayload>) => {
+      const response = await fetch(ENV.CONTACT_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        await handleErrorResponse(response);
+        return;
+      }
+
+      const result = (await response.json()) as { ok?: boolean };
+      if (!result.ok) {
+        throw new Error(t("form.error.network", "Network error. Please try again."));
+      }
+    },
+    [handleErrorResponse, t]
+  );
+
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
@@ -242,7 +318,6 @@ export default function Contact() {
       return;
     }
 
-    // Use unified validation function
     const validationResult = validateForm(form);
     if (!validationResult.success) {
       setErrs(validationResult.errors);
@@ -250,7 +325,6 @@ export default function Contact() {
       return;
     }
 
-    // Extract additional fields needed for submission (honeypot, timestamp)
     const fd = new FormData(form);
     const companyValue = fd.get("company");
     const data = {
@@ -259,9 +333,8 @@ export default function Contact() {
       ts,
     };
 
-    // Honeypot: si el bot llena "company", simulamos éxito pero no guardamos nada
     if (data.company) {
-      setOk(t("form.success", "Thanks! We’ll get back to you shortly."));
+      setOk(t("form.success", "Thanks! We'll get back to you shortly."));
       form.reset();
       return;
     }
@@ -269,67 +342,13 @@ export default function Contact() {
     try {
       setSending(true);
 
-      // Get Turnstile token if available
-      let captchaToken = "";
-      if (ENV.TURNSTILE_SITEKEY) {
-        try {
-          captchaToken = await getTurnstileToken(ENV.TURNSTILE_SITEKEY);
-        } catch (err) {
-          console.warn("Turnstile skipped:", err);
-          // Continue without token if Turnstile fails (backend will handle)
-        }
-      }
+      const captchaToken = await getCaptchaToken();
+      const payload = buildPayload(data, captchaToken);
+      await submitContactForm(payload);
 
-      // Send to Cloudflare Worker
-      const payload = {
-        name: data.name,
-        email: data.email,
-        subject: data.subject,
-        message: data.message,
-        ts: data.ts,
-        lang: i18n.language,
-        ...(captchaToken ? { captcha: captchaToken } : {}),
-      };
-
-      const response = await fetch(ENV.CONTACT_API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = (await response.json()) as
-          | { error: string; issues?: Array<{ path: string; message: string }> }
-          | undefined;
-
-        // Handle validation errors
-        if (errorData?.issues && Array.isArray(errorData.issues)) {
-          const fieldErrors: Record<string, string> = {};
-          for (const issue of errorData.issues) {
-            if (issue.path) {
-              fieldErrors[issue.path] = issue.message;
-            }
-          }
-          if (Object.keys(fieldErrors).length > 0) {
-            setErrs(fieldErrors);
-          }
-        }
-
-        throw new Error(
-          errorData?.error || `Server error: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const result = (await response.json()) as { ok?: boolean };
-      if (result.ok) {
-        setOk(t("form.success", "Thanks! We'll get back to you shortly."));
-        setError("");
-        form.reset();
-      } else {
-        throw new Error(t("form.error.network", "Network error. Please try again."));
-      }
+      setOk(t("form.success", "Thanks! We'll get back to you shortly."));
+      setError("");
+      form.reset();
     } catch (err: unknown) {
       console.error("Contact submit failed:", err);
       setOk("");
