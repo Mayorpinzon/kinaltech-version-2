@@ -311,8 +311,12 @@ const ContactSchema = z.object({
 
 type ContactPayload = z.infer<typeof ContactSchema>;
 
-type Issue = { path: string; message: string };
-type ErrorBody = { error: string; issues?: Issue[] };
+type Issue = { path: string; message: string; code?: string };
+type ErrorBody = { 
+  error: string; 
+  errorCode?: string; // i18n key for frontend translation
+  issues?: Issue[] 
+};
 type SuccessBody = { ok: boolean };
 
 // --- Turnstile Verification ---
@@ -479,6 +483,7 @@ export default {
         return new Response(
           JSON.stringify({
             error: "Validation failed",
+            errorCode: "form.error.validation_failed",
             issues,
           } satisfies ErrorBody),
           { status: 400, headers }
@@ -515,6 +520,7 @@ export default {
         return new Response(
           JSON.stringify({
             error: "Too fast. Please try again.",
+            errorCode: "form.error.too_fast",
           } satisfies ErrorBody),
           { status: 429, headers }
         );
@@ -531,10 +537,10 @@ export default {
         console.log(`[Rate Limit] IP rate limit result:`, { allowed: ipRateLimit.allowed, remaining: ipRateLimit.remaining, reason: ipRateLimit.reason });
         
         if (!ipRateLimit.allowed) {
-          const errorMessage =
+          const errorCode =
             ipRateLimit.reason === "per_minute"
-              ? "Too many requests from this IP address. Maximum 3 submissions per minute allowed. Please try again later."
-              : "Too many requests from this IP address. Maximum 10 submissions per day allowed. Please try again later.";
+              ? "form.error.rate_limit_ip_minute"
+              : "form.error.rate_limit_ip_day";
           
           console.warn(`[Rejected] IP rate limit exceeded: ${ip} (${ipRateLimit.reason})`);
           
@@ -544,7 +550,8 @@ export default {
           headers.set("Retry-After", String(Math.max(0, ipRateLimit.resetAt - Math.floor(Date.now() / 1000))));
           return new Response(
             JSON.stringify({
-              error: errorMessage,
+              error: "Rate limit exceeded",
+              errorCode,
             } satisfies ErrorBody),
             { status: 429, headers }
           );
@@ -561,7 +568,8 @@ export default {
         return new Response(
           JSON.stringify({
             error: "Disposable email addresses are not allowed.",
-            issues: [{ path: "email", message: "Please use a valid email address." }],
+            errorCode: "form.error.disposable_email",
+            issues: [{ path: "email", message: "Please use a valid email address.", code: "form.error.disposable_email" }],
           } satisfies ErrorBody),
           { status: 400, headers }
         );
@@ -576,10 +584,10 @@ export default {
         console.log(`[Rate Limit] Email rate limit result:`, { allowed: emailRateLimit.allowed, remaining: emailRateLimit.remaining, reason: emailRateLimit.reason });
         
         if (!emailRateLimit.allowed) {
-          const errorMessage =
+          const errorCode =
             emailRateLimit.reason === "per_hour"
-              ? "Too many requests from this email address. Maximum 3 submissions per hour allowed. Please try again later."
-              : "Too many requests from this email address. Maximum 10 submissions per day allowed. Please try again later.";
+              ? "form.error.rate_limit_email_hour"
+              : "form.error.rate_limit_email_day";
           
           console.warn(`[Rejected] Email rate limit exceeded: ${body.email} (${emailRateLimit.reason})`);
           
@@ -589,7 +597,8 @@ export default {
           headers.set("Retry-After", String(Math.max(0, emailRateLimit.resetAt - Math.floor(Date.now() / 1000))));
           return new Response(
             JSON.stringify({
-              error: errorMessage,
+              error: "Rate limit exceeded",
+              errorCode,
             } satisfies ErrorBody),
             { status: 429, headers }
           );
@@ -610,7 +619,8 @@ export default {
           return new Response(
             JSON.stringify({
               error: "Captcha verification failed",
-              issues: [{ path: "captcha", message: "Invalid or missing token" }],
+              errorCode: "form.error.captcha",
+              issues: [{ path: "captcha", message: "Invalid or missing token", code: "form.error.captcha" }],
             } satisfies ErrorBody),
             { status: 403, headers }
           );
@@ -628,6 +638,7 @@ export default {
         return new Response(
           JSON.stringify({
             error: "Message contains prohibited content.",
+            errorCode: "form.error.spam_keywords",
           } satisfies ErrorBody),
           { status: 400, headers }
         );
@@ -671,6 +682,7 @@ export default {
       return new Response(
         JSON.stringify({
           error: "Server error. Please try again later.",
+          errorCode: "form.error.server",
         } satisfies ErrorBody),
         { status: 500, headers }
       );

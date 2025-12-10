@@ -160,7 +160,14 @@ export const resources = {
           "fix_fields": "Please fix the highlighted fields.",
           "server": "Server error. Please try again.",
           "network": "Network error. Please try again.",
-          "captcha": "Captcha verification failed."
+          "captcha": "Captcha verification failed.",
+          "disposable_email": "Disposable email addresses are not allowed.",
+          "rate_limit_ip_minute": "Too many requests from this IP address. Maximum 3 submissions per minute allowed. Please try again later.",
+          "rate_limit_ip_day": "Too many requests from this IP address. Maximum 10 submissions per day allowed. Please try again later.",
+          "rate_limit_email_hour": "Too many requests from this email address. Maximum 3 submissions per hour allowed. Please try again later.",
+          "rate_limit_email_day": "Too many requests from this email address. Maximum 10 submissions per day allowed. Please try again later.",
+          "spam_keywords": "Message contains prohibited content.",
+          "validation_failed": "Validation failed."
         },
         "success": "Thanks! We’ll get back to you shortly."
       },
@@ -328,7 +335,14 @@ export const resources = {
           "fix_fields": "Por favor corrige los campos marcados.",
           "server": "Error del servidor. Intenta nuevamente.",
           "network": "Error de red. Verifica tu conexión.",
-          "captcha": "Error al verificar el captcha."
+          "captcha": "Error al verificar el captcha.",
+          "disposable_email": "No se permiten direcciones de correo desechables.",
+          "rate_limit_ip_minute": "Demasiadas solicitudes desde esta dirección IP. Solo se permiten 3 envíos por minuto. Por favor, inténtalo más tarde.",
+          "rate_limit_ip_day": "Demasiadas solicitudes desde esta dirección IP. Solo se permiten 10 envíos por día. Por favor, inténtalo más tarde.",
+          "rate_limit_email_hour": "Demasiadas solicitudes desde este correo electrónico. Solo se permiten 3 envíos por hora. Por favor, inténtalo más tarde.",
+          "rate_limit_email_day": "Demasiadas solicitudes desde este correo electrónico. Solo se permiten 10 envíos por día. Por favor, inténtalo más tarde.",
+          "spam_keywords": "El mensaje contiene contenido no permitido.",
+          "validation_failed": "La validación ha fallado."
         },
         "success": "¡Gracias! Te responderemos pronto."
       },
@@ -492,7 +506,14 @@ export const resources = {
           "fix_fields": "赤い項目を修正してください。",
           "server": "サーバーエラーが発生しました。もう一度お試しください。",
           "network": "ネットワークエラーが発生しました。接続を確認してください。",
-          "captcha": "認証に失敗しました。"
+          "captcha": "認証に失敗しました。",
+          "disposable_email": "使い捨てのメールアドレスはご利用いただけません。",
+          "rate_limit_ip_minute": "このIPアドレスからのリクエストが多すぎます。1分間に最大3回まで送信できます。しばらくしてから再度お試しください。",
+          "rate_limit_ip_day": "このIPアドレスからのリクエストが多すぎます。1日に最大10回まで送信できます。しばらくしてから再度お試しください。",
+          "rate_limit_email_hour": "このメールアドレスからのリクエストが多すぎます。1時間に最大3回まで送信できます。しばらくしてから再度お試しください。",
+          "rate_limit_email_day": "このメールアドレスからのリクエストが多すぎます。1日に最大10回まで送信できます。しばらくしてから再度お試しください。",
+          "spam_keywords": "メッセージに禁止されている内容が含まれています。",
+          "validation_failed": "バリデーションに失敗しました。"
         },
         "success": "ありがとうございます。追ってご連絡いたします。"
       },
