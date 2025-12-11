@@ -8,7 +8,10 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "dev:api": "firebase emulators:start --only functions"
+    "dev:api": "firebase emulators:start --only functions",
+    "generate:sitemap": "node scripts/generate-sitemap.js",
+    "generate:robots": "node scripts/generate-robots.js",
+    "generate:seo": "npm run generate:sitemap && npm run generate:robots"
   },
   "dependencies": {
     "firebase": "^12.4.0",

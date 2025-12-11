@@ -343,7 +343,7 @@ export default function Contact() {
         throw new Error("form.error.network");
       }
     },
-    [handleErrorResponse, t]
+    [handleErrorResponse]
   );
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
