@@ -1,0 +1,17 @@
+# robots.txt for KinalTech Landing Page
+# Update PLACEHOLDER_DOMAIN.com with your actual domain once purchased
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+# Update this URL once the domain is connected
+Sitemap: https://PLACEHOLDER_DOMAIN.com/sitemap.xml
+
+# Disallow admin/internal paths if any
+# Disallow: /admin/
+# Disallow: /api/
+
+# Crawl-delay (optional, adjust if needed)
+# Crawl-delay: 1
+
