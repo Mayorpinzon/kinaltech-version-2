@@ -80,8 +80,8 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Optional right visual (kept for design); provide alt via i18n */}
-        <div className="md:col-span-5 rounded-app overflow-hidden shadow-soft md:block hidden border-shadow-lg">
+        {/* Hero image: mobile (below text, centered) and desktop (right side) */}
+        <div className="mt-8 md:mt-0 mx-auto w-[85%] max-w-md md:w-full md:max-w-none md:col-span-5 rounded-app overflow-hidden shadow-soft border-shadow-lg">
           <picture>
             <img
               className="w-full h-full object-cover"
