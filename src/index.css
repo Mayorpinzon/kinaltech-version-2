@@ -26,6 +26,32 @@ textarea::placeholder {
   opacity: .95;
 }
 
+/* Prevents dark-mode forced overrides and ensures consistent colors across browsers */
+input[type="text"],
+input[type="email"],
+textarea {
+  color: var(--text) !important;
+  background-color: var(--surface) !important;
+  caret-color: var(--primary) !important;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+textarea::placeholder {
+  color: var(--muted) !important;
+  opacity: 1;
+}
+
+/* Ensure autocomplete styling doesn't override our colors */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--text) !important;
+  -webkit-box-shadow: 0 0 0px 1000px var(--surface) inset !important;
+  caret-color: var(--primary) !important;
+}
+
 /* Focus ring: visible, not agresive */
 :where(a, button, input, textarea, select, summary):focus {
   outline: none; /* rely on focus-visible */

@@ -129,7 +129,7 @@ export default function About() {
               <p className="mt-1 text-xs uppercase tracking-wide text-(--muted)">
                 {t(member.roleKey)}
               </p>
-              <p className="mt-3 text-sm text-(--muted)" style={{ textAlign: "justify" }}>
+              <p className="mt-3 text-sm text-(--muted) text-left md:text-justify">
                 {t(member.bioKey)}
               </p>
             </article>
