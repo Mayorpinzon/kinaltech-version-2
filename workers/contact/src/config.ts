@@ -10,17 +10,17 @@ export const ALLOWED_ORIGINS = new Set<string>([
 
 // --- Rate Limiting Configuration ---
 export const RATE_LIMIT_CONFIG = {
-  // Per IP: max 3 requests per minute, max 10 per day
-  IP_MAX_PER_MINUTE: 3,
-  IP_WINDOW_MINUTE_SECONDS: 60, // 1 minute
-  IP_MAX_PER_DAY: 10,
-  IP_WINDOW_DAY_SECONDS: 24 * 60 * 60, // 24 hours
+  // Per IP: max 5 requests per minute, max 15 per day
+  IP_MAX_PER_MINUTE: 5,
+  IP_WINDOW_MINUTE_SECONDS: 60,
+  IP_MAX_PER_DAY: 15,
+  IP_WINDOW_DAY_SECONDS: 24 * 60 * 60,
 
-  // Per Email: max 3 requests per hour, max 10 per day
-  EMAIL_MAX_PER_HOUR: 3,
-  EMAIL_WINDOW_HOUR_SECONDS: 60 * 60, // 1 hour
-  EMAIL_MAX_PER_DAY: 10,
-  EMAIL_WINDOW_DAY_SECONDS: 24 * 60 * 60, // 24 hours
+  // Per Email: max 5 requests per hour, max 15 per day
+  EMAIL_MAX_PER_HOUR: 5,
+  EMAIL_WINDOW_HOUR_SECONDS: 60 * 60,
+  EMAIL_MAX_PER_DAY: 15,
+  EMAIL_WINDOW_DAY_SECONDS: 24 * 60 * 60,
 
   // Global: max 1 request per 2 seconds (anti-speed)
   MIN_REQUEST_INTERVAL_MS: 2000,
