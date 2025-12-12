@@ -513,7 +513,7 @@ export default function Contact() {
               }) || undefined;
 
               const common =
-                "w-full rounded-app border border-[var(--primary)] text-[--text] placeholder-[--muted] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)]";
+                "w-full rounded-app border border-[var(--primary)] text-[--text] placeholder-[--muted] bg-[--surface] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)]";
 
               const autoComplete = getAutoComplete(field);
               const inputType = getInputType(field);
