@@ -139,11 +139,8 @@ export default function Header() {
 
             {/* Mobile actions */}
             <div className="max-[959px]:flex hidden items-center gap-2.5">
-              {/* Hide language selector on very narrow screens */}
-              <div className="max-[380px]:hidden">
-                <LangSelect size="sm" />
-              </div>
-              <ThemeToggle size="sm" theme={theme} onToggle={handleThemeToggle} />
+              {/* Language selector - always visible on mobile */}
+              <LangSelect size="sm" />
               <button
                 type="button"
                 aria-label={
@@ -207,9 +204,7 @@ export default function Header() {
                 <span className="sr-only">KinalTech</span>
               </a>
               <div className="flex items-center gap-2">
-                <div className="min-[381px]:hidden">
-                  <LangSelect size="sm" />
-                </div>
+                {/* Theme toggle moved to mobile menu for better UX on small screens */}
                 <ThemeToggle size="sm" theme={theme} onToggle={handleThemeToggle} />
                 <button
                   className="h-9 w-9 inline-flex items-center justify-center rounded-lg 

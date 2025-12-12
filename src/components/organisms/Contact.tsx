@@ -173,7 +173,7 @@ export default function Contact() {
 
   const ContactSchema = makeContactSchema(t);
 
-  const [ok, setOk] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const [errorCode, setErrorCode] = useState<string | null>(null); // Store error code instead of message
   const [sending, setSending] = useState(false);
   const [errs, setErrs] = useState<Record<string, string>>({});
@@ -357,7 +357,7 @@ export default function Contact() {
     }
 
     setErrorCode(null);
-    setOk("");
+    setIsSuccess(false);
     setErrs({});
     setErrCodes({});
 
@@ -383,7 +383,7 @@ export default function Contact() {
     };
 
     if (data.company) {
-      setOk(t("form.success", "Thanks! We'll get back to you shortly."));
+      setIsSuccess(true);
       form.reset();
       return;
     }
@@ -395,12 +395,12 @@ export default function Contact() {
       const payload = buildPayload(data, captchaToken);
       await submitContactForm(payload);
 
-      setOk(t("form.success", "Thanks! We'll get back to you shortly."));
+      setIsSuccess(true);
       setErrorCode(null);
       form.reset();
     } catch (err: unknown) {
       console.error("Contact submit failed:", err);
-      setOk("");
+      setIsSuccess(false);
 
       // Error message is an error code (i18n key) from backend or frontend
       const errorCodeValue =
@@ -486,7 +486,7 @@ export default function Contact() {
             noValidate
             aria-describedby={(() => {
               if (errorCode) return "form-error";
-              if (ok) return "form-success";
+              if (isSuccess) return "form-success";
               return undefined;
             })()}
           >
@@ -583,13 +583,13 @@ export default function Contact() {
                 {getErrorMessage(errorCode)}
               </p>
             )}
-            {ok && (
+            {isSuccess && (
               <p
                 id="form-success"
                 aria-live="polite"
                 className="text-sm text-(--green-light)"
               >
-                {ok}
+                {t("form.success", "Thanks! We'll get back to you shortly.")}
               </p>
             )}
           </form>
