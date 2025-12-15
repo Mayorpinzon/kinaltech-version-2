@@ -294,11 +294,10 @@ function handleCors(request: Request): Response | null {
 // Using Zod's built-in email validation for better compatibility with valid but uncommon email formats
 const ContactSchema = z.object({
   name: z.string().min(2).max(30),
-  email: z
-    .string()
-    .email("Please enter a valid email.")
-    .max(160)
-    .transform((val) => val.toLowerCase().trim()), // Normalize: lowercase + trim whitespace
+  email: z.preprocess(
+    (val) => (typeof val === "string" ? val.trim().toLowerCase() : val),
+    z.string().email("Please enter a valid email.").max(160)
+  ),
   subject: z.string().min(2).max(160),
   message: z.string().min(10).max(300),
   // Optional metadata
@@ -557,7 +556,7 @@ export default {
         }
       }
 
-      // Email is already normalized by Zod transform (lowercase + trim)
+      // Email is already normalized by Zod preprocess (lowercase + trim)
       if (isDisposableEmail(body.email)) {
         console.warn(`[Rejected] Disposable email detected: ${body.email}`);
         

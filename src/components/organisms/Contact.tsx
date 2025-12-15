@@ -66,11 +66,10 @@ function makeContactSchema(t: TFunction) {
       .string()
       .min(2, t("form.error.name_full", "Please enter your full name."))
       .max(30, t("form.error.name_max", "Max 30 characters.")),
-    email: z
-      .string()
-      .email(t("form.error.email_invalid", "Please enter a valid email."))
-      .max(160)
-      .transform((val) => val.toLowerCase().trim()), // Normalize: lowercase + trim whitespace
+    email: z.preprocess(
+      (val) => (typeof val === "string" ? val.trim().toLowerCase() : val),
+      z.string().email(t("form.error.email_invalid", "Please enter a valid email.")).max(160)
+    ),
     subject: z
       .string()
       .min(2, t("form.error.subject_short", "Subject is too short."))
