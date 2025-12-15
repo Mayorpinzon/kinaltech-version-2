@@ -291,15 +291,13 @@ function handleCors(request: Request): Response | null {
 }
 
 // --- Validation Schema (matches frontend) ---
+// Using Zod's built-in email validation for better compatibility with valid but uncommon email formats
 const ContactSchema = z.object({
   name: z.string().min(2).max(30),
-  email: z
-    .string()
-    .regex(
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      "Please enter a valid email."
-    )
-    .max(160),
+  email: z.preprocess(
+    (val) => (typeof val === "string" ? val.trim().toLowerCase() : val),
+    z.string().email("Please enter a valid email.").max(160)
+  ),
   subject: z.string().min(2).max(160),
   message: z.string().min(10).max(300),
   // Optional metadata
@@ -558,7 +556,7 @@ export default {
         }
       }
 
-      // Check disposable email domains (before rate limiting by email to save resources)
+      // Email is already normalized by Zod preprocess (lowercase + trim)
       if (isDisposableEmail(body.email)) {
         console.warn(`[Rejected] Disposable email detected: ${body.email}`);
         
