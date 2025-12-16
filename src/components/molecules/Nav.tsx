@@ -38,7 +38,7 @@ export function Nav({ variant, onNavigate }: Props) {
                 <a
                   href={href}
                   className={[
-                    "text-sm font-semibold text-[--text] opacity-90 hover:opacity-100 transition-colors",
+                    "text-sm font-semibold text-[--text] transition-colors",
                     "nav-underline",
                     active ? "nav-active" : "",
                   ].join(" ")}

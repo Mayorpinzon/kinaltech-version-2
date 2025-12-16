@@ -184,11 +184,11 @@ function Techs() {
         {/* Everyday Tools Carousel */}
         <div className="mt-7 overflow-hidden mask-edges reveal" aria-label={t("tools.title")}>
           {/* Pista duplicada para loop continuo. Claves únicas con índice. */}
-          <div className="inline-flex h-17 items-center gap-4 animate-slide">
+          <ul className="inline-flex h-17 items-center gap-4 animate-slide list-none p-0 m-0">
             {[...EVERYDAY_TOOLS, ...EVERYDAY_TOOLS].map((tool, i) => (
               <Chip key={`${tool.id}-${i}`} tech={tool} />
             ))}
-          </div>
+          </ul>
         </div>
       </Container>
     </section>

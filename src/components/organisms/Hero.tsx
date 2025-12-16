@@ -43,7 +43,7 @@ export default function Hero() {
           </video>
 
           {/* Contrast overlay for text legibility */}
-          <div className="absolute inset-0 z-10 pointer-events-none bg-linear-to-br from-black/40 via-black/25 to-transparent" />
+          <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-br from-black/60 via-black/40 to-black/20" />
         </div>
       </div>
 
@@ -53,7 +53,7 @@ export default function Hero() {
             {t("hero.title")}
           </H1>
 
-          <Lead id="hero-desc" className="block mt-6 text-lg max-w-xl" style={{ color: "#94a3b8" }}>
+          <Lead id="hero-desc" className="block mt-6 text-lg max-w-xl text-slate-200">
             {t("hero.subtitle")}
           </Lead>
 
