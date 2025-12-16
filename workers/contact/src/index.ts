@@ -296,7 +296,13 @@ const ContactSchema = z.object({
   name: z.string().min(2).max(30),
   email: z.preprocess(
     (val) => (typeof val === "string" ? val.trim().toLowerCase() : val),
-    z.string().email("Please enter a valid email.").max(160)
+    z
+      .string()
+      .max(160)
+      .refine(
+        (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+        { message: "Please enter a valid email." }
+      )
   ),
   subject: z.string().min(2).max(160),
   message: z.string().min(10).max(300),
@@ -433,6 +439,238 @@ async function sendContactEmail(
   }
 }
 
+// --- Response Helpers ---
+function createErrorResponse(
+  request: Request,
+  status: number,
+  error: string,
+  errorCode?: string,
+  issues?: Issue[],
+  retryAfter?: number
+): Response {
+  const origin = request.headers.get("Origin");
+  const headers = getCorsHeaders(origin);
+  headers.set("Content-Type", "application/json");
+  if (retryAfter !== undefined) {
+    headers.set("Retry-After", String(retryAfter));
+  }
+  return new Response(
+    JSON.stringify({ error, errorCode, issues } satisfies ErrorBody),
+    { status, headers }
+  );
+}
+
+function createSuccessResponse(request: Request): Response {
+  const origin = request.headers.get("Origin");
+  const headers = getCorsHeaders(origin);
+  headers.set("Content-Type", "application/json");
+  return new Response(
+    JSON.stringify({ ok: true } satisfies SuccessBody),
+    { status: 200, headers }
+  );
+}
+
+// --- Validation Helpers ---
+function validateRequestMethod(request: Request): Response | null {
+  if (request.method !== "POST") {
+    return createErrorResponse(request, 405, "Method not allowed");
+  }
+  const contentType = request.headers.get("Content-Type");
+  if (!contentType?.includes("application/json")) {
+    return createErrorResponse(request, 415, "Unsupported media type");
+  }
+  return null;
+}
+
+function parseAndValidateBody(
+  payloadUnknown: unknown,
+  request: Request
+): { success: true; data: ContactPayload } | { success: false; response: Response } {
+  const parsed = ContactSchema.safeParse(payloadUnknown);
+  if (!parsed.success) {
+    const issues: Issue[] = parsed.error.issues.map((i) => ({
+      path: i.path.join("."),
+      message: i.message,
+    }));
+    return {
+      success: false,
+      response: createErrorResponse(
+        request,
+        400,
+        "Validation failed",
+        "form.error.validation_failed",
+        issues
+      ),
+    };
+  }
+  return { success: true, data: parsed.data };
+}
+
+function getClientIP(request: Request): string | undefined {
+  return (
+    request.headers.get("CF-Connecting-IP") ||
+    request.headers.get("X-Forwarded-For")?.split(",")[0]?.trim()
+  );
+}
+
+function validateHoneypot(body: ContactPayload, request: Request, ip: string | undefined): Response | null {
+  if (body.company && body.company.trim().length > 0) {
+    console.warn(`[Rejected] Honeypot triggered - bot detected. IP: ${ip || "unknown"}, Email: ${body.email}`);
+    // Return success to bot, but don't process
+    return createSuccessResponse(request);
+  }
+  return null;
+}
+
+function validateSpeedCheck(body: ContactPayload, request: Request): Response | null {
+  const now = Date.now();
+  if (typeof body.ts === "number" && now - body.ts < RATE_LIMIT_CONFIG.MIN_REQUEST_INTERVAL_MS) {
+    return createErrorResponse(
+      request,
+      429,
+      "Too fast. Please try again.",
+      "form.error.too_fast"
+    );
+  }
+  return null;
+}
+
+async function validateRateLimitByIP(
+  ip: string | undefined,
+  rateLimitKV: KVNamespace | undefined,
+  request: Request
+): Promise<Response | null> {
+  if (!rateLimitKV) {
+    console.warn("[Rate Limit] RATE_LIMIT_KV not configured, skipping rate limit check");
+    return null;
+  }
+  if (!ip) {
+    console.warn("[Rate Limit] No IP address available, skipping rate limit check");
+    return null;
+  }
+
+  console.log(`[Rate Limit] Checking rate limit for IP: ${ip}`);
+  const ipRateLimit = await checkRateLimitByIP(ip, rateLimitKV);
+  console.log(`[Rate Limit] IP rate limit result:`, {
+    allowed: ipRateLimit.allowed,
+    remaining: ipRateLimit.remaining,
+    reason: ipRateLimit.reason,
+  });
+
+  if (!ipRateLimit.allowed) {
+    const errorCode =
+      ipRateLimit.reason === "per_minute"
+        ? "form.error.rate_limit_ip_minute"
+        : "form.error.rate_limit_ip_day";
+    console.warn(`[Rejected] IP rate limit exceeded: ${ip} (${ipRateLimit.reason})`);
+    const retryAfter = Math.max(0, ipRateLimit.resetAt - Math.floor(Date.now() / 1000));
+    return createErrorResponse(
+      request,
+      429,
+      "Rate limit exceeded",
+      errorCode,
+      undefined,
+      retryAfter
+    );
+  }
+  return null;
+}
+
+function validateDisposableEmail(body: ContactPayload, request: Request): Response | null {
+  if (isDisposableEmail(body.email)) {
+    console.warn(`[Rejected] Disposable email detected: ${body.email}`);
+    return createErrorResponse(
+      request,
+      400,
+      "Disposable email addresses are not allowed.",
+      "form.error.disposable_email",
+      [
+        {
+          path: "email",
+          message: "Please use a valid email address.",
+          code: "form.error.disposable_email",
+        },
+      ]
+    );
+  }
+  return null;
+}
+
+async function validateRateLimitByEmail(
+  email: string,
+  rateLimitKV: KVNamespace | undefined,
+  request: Request
+): Promise<Response | null> {
+  if (!rateLimitKV) {
+    console.warn("[Rate Limit] RATE_LIMIT_KV not configured, skipping email rate limit check");
+    return null;
+  }
+
+  console.log(`[Rate Limit] Checking rate limit for email: ${email}`);
+  const emailRateLimit = await checkRateLimitByEmail(email, rateLimitKV);
+  console.log(`[Rate Limit] Email rate limit result:`, {
+    allowed: emailRateLimit.allowed,
+    remaining: emailRateLimit.remaining,
+    reason: emailRateLimit.reason,
+  });
+
+  if (!emailRateLimit.allowed) {
+    const errorCode =
+      emailRateLimit.reason === "per_hour"
+        ? "form.error.rate_limit_email_hour"
+        : "form.error.rate_limit_email_day";
+    console.warn(`[Rejected] Email rate limit exceeded: ${email} (${emailRateLimit.reason})`);
+    const retryAfter = Math.max(0, emailRateLimit.resetAt - Math.floor(Date.now() / 1000));
+    return createErrorResponse(
+      request,
+      429,
+      "Rate limit exceeded",
+      errorCode,
+      undefined,
+      retryAfter
+    );
+  }
+  return null;
+}
+
+async function validateTurnstile(
+  token: string,
+  ip: string | undefined,
+  secret: string | undefined,
+  request: Request
+): Promise<Response | null> {
+  if (!secret) {
+    return null;
+  }
+
+  const ok = await verifyTurnstile(token, ip, secret);
+  if (!ok) {
+    console.warn(`[Rejected] Turnstile verification failed for IP: ${ip || "unknown"}`);
+    return createErrorResponse(
+      request,
+      403,
+      "Captcha verification failed",
+      "form.error.captcha",
+      [{ path: "captcha", message: "Invalid or missing token", code: "form.error.captcha" }]
+    );
+  }
+  return null;
+}
+
+function validateSpamKeywords(body: ContactPayload, request: Request): Response | null {
+  const fullText = `${body.subject} ${body.message}`.toLowerCase();
+  if (containsSpamKeywords(fullText)) {
+    console.warn(`[Rejected] Spam keywords detected for email: ${body.email}`);
+    return createErrorResponse(
+      request,
+      400,
+      "Message contains prohibited content.",
+      "form.error.spam_keywords"
+    );
+  }
+  return null;
+}
+
 // --- Main Handler ---
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -440,207 +678,42 @@ export default {
     const corsResponse = handleCors(request);
     if (corsResponse) return corsResponse;
 
-    // Only allow POST
-    if (request.method !== "POST") {
-      const origin = request.headers.get("Origin");
-      const headers = getCorsHeaders(origin);
-      headers.set("Content-Type", "application/json");
-      return new Response(
-        JSON.stringify({ error: "Method not allowed" } satisfies ErrorBody),
-        { status: 405, headers }
-      );
-    }
-
-    // Ensure JSON content type
-    const contentType = request.headers.get("Content-Type");
-    if (!contentType?.includes("application/json")) {
-      const origin = request.headers.get("Origin");
-      const headers = getCorsHeaders(origin);
-      headers.set("Content-Type", "application/json");
-      return new Response(
-        JSON.stringify({ error: "Unsupported media type" } satisfies ErrorBody),
-        { status: 415, headers }
-      );
-    }
+    // Validate request method and content type
+    const methodError = validateRequestMethod(request);
+    if (methodError) return methodError;
 
     try {
       // Parse and validate body
       const payloadUnknown: unknown = await request.json();
-
-      const parsed = ContactSchema.safeParse(payloadUnknown);
-      if (!parsed.success) {
-        const issues: Issue[] = parsed.error.issues.map((i) => ({
-          path: i.path.join("."),
-          message: i.message,
-        }));
-
-        const origin = request.headers.get("Origin");
-        const headers = getCorsHeaders(origin);
-        headers.set("Content-Type", "application/json");
-
-        return new Response(
-          JSON.stringify({
-            error: "Validation failed",
-            errorCode: "form.error.validation_failed",
-            issues,
-          } satisfies ErrorBody),
-          { status: 400, headers }
-        );
+      const parseResult = parseAndValidateBody(payloadUnknown, request);
+      if (!parseResult.success) {
+        return parseResult.response;
       }
 
-      const body: ContactPayload = parsed.data;
+      const body: ContactPayload = parseResult.data;
+      const ip = getClientIP(request);
 
-      // Get IP address (used throughout validation)
-      const ip =
-        request.headers.get("CF-Connecting-IP") ||
-        request.headers.get("X-Forwarded-For")?.split(",")[0]?.trim();
+      // Run all validations
+      const honeypotError = validateHoneypot(body, request, ip);
+      if (honeypotError) return honeypotError;
 
-      // Honeypot check
-      if (body.company && body.company.trim().length > 0) {
-        console.warn(`[Rejected] Honeypot triggered - bot detected. IP: ${ip || "unknown"}, Email: ${body.email}`);
-        
-        const origin = request.headers.get("Origin");
-        const headers = getCorsHeaders(origin);
-        headers.set("Content-Type", "application/json");
-        // Return success to bot, but don't process
-        return new Response(
-          JSON.stringify({ ok: true } satisfies SuccessBody),
-          { status: 200, headers }
-        );
-      }
+      const speedError = validateSpeedCheck(body, request);
+      if (speedError) return speedError;
 
-      // Basic anti-speed check
-      const now = Date.now();
-      if (typeof body.ts === "number" && now - body.ts < RATE_LIMIT_CONFIG.MIN_REQUEST_INTERVAL_MS) {
-        const origin = request.headers.get("Origin");
-        const headers = getCorsHeaders(origin);
-        headers.set("Content-Type", "application/json");
-        return new Response(
-          JSON.stringify({
-            error: "Too fast. Please try again.",
-            errorCode: "form.error.too_fast",
-          } satisfies ErrorBody),
-          { status: 429, headers }
-        );
-      }
+      const ipRateLimitError = await validateRateLimitByIP(ip, env.RATE_LIMIT_KV, request);
+      if (ipRateLimitError) return ipRateLimitError;
 
-      // Rate limiting by IP
-      if (!env.RATE_LIMIT_KV) {
-        console.warn("[Rate Limit] RATE_LIMIT_KV not configured, skipping rate limit check");
-      } else if (!ip) {
-        console.warn("[Rate Limit] No IP address available, skipping rate limit check");
-      } else {
-        console.log(`[Rate Limit] Checking rate limit for IP: ${ip}`);
-        const ipRateLimit = await checkRateLimitByIP(ip, env.RATE_LIMIT_KV);
-        console.log(`[Rate Limit] IP rate limit result:`, { allowed: ipRateLimit.allowed, remaining: ipRateLimit.remaining, reason: ipRateLimit.reason });
-        
-        if (!ipRateLimit.allowed) {
-          const errorCode =
-            ipRateLimit.reason === "per_minute"
-              ? "form.error.rate_limit_ip_minute"
-              : "form.error.rate_limit_ip_day";
-          
-          console.warn(`[Rejected] IP rate limit exceeded: ${ip} (${ipRateLimit.reason})`);
-          
-          const origin = request.headers.get("Origin");
-          const headers = getCorsHeaders(origin);
-          headers.set("Content-Type", "application/json");
-          headers.set("Retry-After", String(Math.max(0, ipRateLimit.resetAt - Math.floor(Date.now() / 1000))));
-          return new Response(
-            JSON.stringify({
-              error: "Rate limit exceeded",
-              errorCode,
-            } satisfies ErrorBody),
-            { status: 429, headers }
-          );
-        }
-      }
+      const disposableEmailError = validateDisposableEmail(body, request);
+      if (disposableEmailError) return disposableEmailError;
 
-      // Email is already normalized by Zod preprocess (lowercase + trim)
-      if (isDisposableEmail(body.email)) {
-        console.warn(`[Rejected] Disposable email detected: ${body.email}`);
-        
-        const origin = request.headers.get("Origin");
-        const headers = getCorsHeaders(origin);
-        headers.set("Content-Type", "application/json");
-        return new Response(
-          JSON.stringify({
-            error: "Disposable email addresses are not allowed.",
-            errorCode: "form.error.disposable_email",
-            issues: [{ path: "email", message: "Please use a valid email address.", code: "form.error.disposable_email" }],
-          } satisfies ErrorBody),
-          { status: 400, headers }
-        );
-      }
+      const emailRateLimitError = await validateRateLimitByEmail(body.email, env.RATE_LIMIT_KV, request);
+      if (emailRateLimitError) return emailRateLimitError;
 
-      // Rate limiting by email
-      if (!env.RATE_LIMIT_KV) {
-        console.warn("[Rate Limit] RATE_LIMIT_KV not configured, skipping email rate limit check");
-      } else {
-        console.log(`[Rate Limit] Checking rate limit for email: ${body.email}`);
-        const emailRateLimit = await checkRateLimitByEmail(body.email, env.RATE_LIMIT_KV);
-        console.log(`[Rate Limit] Email rate limit result:`, { allowed: emailRateLimit.allowed, remaining: emailRateLimit.remaining, reason: emailRateLimit.reason });
-        
-        if (!emailRateLimit.allowed) {
-          const errorCode =
-            emailRateLimit.reason === "per_hour"
-              ? "form.error.rate_limit_email_hour"
-              : "form.error.rate_limit_email_day";
-          
-          console.warn(`[Rejected] Email rate limit exceeded: ${body.email} (${emailRateLimit.reason})`);
-          
-          const origin = request.headers.get("Origin");
-          const headers = getCorsHeaders(origin);
-          headers.set("Content-Type", "application/json");
-          headers.set("Retry-After", String(Math.max(0, emailRateLimit.resetAt - Math.floor(Date.now() / 1000))));
-          return new Response(
-            JSON.stringify({
-              error: "Rate limit exceeded",
-              errorCode,
-            } satisfies ErrorBody),
-            { status: 429, headers }
-          );
-        }
-      }
+      const turnstileError = await validateTurnstile(body.captcha ?? "", ip, env.TURNSTILE_SECRET, request);
+      if (turnstileError) return turnstileError;
 
-      // Verify Turnstile (if secret available)
-      const token = body.captcha ?? "";
-
-      if (env.TURNSTILE_SECRET) {
-        const ok = await verifyTurnstile(token, ip, env.TURNSTILE_SECRET);
-        if (!ok) {
-          console.warn(`[Rejected] Turnstile verification failed for IP: ${ip || "unknown"}`);
-          
-          const origin = request.headers.get("Origin");
-          const headers = getCorsHeaders(origin);
-          headers.set("Content-Type", "application/json");
-          return new Response(
-            JSON.stringify({
-              error: "Captcha verification failed",
-              errorCode: "form.error.captcha",
-              issues: [{ path: "captcha", message: "Invalid or missing token", code: "form.error.captcha" }],
-            } satisfies ErrorBody),
-            { status: 403, headers }
-          );
-        }
-      }
-
-      // Spam keyword detection
-      const fullText = `${body.subject} ${body.message}`.toLowerCase();
-      if (containsSpamKeywords(fullText)) {
-        console.warn(`[Rejected] Spam keywords detected for email: ${body.email}`);
-        
-        const origin = request.headers.get("Origin");
-        const headers = getCorsHeaders(origin);
-        headers.set("Content-Type", "application/json");
-        return new Response(
-          JSON.stringify({
-            error: "Message contains prohibited content.",
-            errorCode: "form.error.spam_keywords",
-          } satisfies ErrorBody),
-          { status: 400, headers }
-        );
-      }
+      const spamError = validateSpamKeywords(body, request);
+      if (spamError) return spamError;
 
       // Sanitize text fields
       const clean: ContactPayload = {
@@ -663,28 +736,15 @@ export default {
         ),
       ]);
 
-      // Success response
-      const origin = request.headers.get("Origin");
-      const headers = getCorsHeaders(origin);
-      headers.set("Content-Type", "application/json");
-      return new Response(
-        JSON.stringify({ ok: true } satisfies SuccessBody),
-        { status: 200, headers }
-      );
+      return createSuccessResponse(request);
     } catch (e) {
       console.error("Contact handler failed:", e);
-
-      const origin = request.headers.get("Origin");
-      const headers = getCorsHeaders(origin);
-      headers.set("Content-Type", "application/json");
-      return new Response(
-        JSON.stringify({
-          error: "Server error. Please try again later.",
-          errorCode: "form.error.server",
-        } satisfies ErrorBody),
-        { status: 500, headers }
+      return createErrorResponse(
+        request,
+        500,
+        "Server error. Please try again later.",
+        "form.error.server"
       );
     }
   },
 };
-

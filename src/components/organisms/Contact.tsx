@@ -68,7 +68,13 @@ function makeContactSchema(t: TFunction) {
       .max(30, t("form.error.name_max", "Max 30 characters.")),
     email: z.preprocess(
       (val) => (typeof val === "string" ? val.trim().toLowerCase() : val),
-      z.string().email(t("form.error.email_invalid", "Please enter a valid email.")).max(160)
+      z
+        .string()
+        .max(160)
+        .refine(
+          (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+          { message: t("form.error.email_invalid", "Please enter a valid email.") }
+        )
     ),
     subject: z
       .string()

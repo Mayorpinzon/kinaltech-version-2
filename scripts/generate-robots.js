@@ -4,8 +4,8 @@
  * Usage: DOMAIN=yourdomain.com node scripts/generate-robots.js
  */
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 // Get domain from environment variable or use placeholder
 const DOMAIN = process.env.DOMAIN || process.env.VITE_SITE_URL || 'PLACEHOLDER_DOMAIN.com';
