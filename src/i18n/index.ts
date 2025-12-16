@@ -384,8 +384,8 @@ export const resources = {
       },
 
       // Hero
-      "hero.title": "熟練したフロントエンド開発でデジタル体験を向上",
-      "hero.subtitle": "KinalTechは、独立したフロントエンド開発者チームとして、Webやモバイルであなたのデジタル製品を引き立てる体験を創り出します。",
+      "hero.title": "熟練したフロントエンド開発でデジタルエクスペリエンス(DX)を向上",
+      "hero.subtitle": "KinalTechは、フロントエンド開発専門チームとして、Web・モバイルのUI/UX改善とパフォーマンス向上を支援します。",
       "hero.cta1": "サービスを見る",
       "hero.cta2": "お問い合わせ",
       "hero.cta1_aria": "サービスセクションへ移動",
