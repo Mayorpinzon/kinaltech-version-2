@@ -35,15 +35,15 @@ export default function Hero() {
             muted
             loop
             playsInline
-            preload="metadata"
+            preload={canAutoplay ? "metadata" : "none"}
             autoPlay={canAutoplay}
           >
             {/* Minimal fallback */}
-            <img src="/hero-poster.jpg" alt="" className="h-full w-full object-cover" />
+            <img src="/hero-poster.jpg" alt="" className="h-full w-full object-cover" loading="lazy" />
           </video>
 
           {/* Contrast overlay for text legibility */}
-          <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-br from-black/60 via-black/40 to-black/20" />
+          <div className="absolute inset-0 z-10 pointer-events-none bg-linear-to-br from-black/60 via-black/40 to-black/20" />
         </div>
       </div>
 
@@ -88,8 +88,8 @@ export default function Hero() {
               src="/hero-poster.jpg"
               alt={t("hero.imageAlt")}
               decoding="async"
-              fetchPriority="low"
-              loading="lazy"
+              fetchPriority="high"
+              loading="eager"
               width={1280}
               height={960}
             />

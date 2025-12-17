@@ -35,7 +35,8 @@ import {
   AsanaIcon,
 } from "../atoms";
 import { useReveal } from "../../hooks/useReveal";
-import { useState, useEffect, type ComponentType, type SVGProps } from "react";
+import { useTheme } from "../../hooks/useTheme";
+import type { ComponentType, SVGProps } from "react";
 import type { TranslationKey } from "../../i18n/types";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
@@ -83,32 +84,10 @@ const EVERYDAY_TOOLS: Tech[] = [
   { id: "asana", nameKey: "tools.asana" as TranslationKey, color: "#F06A6A", Icon: AsanaIcon },
 ];
 
-// Shared hook for theme detection
-function useThemeDetection() {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const checkTheme = () => {
-      const isDarkMode = document.documentElement.dataset.theme === "dark" ||
-        document.body.classList.contains("dark");
-      setIsDark(isDarkMode);
-    };
-
-    checkTheme();
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-
-    return () => observer.disconnect();
-  }, []);
-
-  return isDark;
-}
-
 function Chip({ tech }: Readonly<{ tech: Tech }>) {
   const { t } = useTranslation();
   const { Icon, color, darkColor, nameKey } = tech;
-  const isDark = useThemeDetection();
+  const isDark = useTheme();
 
   const iconColor = isDark && darkColor ? darkColor : color;
 
@@ -131,7 +110,7 @@ function Chip({ tech }: Readonly<{ tech: Tech }>) {
 function Card({ tech }: Readonly<{ tech: Tech }>) {
   const { t } = useTranslation();
   const { Icon, color, darkColor, nameKey } = tech;
-  const isDark = useThemeDetection();
+  const isDark = useTheme();
 
   const iconColor = isDark && darkColor ? darkColor : color;
 
@@ -156,8 +135,6 @@ function Card({ tech }: Readonly<{ tech: Tech }>) {
 function Techs() {
   const { t } = useTranslation();
   useReveal();
-
-  const [/*active*/, /*setActive*/] = useState<string>(TECHS[0].id);
 
   return (
     <section id="techs" className="py-24 md:py-28 bg-surface text-body scroll-mt-20 bg-grad-1">
