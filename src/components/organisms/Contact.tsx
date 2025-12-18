@@ -57,6 +57,49 @@ function InfoRow({
   );
 }
 
+function LocationRow({
+  icon,
+  title,
+  subtitle,
+  mapUrl,
+}: Readonly<{
+  icon: ReactNode;
+  title: string;
+  subtitle: string;
+  mapUrl: string;
+}>) {
+  return (
+    <div className="rounded-app bg-transparent p-4">
+      <div className="flex items-start gap-5 mb-4">
+        <div
+          className="inline-grid h-15 w-15 flex-none shrink-0 place-items-center rounded-2xl text-[--white] bg-linear-to-br from-(--primary) to-(--accent) shadow-soft"
+          aria-hidden
+        >
+          <div className="h-6 w-6 text-(--white)">{icon}</div>
+        </div>
+        <div className="min-w-0">
+          <p className="text-md font-semibold text-[--text]">{title}</p>
+          <p className="text-sm text-[--muted] whitespace-pre-line">{subtitle}</p>
+        </div>
+      </div>
+      <div className="mt-4 rounded-lg overflow-hidden border border-(--primary) shadow-soft">
+        <iframe
+          src={mapUrl}
+          width="100%"
+          height="200"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          title={title}
+          className="w-full"
+          key={mapUrl}
+        />
+      </div>
+    </div>
+  );
+}
+
 /* ============================
    Validation Schema (Zod + i18n)
    ============================ */
@@ -175,6 +218,19 @@ export default function Contact() {
   useReveal();
 
   const ContactSchema = makeContactSchema(t);
+
+  // Get current language code for Google Maps (normalize to en/es/ja)
+  const getMapLanguage = () => {
+    const lang = i18n.language || i18n.resolvedLanguage || "en";
+    const normalized = lang.toLowerCase();
+    if (normalized.startsWith("es")) return "es";
+    if (normalized.startsWith("ja")) return "ja";
+    return "en";
+  };
+
+  // Generate Google Maps embed URL with current language
+  const mapLanguage = getMapLanguage();
+  const mapUrl = `https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13114.712239078064!2d135.8606452688538!3d34.7385085164975!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x600138d0ca6665d3%3A0xdc630d79ee814be7!2zTmFnYW1vZGFpLCBLaXp1Z2F3YSwgS3nFjXRvIDYxOS0xMTI3LCBOaOG6rXQgQuG6o24!5e0!3m2!1s${mapLanguage}!2s!4v1766045913370!5m2!1s${mapLanguage}!2s`;
 
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorCode, setErrorCode] = useState<string | null>(null); // Store error code instead of message
@@ -471,14 +527,15 @@ export default function Contact() {
               subtitle={t("contact.email.value")}
             />
             <InfoRow
-              icon={<PinIcon />}
-              title={t("contact.location.label")}
-              subtitle={t("contact.location.value")}
-            />
-            <InfoRow
               icon={<ClockIcon />}
               title={t("contact.hours.label")}
               subtitle={t("contact.hours.value")}
+            />
+            <LocationRow
+              icon={<PinIcon />}
+              title={t("contact.location.label")}
+              subtitle={t("contact.location.value")}
+              mapUrl={mapUrl}
             />
           </div>
 
