@@ -130,7 +130,7 @@ export const resources = {
       "contact.email.label": "Write to us",
       "contact.email.value": "Please use the form to get in touch — we’ll reply shortly.",
       "contact.location.label": "Location",
-      "contact.location.value": "Kyoto, Japan",
+      "contact.location.value": "619-1127 Japan, Kyoto, Nagamodai",
       "contact.hours.label": "Business hours",
       "contact.hours.value": "Monday – Friday: 10AM – 7PM",
 
@@ -305,7 +305,7 @@ export const resources = {
       "contact.email.label": "Escríbenos",
       "contact.email.value": "Por favor usa el formulario para contactarnos.\nEn breve te responderemos.",
       "contact.location.label": "Ubicación",
-      "contact.location.value": "Kyoto, Japon",
+      "contact.location.value": "619-1127 Japan, Kyoto, Nagamodai",
       "contact.hours.label": "Horario",
       "contact.hours.value": "Lunes – Viernes: 10AM – 7PM ",
 
@@ -475,7 +475,7 @@ export const resources = {
       "contact.email.label": "メールでのお問い合わせ",
       "contact.email.value": "フォームからご連絡ください。折り返しこちらからご返信いたします。",
       "contact.location.label": "所在地",
-      "contact.location.value": "日本・京都",
+      "contact.location.value": "〒619-1127 京都府京田辺市長藻台",
       "contact.hours.label": "営業時間",
       "contact.hours.value": "月曜～金曜：10時〜19時",
 
