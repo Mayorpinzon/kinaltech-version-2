@@ -627,16 +627,18 @@ export default function Contact() {
               );
             })}
 
-            <Button
-              variant="outline"
-              movingBorder
-              type="submit"
-              className="mt-2 h-13 w-50 shadow-lg hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
-              disabled={sending}
-              aria-label={sending ? t("form.sending") : t("form.send")}
-            >
-              {sending ? t("form.sending", "Sending…") : t("form.send")}
-            </Button>
+            <div className="flex justify-center mt-2">
+              <Button
+                variant="outline"
+                movingBorder
+                type="submit"
+                className="h-13 w-50 shadow-lg hover:shadow-xl hover:shadow-blue-600/20 rainbow-border-round"
+                disabled={sending}
+                aria-label={sending ? t("form.sending") : t("form.send")}
+              >
+                {sending ? t("form.sending", "Sending…") : t("form.send")}
+              </Button>
+            </div>
 
             {errorCode && (
               <p id="form-error" role="alert" className="text-sm text-(--danger)">
