@@ -35,15 +35,15 @@ export default function Hero() {
             muted
             loop
             playsInline
-            preload="metadata"
+            preload={canAutoplay ? "metadata" : "none"}
             autoPlay={canAutoplay}
           >
             {/* Minimal fallback */}
-            <img src="/hero-poster.jpg" alt="" className="h-full w-full object-cover" />
+            <img src="/hero-poster.jpg" alt="" className="h-full w-full object-cover" loading="lazy" />
           </video>
 
           {/* Contrast overlay for text legibility */}
-          <div className="absolute inset-0 z-10 pointer-events-none bg-gradient-to-br from-black/40 via-black/25 to-transparent" />
+          <div className="absolute inset-0 z-10 pointer-events-none bg-linear-to-br from-black/60 via-black/40 to-black/20" />
         </div>
       </div>
 
@@ -53,7 +53,7 @@ export default function Hero() {
             {t("hero.title")}
           </H1>
 
-          <Lead id="hero-desc" className="block mt-6 text-lg max-w-xl" style={{ color: "#94a3b8" }}>
+          <Lead id="hero-desc" className="block mt-6 text-lg max-w-xl text-slate-200">
             {t("hero.subtitle")}
           </Lead>
 
@@ -80,16 +80,16 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* Optional right visual (kept for design); provide alt via i18n */}
-        <div className="md:col-span-5 rounded-app overflow-hidden shadow-soft md:block hidden border-shadow-lg">
+        {/* Hero image: mobile (below text, centered) and desktop (right side) */}
+        <div className="mt-8 md:mt-0 mx-auto w-[85%] max-w-md md:w-full md:max-w-none md:col-span-5 rounded-app overflow-hidden shadow-soft border-shadow-lg">
           <picture>
             <img
               className="w-full h-full object-cover"
               src="/hero-poster.jpg"
               alt={t("hero.imageAlt")}
               decoding="async"
-              fetchPriority="low"
-              loading="lazy"
+              fetchPriority="high"
+              loading="eager"
               width={1280}
               height={960}
             />

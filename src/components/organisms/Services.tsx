@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { useMemo } from "react";
 import { Container, H2, Lead, WebIcon, MobileIcon, UIUXIcon, IAIcon, TeamworkIcon } from "../atoms";
 import { ServiceCard } from "../molecules";
 import { useReveal } from "../../hooks/useReveal";
@@ -8,44 +9,47 @@ export default function Services() {
   const { t } = useTranslation();
   useReveal(); // triggers .reveal → .show animation on scroll
 
-  // List of services (for semantic mapping and maintainability)
-  const services = [
-    {
-      id: "web",
-      icon: <WebIcon aria-hidden="true" />,
-      title: t("services.items.web.title"),
-      text: t("services.items.web.text"),
-    },
-    {
-      id: "mobile",
-      icon: <MobileIcon aria-hidden="true" />,
-      title: t("services.items.mobile.title"),
-      text: t("services.items.mobile.text"),
-    },
-    {
-      id: "uiux",
-      icon: <UIUXIcon aria-hidden="true" />,
-      title: t("services.items.ui.title"),
-      text: t("services.items.ui.text"),
-    },
-    {
-      id: "ia",
-      icon: <IAIcon aria-hidden="true" />,
-      title: t("services.items.ia.title"),
-      text: t("services.items.ia.text"),
-    },
-    {
-      id: "phi",
-      icon: <TeamworkIcon aria-hidden="true" />,
-      title: t("services.items.phi.title"),
-      text: t("services.items.phi.text"),
-    },
-  ];
+  // Memoize services array to avoid recreating on every render
+  const services = useMemo(
+    () => [
+      {
+        id: "web",
+        icon: <WebIcon aria-hidden="true" />,
+        title: t("services.items.web.title"),
+        text: t("services.items.web.text"),
+      },
+      {
+        id: "mobile",
+        icon: <MobileIcon aria-hidden="true" />,
+        title: t("services.items.mobile.title"),
+        text: t("services.items.mobile.text"),
+      },
+      {
+        id: "uiux",
+        icon: <UIUXIcon aria-hidden="true" />,
+        title: t("services.items.ui.title"),
+        text: t("services.items.ui.text"),
+      },
+      {
+        id: "ia",
+        icon: <IAIcon aria-hidden="true" />,
+        title: t("services.items.ia.title"),
+        text: t("services.items.ia.text"),
+      },
+      {
+        id: "phi",
+        icon: <TeamworkIcon aria-hidden="true" />,
+        title: t("services.items.phi.title"),
+        text: t("services.items.phi.text"),
+      },
+    ],
+    [t]
+  );
 
   return (
     <section
       id="services"
-      className="py-25 md:py-28 bg-[var(--surface)] text-body dark:text-white scroll-mt-20"
+      className="py-25 md:py-28 bg-(--surface) text-body dark:text-white scroll-mt-20"
       aria-labelledby="services-title"
       aria-describedby="services-desc"
     >

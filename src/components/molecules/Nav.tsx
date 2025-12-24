@@ -38,7 +38,7 @@ export function Nav({ variant, onNavigate }: Props) {
                 <a
                   href={href}
                   className={[
-                    "text-sm font-semibold text-[--text] opacity-90 hover:opacity-100 transition-colors",
+                    "text-sm font-semibold text-[--text] transition-colors",
                     "nav-underline",
                     active ? "nav-active" : "",
                   ].join(" ")}
@@ -69,8 +69,8 @@ export function Nav({ variant, onNavigate }: Props) {
                 className={[
                   "block px-4 py-3 text-center font-semibold",
                   "focus:outline-none focus-visible:ring-2 focus-visible:ring-[--accent] rounded-xl",
-                  "hover:bg-[var(--surface-a-60)] active:bg-[var(--surface-a-60)]",
-                  active ? "text-[var(--primary)]" : "text-[var(--primary-2)]",
+                  "hover:bg-(--surface-a-60) active:bg-(--surface-a-60)",
+                  active ? "text-(--primary)" : "text-(--primary-2)",
                 ].join(" ")}
                 aria-current={active ? "page" : undefined}
               >

@@ -100,8 +100,8 @@ export function LangSelect({ size = "md" }: Props) {
       {/* Dropdown */}
       {open && (
         <div
-          className="absolute right-0 min-w-[9rem] overflow-hidden rounded-2xl 
-          border border-[var(--border)] bg-[var(--primary)] shadow-xl text-white transition-colors"
+          className="absolute right-0 min-w-36 overflow-hidden rounded-2xl 
+          border border-(--border) bg-(--primary) shadow-xl text-white transition-colors"
         >
           <select
             value={current}

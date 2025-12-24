@@ -19,15 +19,15 @@ export function ServiceCard({
       className={[
         // base visuals (match template)
         "relative overflow-hidden",
-        "rounded-[var(--radius)]",
+        "rounded-(--radius)",
         "border border-[color-mix(in_srgb,var(--muted)_28%,transparent)]",
-        "bg-[var(--surface)]",
+        "bg-(--surface)",
         "p-7",
         // elevation + hover feedback
         "glow-pulse",
         "transition-transform duration-200",
         "focus-within:-translate-y-1.5 focus-within:[box-shadow:0_18px_40px_rgba(2,6,23,.15)]",
-        "hover:border-[var(--primary)]",
+        "hover:border-(--primary)",
         className,
       ].join(" ")}
       style={style}

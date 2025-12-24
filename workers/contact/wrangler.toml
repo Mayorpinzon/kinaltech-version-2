@@ -15,6 +15,10 @@ id = "514ecb70d3744a498c37e3f2a7ba8920"
 [[send_email]]
 name = "SEND_EMAIL"
 destination_address = "kinaltech-info-box@kinaltech.com"
+# Rate limiting KV namespace (for IP and email rate limiting)
+[[kv_namespaces]]
+binding = "RATE_LIMIT_KV"
+id = "bdf0b2236fc84f35b03b3e0dd4429d75"
 
 # Environment variables (secrets should be set via: wrangler secret put <NAME>)
 # Or in Cloudflare Dashboard > Workers > contact > Settings > Variables

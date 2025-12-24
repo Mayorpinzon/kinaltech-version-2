@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <!-- Homepage - English (default) -->
+  <url>
+    <loc>https://PLACEHOLDER_DOMAIN.com/</loc>
+    <lastmod>2025-12-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://PLACEHOLDER_DOMAIN.com/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://PLACEHOLDER_DOMAIN.com/?lng=es" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://PLACEHOLDER_DOMAIN.com/?lng=ja" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://PLACEHOLDER_DOMAIN.com/" />
+  </url>
+  
+  <!-- Homepage - Spanish -->
+  <url>
+    <loc>https://PLACEHOLDER_DOMAIN.com/?lng=es</loc>
+    <lastmod>2025-12-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://PLACEHOLDER_DOMAIN.com/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://PLACEHOLDER_DOMAIN.com/?lng=es" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://PLACEHOLDER_DOMAIN.com/?lng=ja" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://PLACEHOLDER_DOMAIN.com/" />
+  </url>
+  
+  <!-- Homepage - Japanese -->
+  <url>
+    <loc>https://PLACEHOLDER_DOMAIN.com/?lng=ja</loc>
+    <lastmod>2025-12-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://PLACEHOLDER_DOMAIN.com/" />
+    <xhtml:link rel="alternate" hreflang="es" href="https://PLACEHOLDER_DOMAIN.com/?lng=es" />
+    <xhtml:link rel="alternate" hreflang="ja" href="https://PLACEHOLDER_DOMAIN.com/?lng=ja" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://PLACEHOLDER_DOMAIN.com/" />
+  </url>
+</urlset>
+

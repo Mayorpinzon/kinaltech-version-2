@@ -130,7 +130,7 @@ export const resources = {
       "contact.email.label": "Write to us",
       "contact.email.value": "Please use the form to get in touch — we’ll reply shortly.",
       "contact.location.label": "Location",
-      "contact.location.value": "Kyoto, Japan",
+      "contact.location.value": "619-1127 Japan, Kyoto, Nagamodai",
       "contact.hours.label": "Business hours",
       "contact.hours.value": "Monday – Friday: 10AM – 7PM",
 
@@ -160,7 +160,14 @@ export const resources = {
           "fix_fields": "Please fix the highlighted fields.",
           "server": "Server error. Please try again.",
           "network": "Network error. Please try again.",
-          "captcha": "Captcha verification failed."
+          "captcha": "Captcha verification failed.",
+          "disposable_email": "Disposable email addresses are not allowed.",
+          "rate_limit_ip_minute": "Too many requests from this IP address. Maximum 5 submissions per minute allowed. Please try again later.",
+          "rate_limit_ip_day": "Too many requests from this IP address. Maximum 15 submissions per day allowed. Please try again later.",
+          "rate_limit_email_hour": "Too many requests from this email address. Maximum 5 submissions per hour allowed. Please try again later.",
+          "rate_limit_email_day": "Too many requests from this email address. Maximum 15 submissions per day allowed. Please try again later.",
+          "spam_keywords": "Message contains prohibited content.",
+          "validation_failed": "Validation failed."
         },
         "success": "Thanks! We’ll get back to you shortly."
       },
@@ -298,7 +305,7 @@ export const resources = {
       "contact.email.label": "Escríbenos",
       "contact.email.value": "Por favor usa el formulario para contactarnos.\nEn breve te responderemos.",
       "contact.location.label": "Ubicación",
-      "contact.location.value": "Kyoto, Japon",
+      "contact.location.value": "619-1127 Japan, Kyoto, Nagamodai",
       "contact.hours.label": "Horario",
       "contact.hours.value": "Lunes – Viernes: 10AM – 7PM ",
 
@@ -328,7 +335,14 @@ export const resources = {
           "fix_fields": "Por favor corrige los campos marcados.",
           "server": "Error del servidor. Intenta nuevamente.",
           "network": "Error de red. Verifica tu conexión.",
-          "captcha": "Error al verificar el captcha."
+          "captcha": "Error al verificar el captcha.",
+          "disposable_email": "No se permiten direcciones de correo desechables.",
+          "rate_limit_ip_minute": "Demasiadas solicitudes desde esta dirección IP. Solo se permiten 5 envíos por minuto. Por favor, inténtalo más tarde.",
+          "rate_limit_ip_day": "Demasiadas solicitudes desde esta dirección IP. Solo se permiten 15 envíos por día. Por favor, inténtalo más tarde.",
+          "rate_limit_email_hour": "Demasiadas solicitudes desde este correo electrónico. Solo se permiten 5 envíos por hora. Por favor, inténtalo más tarde.",
+          "rate_limit_email_day": "Demasiadas solicitudes desde este correo electrónico. Solo se permiten 15 envíos por día. Por favor, inténtalo más tarde.",
+          "spam_keywords": "El mensaje contiene contenido no permitido.",
+          "validation_failed": "La validación ha fallado."
         },
         "success": "¡Gracias! Te responderemos pronto."
       },
@@ -370,8 +384,8 @@ export const resources = {
       },
 
       // Hero
-      "hero.title": "熟練したフロントエンド開発でデジタル体験を向上",
-      "hero.subtitle": "KinalTechは、独立したフロントエンド開発者チームとして、Webやモバイルであなたのデジタル製品を引き立てる体験を創り出します。",
+      "hero.title": "熟練したフロントエンド開発でデジタルエクスペリエンス(DX)を向上",
+      "hero.subtitle": "KinalTechは、フロントエンド開発専門チームとして、Web・モバイルのUI/UX改善とパフォーマンス向上を支援します。",
       "hero.cta1": "サービスを見る",
       "hero.cta2": "お問い合わせ",
       "hero.cta1_aria": "サービスセクションへ移動",
@@ -461,7 +475,7 @@ export const resources = {
       "contact.email.label": "メールでのお問い合わせ",
       "contact.email.value": "フォームからご連絡ください。折り返しこちらからご返信いたします。",
       "contact.location.label": "所在地",
-      "contact.location.value": "日本・京都",
+      "contact.location.value": "〒619-1127 京都府京田辺市長藻台",
       "contact.hours.label": "営業時間",
       "contact.hours.value": "月曜～金曜：10時〜19時",
 
@@ -492,7 +506,14 @@ export const resources = {
           "fix_fields": "赤い項目を修正してください。",
           "server": "サーバーエラーが発生しました。もう一度お試しください。",
           "network": "ネットワークエラーが発生しました。接続を確認してください。",
-          "captcha": "認証に失敗しました。"
+          "captcha": "認証に失敗しました。",
+          "disposable_email": "使い捨てのメールアドレスはご利用いただけません。",
+          "rate_limit_ip_minute": "このIPアドレスからのリクエストが多すぎます。1分間に最大5回まで送信できます。しばらくしてから再度お試しください。",
+          "rate_limit_ip_day": "このIPアドレスからのリクエストが多すぎます。1日に最大15回まで送信できます。しばらくしてから再度お試しください。",
+          "rate_limit_email_hour": "このメールアドレスからのリクエストが多すぎます。1時間に最大5回まで送信できます。しばらくしてから再度お試しください。",
+          "rate_limit_email_day": "このメールアドレスからのリクエストが多すぎます。1日に最大15回まで送信できます。しばらくしてから再度お試しください。",
+          "spam_keywords": "メッセージに禁止されている内容が含まれています。",
+          "validation_failed": "バリデーションに失敗しました。"
         },
         "success": "ありがとうございます。追ってご連絡いたします。"
       },

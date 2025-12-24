@@ -35,7 +35,8 @@ import {
   AsanaIcon,
 } from "../atoms";
 import { useReveal } from "../../hooks/useReveal";
-import { useState, useEffect, type ComponentType, type SVGProps } from "react";
+import { useTheme } from "../../hooks/useTheme";
+import type { ComponentType, SVGProps } from "react";
 import type { TranslationKey } from "../../i18n/types";
 
 type IconComponent = ComponentType<SVGProps<SVGSVGElement>>;
@@ -83,32 +84,10 @@ const EVERYDAY_TOOLS: Tech[] = [
   { id: "asana", nameKey: "tools.asana" as TranslationKey, color: "#F06A6A", Icon: AsanaIcon },
 ];
 
-// Shared hook for theme detection
-function useThemeDetection() {
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const checkTheme = () => {
-      const isDarkMode = document.documentElement.dataset.theme === "dark" ||
-        document.body.classList.contains("dark");
-      setIsDark(isDarkMode);
-    };
-
-    checkTheme();
-    const observer = new MutationObserver(checkTheme);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
-
-    return () => observer.disconnect();
-  }, []);
-
-  return isDark;
-}
-
 function Chip({ tech }: Readonly<{ tech: Tech }>) {
   const { t } = useTranslation();
   const { Icon, color, darkColor, nameKey } = tech;
-  const isDark = useThemeDetection();
+  const isDark = useTheme();
 
   const iconColor = isDark && darkColor ? darkColor : color;
 
@@ -116,7 +95,7 @@ function Chip({ tech }: Readonly<{ tech: Tech }>) {
     <li
       className="
         inline-flex items-center gap-4 rounded-full px-5 h-15 mx-2
-        border border-[var(--border)]
+        border border-(--border)
         bg-[--surface] text-[--text] font-medium
         transition-colors shrink-0"
     >
@@ -131,15 +110,15 @@ function Chip({ tech }: Readonly<{ tech: Tech }>) {
 function Card({ tech }: Readonly<{ tech: Tech }>) {
   const { t } = useTranslation();
   const { Icon, color, darkColor, nameKey } = tech;
-  const isDark = useThemeDetection();
+  const isDark = useTheme();
 
   const iconColor = isDark && darkColor ? darkColor : color;
 
   return (
     <article
       className="
-        rounded-[16px] border border-[var(--border)] bg-card p-6 text-center
-        shadow-soft hover:border-[var(--primary)] hover:shadow-md
+        rounded-[16px] border border-(--border) bg-card p-6 text-center
+        shadow-soft hover:border-(--primary) hover:shadow-md
         transition-colors glow-pulse
       "
     >
@@ -157,8 +136,6 @@ function Techs() {
   const { t } = useTranslation();
   useReveal();
 
-  const [/*active*/, /*setActive*/] = useState<string>(TECHS[0].id);
-
   return (
     <section id="techs" className="py-24 md:py-28 bg-surface text-body scroll-mt-20 bg-grad-1">
       <Container>
@@ -170,7 +147,7 @@ function Techs() {
 
         {/* Grid de cards inferior */}
         <div
-          className=" mt-9 grid gap-6 reveal [grid-template-columns:repeat(auto-fit,minmax(180px,1fr))] "
+          className=" mt-9 grid gap-6 reveal grid-cols-[repeat(auto-fit,minmax(180px,1fr))] "
         >
           {TECHS.map((t) => (
             <Card key={t.id} tech={t} />
@@ -179,16 +156,16 @@ function Techs() {
 
         {/* Everyday Tools Section */}
         <div className="mt-16 text-center max-w-3xl mx-auto reveal">
-          <H2 className="break-words hyphens-auto">{t("tools.title")}</H2>
+          <H2 className="wrap-break-word hyphens-auto">{t("tools.title")}</H2>
         </div>
         {/* Everyday Tools Carousel */}
         <div className="mt-7 overflow-hidden mask-edges reveal" aria-label={t("tools.title")}>
           {/* Pista duplicada para loop continuo. Claves únicas con índice. */}
-          <div className="inline-flex h-17 items-center gap-4 animate-slide">
+          <ul className="inline-flex h-17 items-center gap-4 animate-slide list-none p-0 m-0">
             {[...EVERYDAY_TOOLS, ...EVERYDAY_TOOLS].map((tool, i) => (
               <Chip key={`${tool.id}-${i}`} tech={tool} />
             ))}
-          </div>
+          </ul>
         </div>
       </Container>
     </section>
