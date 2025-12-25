@@ -3,6 +3,13 @@
 // Cloudflare Worker for contact form submission
 
 import { z } from "zod";
+import { EmailMessage } from "cloudflare:email";
+
+declare global {
+  interface SendEmail {
+    send(message: EmailMessage): Promise<void>;
+  }
+}
 import {
   ALLOWED_ORIGINS,
   RATE_LIMIT_CONFIG,
@@ -13,9 +20,7 @@ import {
 // --- Environment Variables (set in Cloudflare Dashboard) ---
 interface Env {
   TURNSTILE_SECRET: string;
-  SENDGRID_API_KEY: string;
-  SENDGRID_TO: string;
-  SENDGRID_FROM: string;
+  SEND_EMAIL: SendEmail; // Cloudflare Workers Email binding
   CONTACT_KV: KVNamespace; // Cloudflare KV namespace for storing messages
   RATE_LIMIT_KV: KVNamespace; // Cloudflare KV namespace for rate limiting
   // Optional: For Firestore fallback (if needed)
@@ -371,22 +376,13 @@ async function saveContactToKV(
   });
 }
 
-// --- Email: Send via SendGrid ---
+// --- Email: Send via Cloudflare Workers Email ---
 async function sendContactEmail(
   clean: ContactPayload,
-  apiKey: string,
-  to: string,
-  from: string
+  sendEmail: SendEmail
 ): Promise<void> {
-  if (!apiKey || !to || !from) {
-    console.warn("Email config incomplete. Skipping email send.");
-    return;
-  }
-
-  const recipients = to.split(",").map((e) => e.trim()).filter(Boolean);
-
-  if (!recipients.length) {
-    console.warn("CONTACT_TO is empty after parsing. Skipping email send.");
+  if (!sendEmail) {
+    console.warn("SEND_EMAIL binding not available. Skipping email send.");
     return;
   }
 
@@ -394,48 +390,69 @@ async function sendContactEmail(
   const safeSubject = sanitizeText(clean.subject, 160) || "New contact form message (no subject)";
   const preview = sanitizeText(clean.message, 200);
 
-  const emailData = {
-    personalizations: recipients.map((email) => ({ to: [{ email }] })),
-    from: { email: from },
-    subject: `New contact form message: ${safeSubject}`,
-    content: [
-      {
-        type: "text/plain",
-        value:
-          `You have received a new contact form submission:\n\n` +
-          `Name: ${safeName}\n` +
-          `Email: ${clean.email}\n` +
-          `Subject: ${safeSubject}\n\n` +
-          `Message:\n${clean.message}\n\n`,
-      },
-      {
-        type: "text/html",
-        value:
-          `<p>You have received a new contact form submission:</p>` +
-          `<p><strong>Name:</strong> ${safeName}</p>` +
-          `<p><strong>Email:</strong> ${clean.email}</p>` +
-          `<p><strong>Subject:</strong> ${safeSubject}</p>` +
-          `<p><strong>Message:</strong></p>` +
-          `<pre style="white-space:pre-wrap;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">${clean.message}</pre>` +
-          `<hr />` +
-          `<p>Preview:</p>` +
-          `<p>${preview}</p>`,
-      },
-    ],
-  };
 
-  const resp = await fetch("https://api.sendgrid.com/v3/mail/send", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify(emailData),
-  });
+  // IMPORTANT: Both from and to addresses must be verified in Cloudflare Email Routing
+  const fromEmail = "no-reply@notify.kinaltech.com";
+  const toEmail = "kinaltech-info-box@kinaltech.com";
+  
+  const plainText =
+    `You have received a new contact form submission:\n\n` +
+    `Name: ${safeName}\n` +
+    `Email: ${clean.email}\n` +
+    `Subject: ${safeSubject}\n\n` +
+    `Message:\n${clean.message}\n\n`;
 
-  if (!resp.ok) {
-    const errorText = await resp.text();
-    throw new Error(`SendGrid API error: ${resp.status} - ${errorText}`);
+  const htmlContent =
+    `<p>You have received a new contact form submission:</p>` +
+    `<p><strong>Name:</strong> ${safeName}</p>` +
+    `<p><strong>Email:</strong> ${clean.email}</p>` +
+    `<p><strong>Subject:</strong> ${safeSubject}</p>` +
+    `<p><strong>Message:</strong></p>` +
+    `<pre style="white-space:pre-wrap;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">${clean.message}</pre>` +
+    `<hr />` +
+    `<p>Preview:</p>` +
+    `<p>${preview}</p>`;
+
+  // Create MIME message - simplified format
+  const boundary = `----=_Part_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  
+  const mimeMessage = [
+    `Message-ID: <${Date.now()}-${Math.random().toString(36).substring(2, 9)}@notify.kinaltech.com>`,
+    `Date: ${new Date().toUTCString()}`,
+    `From: Contact Form <${fromEmail}>`,
+    `To: ${toEmail}`,
+    `Reply-To: ${clean.name} <${clean.email}>`,
+    `Subject: New contact form message: ${safeSubject}`,
+    `MIME-Version: 1.0`,
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    ``,
+    `--${boundary}`,
+    `Content-Type: text/plain; charset=UTF-8`,
+    `Content-Transfer-Encoding: 7bit`,
+    ``,
+    plainText,
+    ``,
+    `--${boundary}`,
+    `Content-Type: text/html; charset=UTF-8`,
+    `Content-Transfer-Encoding: 7bit`,
+    ``,
+    htmlContent,
+    ``,
+    `--${boundary}--`,
+  ].join("\r\n");
+
+  const message = new EmailMessage(fromEmail, toEmail, mimeMessage);
+
+  try {
+    await sendEmail.send(message);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("Email send error details:", {
+      from: fromEmail,
+      to: toEmail,
+      error: errorMessage,
+    });
+    throw new Error(`Failed to send email: ${errorMessage}`);
   }
 }
 
@@ -729,7 +746,7 @@ export default {
       // Process in parallel: save to KV and send email
       await Promise.all([
         saveContactToKV(clean, env.CONTACT_KV, body.lang),
-        sendContactEmail(clean, env.SENDGRID_API_KEY, env.SENDGRID_TO, env.SENDGRID_FROM).catch(
+        sendContactEmail(clean, env.SEND_EMAIL).catch(
           (err) => {
             console.error("Email send failed:", err);
           }
