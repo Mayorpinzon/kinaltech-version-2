@@ -95,7 +95,7 @@ function Chip({ tech }: Readonly<{ tech: Tech }>) {
     <li
       className="
         inline-flex items-center gap-4 rounded-full px-5 h-15 mx-2
-        border border-(--border)
+        border-2 border-(--border)
         bg-[--surface] text-[--text] font-medium
         transition-colors shrink-0"
     >
