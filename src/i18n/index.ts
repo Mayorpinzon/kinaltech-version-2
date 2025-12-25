@@ -119,7 +119,7 @@ export const resources = {
       "about.team.lead": "Meet the developers behind KinalTech and the minds that bring each project to life.",
       "about.team.dev1.name": "Gabriel",
       "about.team.dev2.name": "Mario Alberto",
-      "about.team.dev1.role": "AI/Frontend developer..",
+      "about.team.dev1.role": "AI/Frontend developer.",
       "about.team.dev2.role": "Frontend developer.",
       "about.team.dev1.bio": "Machine learning specialist with several years of experience leading technical initiatives and managing development teams. Oversees a team of developers, implementing efficient pipelines, strong version-control practices, and collaborative workflows. His approach combines technical vision, solid organization, and an excellent ability to identify issues and propose effective solutions.",
       "about.team.dev2.bio": "Self-taught developer with experience in frontend web development. Focused on creating clear, accessible, and efficient user interfaces. His background in business allows him to better understand client needs and transform them into result-driven digital solutions.",
