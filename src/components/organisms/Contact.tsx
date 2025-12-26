@@ -592,7 +592,7 @@ export default function Contact() {
                       name={field}
                       rows={6}
                       placeholder={placeholder}
-                      className={`${common} px-4 py-3 glow-pulse`}
+                      className={`${common} px-4 py-3 glow-pulse resize-y min-h-[5.5rem] max-h-[15.5rem]`}
                       autoComplete="off"
                       required
                       aria-required="true"
